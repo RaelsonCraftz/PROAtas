@@ -262,6 +262,12 @@ namespace PROAtas.ViewModel
         private async void ChangeMinuteImageExecute()
         {
             var stream = await imageService.GetImageStreamAsync();
+            if (stream != null)
+            {
+                var image = ImageSource.FromStream(() => stream);
+
+                MinuteImage = image;
+            }
         }
 
         #endregion

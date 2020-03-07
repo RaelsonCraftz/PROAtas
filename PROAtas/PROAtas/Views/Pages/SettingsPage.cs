@@ -94,14 +94,19 @@ namespace PROAtas.Views.Pages
                 IconImageSource = Images.Image,
                 ViewModel = vm,
 
-                Content = new Grid
+                Content = new StackLayout
                 {
+                    Spacing = 5,
+
                     Children =
                     {
+                        new Image { } .Center()
+                            .Bind(nameof(vm.MinuteImage)),
+
                         new Button { Text = "Imagem" } .Center()
                             .Bind(nameof(vm.ChangeMinuteImage)),
                     }
-                }
+                } .Center(),
             });
         }
     }
