@@ -19,6 +19,7 @@ namespace PROAtas
         public IPrintService printService = DependencyService.Get<IPrintService>();
         public IAdService adService = DependencyService.Get<IAdService>();
 
+        public IPermissionService permissionService = new PermissionService();
         public IDataService dataService = new DataService();
         public ILogService logService = new LogService();
 
@@ -48,6 +49,7 @@ namespace PROAtas
             if (!Current.Properties.ContainsKey(Constants.MarginRight)) Current.Properties[Constants.MarginRight] = "3";
             if (!Current.Properties.ContainsKey(Constants.MarginBottom)) Current.Properties[Constants.MarginBottom] = "2";
             if (!Current.Properties.ContainsKey(Constants.Version)) Current.Properties[Constants.Version] = "0";
+            if (!Current.Properties.ContainsKey(Constants.SelectedMinuteImage)) Current.Properties[Constants.SelectedMinuteImage] = "0";
             Current.SavePropertiesAsync();
 
             // ViewModels

@@ -1,9 +1,15 @@
-﻿using Xamarin.Forms;
+﻿using PROAtas.Assets.Theme;
+using Xamarin.Forms;
 
 namespace PROAtas.Controls
 {
     public class AdMobView : View
     {
+        public AdMobView()
+        {
+            BackgroundColor = Colors.Primary;
+        }
+
         public static readonly BindableProperty AdUnitIdProperty = BindableProperty.Create(
                    nameof(AdUnitId),
                    typeof(string),

@@ -24,6 +24,7 @@ namespace PROAtas.ViewModel
     {
         #region Service Container
 
+        private readonly IPermissionService permissionService = App.Current.permissionService;
         private readonly IToastService toastService = App.Current.toastService;
         private readonly IPrintService printService = App.Current.printService;
         private readonly IImageService imageService = App.Current.imageService;
@@ -142,39 +143,55 @@ namespace PROAtas.ViewModel
         public ICommand PrintWord => new Command(() => PrintWordExecute());
         private async void PrintWordExecute()
         {
-            if (await RequestStoragePermission())
+            if (await permissionService.RequestStoragePermission())
             {
                 IsLoading = true;
                 _ = Task.Run(() =>
                 {
-                    byte[] localbyte = imageService.GetFileFromDrawable();
+                    var log = logService.LogAction(() =>
+                    {
+                        byte[] localbyte;
+                        if (Application.Current.Properties[Constants.SelectedMinuteImage]?.ToString() != "0")
+                        {
+                            var selectedImage = int.Parse(Application.Current.Properties[Constants.SelectedMinuteImage]?.ToString());
+                            var minuteImage = dataService.MinuteImageRepository.Get(selectedImage);
+                            minuteImage.ImageBytes = imageService.GetBytesFromPath(minuteImage.Name);
 
-                    WordDocument localDocument = CreateDocument(SelectedMinute.Model, localbyte);
+                            localbyte = minuteImage.ImageBytes;
+                        }
+                        else
+                            localbyte = imageService.GetBytesFromLogo();
 
-                    MemoryStream stream = new MemoryStream();
-                    stream.Position = 0;
+                        WordDocument localDocument = CreateDocument(SelectedMinute.Model, localbyte);
 
-                    localDocument.Save(stream, Syncfusion.DocIO.FormatType.Docx);
+                        MemoryStream stream = new MemoryStream();
+                        stream.Position = 0;
 
-                    localDocument.Close();
+                        localDocument.Save(stream, Syncfusion.DocIO.FormatType.Docx);
 
-                    var arquivonome = SelectedMinute.Model.Name
-                        .Replace("&", " ")
-                        .Replace(@"""", "-")
-                        .Replace("?", "")
-                        .Replace("<", "-")
-                        .Replace(">", "-")
-                        .Replace("#", "")
-                        .Replace("{", "(")
-                        .Replace("}", ")")
-                        .Replace("%", " ")
-                        .Replace("~", "-")
-                        .Replace("/", "-")
-                        .Replace(@"\", "-");
-                    printService.Print(arquivonome + ".docx", "application/msword", stream);
+                        localDocument.Close();
 
+                        var arquivonome = SelectedMinute.Model.Name
+                            .Replace("&", " ")
+                            .Replace(@"""", "-")
+                            .Replace("?", "")
+                            .Replace("<", "-")
+                            .Replace(">", "-")
+                            .Replace("#", "")
+                            .Replace("{", "(")
+                            .Replace("}", ")")
+                            .Replace("%", " ")
+                            .Replace("~", "-")
+                            .Replace("/", "-")
+                            .Replace(@"\", "-");
+                        printService.Print(arquivonome + ".docx", "application/msword", stream);
+
+                    });
                     InvokeMainThread(() =>
                     {
+                        if (log != null)
+                            toastService.ShortAlert(log);
+
                         SelectedMinute = null;
                         IsLoading = false;
                     });
@@ -187,7 +204,7 @@ namespace PROAtas.ViewModel
         public ICommand PrintPDF => new Command(() => PrintPDFExecute());
         private async void PrintPDFExecute()
         {
-            if (await RequestStoragePermission())
+            if (await permissionService.RequestStoragePermission())
             {
                 if (await DisplayAlert("Aviso", "Para gerar um PDF você precisará ver um vídeo antes. Isto ajuda a financiar este aplicativo. Você concorda?\r\n\r\nREQUER INTERNET", "Sim", "Não"))
                 {
@@ -204,7 +221,17 @@ namespace PROAtas.ViewModel
                         {
                             if (IsRewarded)
                             {
-                                byte[] localbyte = imageService.GetFileFromDrawable();
+                                byte[] localbyte;
+                                if (Application.Current.Properties[Constants.SelectedMinuteImage]?.ToString() != "0")
+                                {
+                                    var selectedImage = int.Parse(Application.Current.Properties[Constants.SelectedMinuteImage]?.ToString());
+                                    var minuteImage = dataService.MinuteImageRepository.Get(selectedImage);
+                                    minuteImage.ImageBytes = imageService.GetBytesFromPath(minuteImage.Name);
+
+                                    localbyte = minuteImage.ImageBytes;
+                                }
+                                else
+                                    localbyte = imageService.GetBytesFromLogo();
 
                                 WordDocument localWord = CreateDocument(SelectedMinute.Model, localbyte, true);
 
@@ -315,7 +342,7 @@ namespace PROAtas.ViewModel
 
             localSection.AddParagraph();
 
-            //Lista de informações e pessoas
+            // People List
             var people = string.Empty;
             var personList = dataService.PersonRepository.Find(l => l.IdMinute == minute.Id)?.ToList() ?? new List<Person>();
             for (int i = 0; i < personList.Count; i++)
@@ -323,47 +350,66 @@ namespace PROAtas.ViewModel
                 if (i == 0) people = personList[i].Name;
                 else people += ($", {personList[i].Name}");
             }
+
+            // Justifying the paragraph
             IWParagraph localParagraph3 = localSection.AddParagraph();
             localParagraph3.ParagraphFormat.HorizontalAlignment = HorizontalAlignment.Justify;
-            //IWTextRange textoDescricao = localParagrafo3.AppendText("Reunião do Engenheiros Sem Fronteiras - Núcleo João Pessoa - Diretoria " + Usuario.Diretoria +
+
             IWTextRange textoDescricao = localParagraph3.AppendText($"Reunião da Organização {organizationName}, realizada no dia {minute.Date} às {minute.Start} com a presença de {people}");
             textoDescricao.CharacterFormat.Font = new Syncfusion.Drawing.Font(fontFamily, fontSize);
 
             localSection.AddParagraph();
 
+            // Justifying the paragraph
             IWParagraph localParagraph4 = localSection.AddParagraph();
             localParagraph4.ParagraphFormat.HorizontalAlignment = HorizontalAlignment.Justify;
+
+            // Paragraph header
             IWTextRange subDescriptionText = localParagraph4.AppendText("A seguinte pauta foi discutida:");
             subDescriptionText.CharacterFormat.Font = new Syncfusion.Drawing.Font(fontFamily, fontSize);
 
-            //Lista de Tópicos
+            // Topic and Information List
             var topics = dataService.TopicRepository.Find(l => l.IdMinute == minute.Id)?.ToList() ?? new List<Topic>();
-
             for (int i = 0; i < topics.Count; i++)
             {
                 localSection.AddParagraph();
 
+                // Paragraph Format
                 IWParagraph localParagraphTopic = localSection.AddParagraph();
                 localParagraphTopic.ListFormat.ApplyDefNumberedStyle();
                 localParagraphTopic.ListFormat.ContinueListNumbering();
                 localParagraphTopic.ParagraphFormat.HorizontalAlignment = HorizontalAlignment.Justify;
+
+                // Topic Text
                 IWTextRange topicText = localParagraphTopic.AppendText($"{topics[i].Text}:");
                 topicText.CharacterFormat.Font = new Syncfusion.Drawing.Font(fontFamily, fontSize);
                 topicText.CharacterFormat.Bold = true;
 
+                // Information List
                 var information = dataService.InformationRepository.Find(l => l.IdTopic == topics[i].Id)?.ToList() ?? new List<Information>();
-                for (int f = 0; f < information.Count; f++)
+                foreach (var info in information)
                 {
-                    IWParagraph localParagraphInformation = localSection.AddParagraph();
-                    localParagraphInformation.ParagraphFormat.HorizontalAlignment = HorizontalAlignment.Justify;
-                    localParagraphInformation.ListFormat.ApplyDefBulletStyle();
-                    IWTextRange informationText;
-                    if (isPDF)
-                        informationText = localParagraphInformation.AppendText($"- {information[f].Text};");
-                    else
-                        informationText = localParagraphInformation.AppendText($"{information[f].Text};");
+                    // Checking if this information is not empty
+                    if (!string.IsNullOrEmpty(info.Text?.Replace("\n\n", string.Empty).Trim()))
+                    {
+                        IWParagraph localParagraphInformation = localSection.AddParagraph();
+                        localParagraphInformation.ParagraphFormat.HorizontalAlignment = HorizontalAlignment.Justify;
+                        localParagraphInformation.ListFormat.ApplyDefBulletStyle();
 
-                    informationText.CharacterFormat.Font = new Syncfusion.Drawing.Font(fontFamily, fontSize);
+                        // Information Text
+                        IWTextRange informationText;
+                        // If the text has any line breaks, remove them
+                        info.Text = info.Text?.Replace("\n\n", " ");
+
+                        // Checking if the output is PDF
+                        if (isPDF)
+                            informationText = localParagraphInformation.AppendText($"- {info.Text};");
+                        else
+                            informationText = localParagraphInformation.AppendText($"{info.Text};");
+                        
+                        // Text Font
+                        informationText.CharacterFormat.Font = new Syncfusion.Drawing.Font(fontFamily, fontSize);
+                    }
                 }
             }
 
@@ -378,20 +424,6 @@ namespace PROAtas.ViewModel
             localText.CharacterFormat.Font = new Syncfusion.Drawing.Font(fontFamily, fontSize);
 
             return localDocument;
-        }
-
-        public async Task<bool> RequestStoragePermission()
-        {
-            var statusWrite = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
-            var statusRead = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
-            
-            if (statusWrite != PermissionStatus.Granted)
-                statusWrite = await Permissions.RequestAsync<Permissions.StorageWrite>();
-
-            if (statusRead != PermissionStatus.Granted)
-                statusRead = await Permissions.RequestAsync<Permissions.StorageRead>();
-
-            return statusWrite == PermissionStatus.Granted && statusRead == PermissionStatus.Granted;
         }
 
         #endregion

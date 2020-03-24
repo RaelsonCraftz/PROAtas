@@ -1,8 +1,14 @@
 ﻿using PROAtas.Core;
+using PROAtas.Model;
 using PROAtas.Services;
+using PROAtas.ViewModel.Elements;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -12,8 +18,10 @@ namespace PROAtas.ViewModel
     {
         #region Service Container
 
+        private readonly IPermissionService permissionService = App.Current.permissionService;
         private readonly IToastService toastService = App.Current.toastService;
         private readonly IImageService imageService = App.Current.imageService;
+        private readonly IDataService dataService = App.Current.dataService;
         private readonly ILogService logService = App.Current.logService;
 
         #endregion
@@ -36,12 +44,28 @@ namespace PROAtas.ViewModel
             "Segoe Script",
         };
 
-        public ImageSource MinuteImage
+        public ObservableCollection<MinuteImageElement> ImageCollection { get; } = new ObservableCollection<MinuteImageElement>();
+
+        public MinuteImageElement MinuteImage
         {
             get => _minuteImage;
             set { _minuteImage = value; NotifyPropertyChanged(); }
         }
-        private ImageSource _minuteImage;
+        private MinuteImageElement _minuteImage;
+
+        public bool IsImageDialogOpen
+        {
+            get => _isImageDialogOpen;
+            set { _isImageDialogOpen = value; NotifyPropertyChanged(); }
+        }
+        private bool _isImageDialogOpen;
+
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set { _isLoading = value; NotifyPropertyChanged(); }
+        }
+        private bool _isLoading;
 
         public string User
         {
@@ -258,16 +282,62 @@ namespace PROAtas.ViewModel
             }
         }
 
-        public ICommand ChangeMinuteImage => new Command(() => ChangeMinuteImageExecute());
-        private async void ChangeMinuteImageExecute()
+        public ICommand ChooseCollection => new Command(() => ChooseCollectionExecute());
+        private async void ChooseCollectionExecute()
         {
-            var stream = await imageService.GetImageStreamAsync();
-            if (stream != null)
+            if (await permissionService.RequestStoragePermission())
             {
-                var image = ImageSource.FromStream(() => stream);
+                IsLoading = true;
 
-                MinuteImage = image;
+                imageService.CreateDirectory();
+
+                var stream = await imageService.GetImageFromGalleryAsync();
+                if (stream != null)
+                {
+                    _ = Task.Run(() =>
+                    {
+                        var log = logService.LogAction(async () =>
+                        {
+                            var minuteImage = new MinuteImage()
+                            {
+                                Name = Guid.NewGuid().ToString(),
+                                ImageBytes = imageService.GetBytesFromStream(stream),
+                            };
+
+                            // Persisting the image on the folder and also on the database
+                            await imageService.SaveImageToDirectory(stream, minuteImage.Name);
+                            dataService.MinuteImageRepository.Add(minuteImage);
+
+                            InvokeMainThread(() =>
+                            {
+                                MinuteImage = new MinuteImageElement(minuteImage);
+                                MinuteImage.ImageSource = ImageSource.FromStream(() => stream);
+
+                                ImageCollection.Add(MinuteImage);
+                            });
+                        });
+
+                        if (log != null) 
+                            InvokeMainThread(() => toastService.ShortAlert("Algo deu errado. Você precisa selecionar uma imagem!"));
+                    });
+                }
+
+                IsLoading = false;
             }
+            else
+                await DisplayAlert("Permissão", "Você precisa habilitar permissão de gravação para utilizar esta funcionalidade!", "OK");
+        }
+
+        public ICommand ChooseUrl => new Command(() => ChooseUrlExecute());
+        private async void ChooseUrlExecute()
+        {
+
+        }
+
+        public ICommand ChooseStorage => new Command(() => ChooseStorageExecute());
+        private async void ChooseStorageExecute()
+        {
+
         }
 
         #endregion
@@ -290,6 +360,7 @@ namespace PROAtas.ViewModel
             var marginTop = double.Parse(App.Current.Properties[Constants.MarginTop].ToString());
             var marginRight = double.Parse(App.Current.Properties[Constants.MarginRight].ToString());
             var marginBottom = double.Parse(App.Current.Properties[Constants.MarginBottom].ToString());
+            var selectedImage = int.Parse(App.Current.Properties[Constants.SelectedMinuteImage].ToString());
 
             User = user;
             Organization = organization;
@@ -299,6 +370,22 @@ namespace PROAtas.ViewModel
             MarginTop = marginTop;
             MarginRight = marginRight;
             MarginBottom = marginBottom;
+
+            var imageCollection = dataService.MinuteImageRepository.GetAll();
+            var logoStream = new MemoryStream(imageService.GetBytesFromLogo());
+            ImageCollection.Add(new MinuteImageElement(new MinuteImage { Id = 0 })
+            {
+                ImageSource = ImageSource.FromStream(() => logoStream)
+            });
+
+            foreach (var minuteImage in imageCollection)
+            {
+                var imageBytes = imageService.GetBytesFromPath(minuteImage.Name);
+                var imageStream = new MemoryStream(imageBytes);
+                ImageCollection.Add(new MinuteImageElement(minuteImage) { ImageSource = ImageSource.FromStream(() => imageStream) });
+            }
+
+            MinuteImage = ImageCollection.FirstOrDefault(l => l.Model.Id == selectedImage);
         }
 
         public override void Leave()

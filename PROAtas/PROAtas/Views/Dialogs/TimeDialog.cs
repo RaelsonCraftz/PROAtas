@@ -15,7 +15,7 @@ namespace PROAtas.Views.Dialogs
     {
         enum Row { Header, Content }
 
-        public TimeDialog() => Build();
+        public TimeDialog(EDockTo? dockSide = null) : base(dockSide) => Build();
 
         private void Build()
         {
@@ -80,9 +80,11 @@ namespace PROAtas.Views.Dialogs
                                 }
                             } .Standard() .Row(1),
                         }
-                    }
+                    } .Transparent() .Assign(out Grid innerContent)
                 }
             };
+
+            InnerContent = innerContent;
         }
     }
 }

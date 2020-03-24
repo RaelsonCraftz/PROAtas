@@ -8,8 +8,11 @@ namespace PROAtas.Services
 {
     public interface IImageService
     {
-        string DirectoryPath { get; set; }
-        byte[] GetFileFromDrawable();
-        Task<Stream> GetImageStreamAsync();
+        bool CreateDirectory();
+        byte[] GetBytesFromLogo();
+        byte[] GetBytesFromStream(Stream imageStream);
+        byte[] GetBytesFromPath(string imageName);
+        Task SaveImageToDirectory(Stream imageStream, string imageName);
+        Task<Stream> GetImageFromGalleryAsync();
     }
 }

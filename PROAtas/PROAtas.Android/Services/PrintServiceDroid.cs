@@ -25,8 +25,8 @@ namespace PROAtas.Droid.Services
 
             Java.IO.File myDir = new Java.IO.File($"{root}/Atas");
             myDir.Mkdir();
-            Java.IO.File file = new Java.IO.File(myDir, fileName);
 
+            Java.IO.File file = new Java.IO.File(myDir, fileName);
             if (file.Exists())
                 file.Delete();
 

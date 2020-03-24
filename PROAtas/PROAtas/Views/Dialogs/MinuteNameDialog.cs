@@ -12,7 +12,7 @@ namespace PROAtas.Views.Dialogs
     {
         enum Row { Header, Content }
 
-        public MinuteNameDialog() => Build();
+        public MinuteNameDialog(EDockTo? dockSide = null) : base(dockSide) => Build();
 
         private void Build()
         {
@@ -66,9 +66,11 @@ namespace PROAtas.Views.Dialogs
                                 }
                             } .Standard() .Row(1) .CenterV()
                         }
-                    } .Transparent(),
+                    } .Transparent() .Assign(out Grid innerContent),
                 }
             };
+
+            InnerContent = innerContent;
         }
     }
 }

@@ -11,6 +11,7 @@ namespace PROAtas.Assets.Styles
     {
         public static TButton Standard<TButton>(this TButton button) where TButton : Button
         {
+            button.Visual = VisualMarker.Material;
             button.BackgroundColor = Colors.Accent;
             button.TextColor = Colors.TextIcons;
             button.Padding = 5;
@@ -21,6 +22,7 @@ namespace PROAtas.Assets.Styles
 
         public static TButton Success<TButton>(this TButton button) where TButton : Button
         {
+            button.Visual = VisualMarker.Material;
             button.BackgroundColor = Colors.Success;
             button.TextColor = Colors.TextIcons;
             button.Padding = 5;
@@ -31,6 +33,7 @@ namespace PROAtas.Assets.Styles
 
         public static TButton Danger<TButton>(this TButton button) where TButton : Button
         {
+            button.Visual = VisualMarker.Material;
             button.BackgroundColor = Colors.Danger;
             button.TextColor = Colors.TextIcons;
             button.Padding = 5;
@@ -41,6 +44,8 @@ namespace PROAtas.Assets.Styles
 
         public static TButton Round<TButton>(this TButton button, double size = 60, int scale = 1) where TButton : Button
         {
+            button.Visual = VisualMarker.Material;
+
             size *= scale;
             button.WidthRequest = size;
             button.HeightRequest = size;

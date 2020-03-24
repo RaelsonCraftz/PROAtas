@@ -3,8 +3,10 @@ using PROAtas.Assets.Components;
 using PROAtas.Assets.Styles;
 using PROAtas.Assets.Theme;
 using PROAtas.ViewModel;
+using PROAtas.Views.Dialogs;
 using Xamarin.Forms;
 using static CSharpForMarkup.EnumsForGridRowsAndColumns;
+using static PROAtas.Views.Dialogs.BaseDialog;
 
 namespace PROAtas.Views.Pages
 {
@@ -94,19 +96,50 @@ namespace PROAtas.Views.Pages
                 IconImageSource = Images.Image,
                 ViewModel = vm,
 
-                Content = new StackLayout
+                Content = new Grid
                 {
-                    Spacing = 5,
+                    RowDefinitions = Rows.Define(
+                        (0, new GridLength(2, GridUnitType.Star)),
+                        (1, GridLength.Auto)),
+
+                    RowSpacing = 5,
+                    ColumnSpacing = 0,
 
                     Children =
                     {
-                        new Image { } .Center()
-                            .Bind(nameof(vm.MinuteImage)),
+                        new Image { } .Top() .Size(128)
+                            .Row(0)
+                            .Bind($"{nameof(vm.MinuteImage)}.{nameof(vm.MinuteImage.ImageSource)}"),
 
-                        new Button { Text = "Imagem" } .Center()
-                            .Bind(nameof(vm.ChangeMinuteImage)),
-                    }
-                } .Center(),
+                        new ScrollView
+                        {
+                            Content = new StackLayout
+                            {
+                                Spacing = 5,
+
+                                Children =
+                                {
+                                    new Button { ImageSource = Images.Collection, Text = "Imagens" } .Standard() .FillExpandH()
+                                        .Bind(nameof(vm.ChooseCollection)),
+
+                                    new Button { ImageSource = Images.Url, Text = "Url" } .Standard() .FillExpandH()
+                                        .Bind(nameof(vm.ChooseUrl)),
+
+                                    new Button { ImageSource = Images.Storage, Text = "Armazenados" } .Standard() .FillExpandH()
+                                        .Bind(nameof(vm.ChooseStorage)),
+                                }
+                            } .Padding(new Thickness(50, 0, 50, 0)),
+                        } .Row(1) .Bottom(),
+
+                        new ImageStorageDialog(EDockTo.End) { }
+                            .Assign(out ImageStorageDialog imageStorageDialog)
+                            .RowSpan(2)
+                            .Invoke(l => l.Close += () =>
+                            {
+                                vm.IsImageDialogOpen = false;
+                            }),
+                    },
+                }.Center(),
             });
         }
     }

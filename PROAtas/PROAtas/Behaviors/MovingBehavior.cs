@@ -5,16 +5,10 @@ using Xamarin.Forms;
 
 namespace PROAtas.Behaviors
 {
-    public enum EPanelOrientation
-    {
-        Left,
-        Top,
-        Right,
-        Bottom,
-    }
-    
     public class MovingBehavior : Behavior<VisualElement>
     {
+        public enum EMoveTo { Start, Top, End, Bottom, }
+
         private VisualElement Control;
 
         #region Behavior Implementation
@@ -45,12 +39,7 @@ namespace PROAtas.Behaviors
 
         #region Bindable Properties
 
-        public EPanelOrientation DockSide
-        {
-            get { return (EPanelOrientation)GetValue(DockSideProperty); }
-            set { SetValue(DockSideProperty, value); }
-        }
-        public static readonly BindableProperty DockSideProperty = BindableProperty.Create(nameof(DockSide), typeof(EPanelOrientation), typeof(MovingBehavior), default(EPanelOrientation));
+        public EMoveTo MoveTo { get; set; }
 
         public bool IsActive
         {
@@ -75,18 +64,18 @@ namespace PROAtas.Behaviors
                 await Task.Delay(100);
                 if (IsActive) await Control.TranslateTo(0, 0, 500, Easing.CubicOut);
                 else
-                    switch (DockSide)
+                    switch (MoveTo)
                     {
-                        case EPanelOrientation.Left:
+                        case EMoveTo.Start:
                             await Control.TranslateTo(-Control.Width, 0, 500, Easing.CubicOut);
                             break;
-                        case EPanelOrientation.Top:
+                        case EMoveTo.Top:
                             await Control.TranslateTo(0, -Control.Height, 500, Easing.CubicOut);
                             break;
-                        case EPanelOrientation.Right:
+                        case EMoveTo.End:
                             await Control.TranslateTo(Control.Width, 0, 500, Easing.CubicOut);
                             break;
-                        case EPanelOrientation.Bottom:
+                        case EMoveTo.Bottom:
                             await Control.TranslateTo(0, Control.Height, 500, Easing.CubicOut);
                             break;
                     }

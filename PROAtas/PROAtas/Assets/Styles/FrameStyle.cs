@@ -11,6 +11,7 @@ namespace PROAtas.Assets.Styles
     {
         public static TFrame Standard<TFrame>(this TFrame frame) where TFrame : Frame
         {
+            frame.Visual = VisualMarker.Material;
             frame.BackgroundColor = Colors.Primary;
             frame.Padding = new Thickness(5);
             frame.CornerRadius = 6;

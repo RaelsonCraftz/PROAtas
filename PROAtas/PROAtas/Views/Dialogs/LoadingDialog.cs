@@ -11,7 +11,7 @@ namespace PROAtas.Views.Dialogs
 {
     public class LoadingDialog : BaseDialog
     {
-        public LoadingDialog() => Build();
+        public LoadingDialog() : base() => Build();
 
         private void Build()
         {

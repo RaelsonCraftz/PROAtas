@@ -26,6 +26,7 @@ namespace PROAtas.Core
         public const string MarginTop = nameof(MarginTop);
         public const string MarginRight = nameof(MarginRight);
         public const string MarginBottom = nameof(MarginBottom);
+        public const string SelectedMinuteImage = nameof(SelectedMinuteImage);
 
         public const string Version = nameof(Version);
     }

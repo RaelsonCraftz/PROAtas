@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Windows.Input;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace PROAtas.Views.Dialogs
 {
     public class BaseDialog : ContentView
     {
+        public enum EDockTo { Start, Top, End, Bottom, None, }
+        
         public delegate void OnOpening();
         public event OnOpening Opening;
 
@@ -15,11 +18,45 @@ namespace PROAtas.Views.Dialogs
         public delegate void OnClose();
         public event OnClose Close;
 
+        public View InnerContent 
+        { 
+            get { return _innerContent; }
+            set 
+            { 
+                _innerContent = value;
+
+                switch (DockTo)
+                {
+                    case EDockTo.Start:
+                        _innerContent.TranslationX = -DeviceDisplay.MainDisplayInfo.Width / DeviceDisplay.MainDisplayInfo.Density;
+                        break;
+                    case EDockTo.Top:
+                        _innerContent.TranslationY = -DeviceDisplay.MainDisplayInfo.Height / DeviceDisplay.MainDisplayInfo.Density;
+                        break;
+                    case EDockTo.End:
+                        _innerContent.TranslationX = DeviceDisplay.MainDisplayInfo.Width / DeviceDisplay.MainDisplayInfo.Density;
+                        break;
+                    case EDockTo.Bottom:
+                        _innerContent.TranslationX = DeviceDisplay.MainDisplayInfo.Height / DeviceDisplay.MainDisplayInfo.Density;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        private View _innerContent;
+
+        public EDockTo DockTo { get; set; }
+
         public BaseDialog()
         {
             IsVisible = false;
+        }
 
-            Animate();
+        public BaseDialog(EDockTo? dockTo)
+        {
+            IsVisible = false;
+            DockTo = dockTo ?? EDockTo.None;
         }
 
         public bool IsOpen
@@ -54,13 +91,36 @@ namespace PROAtas.Views.Dialogs
             if (IsOpen)
             {
                 Opening?.Invoke();
+
                 IsVisible = true;
-                await this.FadeTo(1, 250, Easing.Linear);
+
+                _ = InnerContent?.TranslateTo(0, 0, 500, Easing.CubicOut);
+                await this.FadeTo(1, 500, Easing.Linear);
             }
             else
             {
                 Closing?.Invoke();
-                await this.FadeTo(0, 250, Easing.Linear);
+
+                switch (DockTo)
+                {
+                    case EDockTo.Start:
+                        _ = InnerContent?.TranslateTo(-Width, 0, 500, Easing.CubicOut);
+                        break;
+                    case EDockTo.Top:
+                        _ = InnerContent?.TranslateTo(0, -Height, 500, Easing.CubicOut);
+                        break;
+                    case EDockTo.End:
+                        _ = InnerContent?.TranslateTo(Width, 0, 500, Easing.CubicOut);
+                        break;
+                    case EDockTo.Bottom:
+                        _ = InnerContent?.TranslateTo(0, Height, 500, Easing.CubicOut);
+                        break;
+                    default:
+                        break;
+                }
+                
+                await this.FadeTo(0, 500, Easing.Linear);
+
                 IsVisible = false;
             }
         }

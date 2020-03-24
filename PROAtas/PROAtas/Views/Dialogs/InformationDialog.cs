@@ -2,11 +2,7 @@
 using PROAtas.Assets.Components;
 using PROAtas.Assets.Styles;
 using PROAtas.Assets.Theme;
-using PROAtas.Controls;
 using PROAtas.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 using static CSharpForMarkup.EnumsForGridRowsAndColumns;
 
@@ -16,7 +12,7 @@ namespace PROAtas.Views.Dialogs
     {
         enum Row { Header, Content, Warning }
 
-        public InformationDialog() => Build();
+        public InformationDialog(EDockTo? dockSide = null) : base(dockSide) => Build();
 
         private void Build()
         {
@@ -71,11 +67,11 @@ namespace PROAtas.Views.Dialogs
                                 }
                             } .Standard() .Row(1),
                         }
-                    } .Transparent(),
+                    } .Transparent() .Assign(out Grid innerContent),
                 },
             };
 
-
+            InnerContent = innerContent;
         }
     }
 }

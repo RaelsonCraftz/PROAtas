@@ -14,6 +14,8 @@ using PROAtas.Views.Dialogs;
 using System.Linq;
 using Xamarin.Forms;
 using static CSharpForMarkup.EnumsForGridRowsAndColumns;
+using static PROAtas.Behaviors.MovingBehavior;
+using static PROAtas.Views.Dialogs.BaseDialog;
 
 namespace PROAtas.Views.Pages
 {
@@ -53,7 +55,7 @@ namespace PROAtas.Views.Pages
                     {
                         Behaviors =
                         {
-                            new MovingBehavior { DockSide = EPanelOrientation.Top }
+                            new MovingBehavior { MoveTo = EMoveTo.Top }
                                 .BindBehavior(MovingBehavior.IsActiveProperty, nameof(vm.SelectedTopic), converter: new NullToBool())
                         },
 
@@ -122,6 +124,10 @@ namespace PROAtas.Views.Pages
                     // Information list beloging to the selected topic
                     new Grid
                     {
+                        RowDefinitions = Rows.Define(
+                            (0, GridLength.Star),
+                            (1, GridLength.Auto)),
+
                         IsVisible = false, Opacity = 0,
 
                         Behaviors =
@@ -133,15 +139,17 @@ namespace PROAtas.Views.Pages
                         Children =
                         {
                             new CollectionView { ItemTemplate = InformationTemplate.New(vm), ItemSizingStrategy = ItemSizingStrategy.MeasureAllItems } .VerticalListStyle() .Single()
+                                .Row(0)
                                 .Bind(CollectionView.ItemsSourceProperty, nameof(vm.Information)),
 
-                            new Button { ImageSource = Images.Add, Margin = 10 } .Standard() .Round() .Bottom() .Right()
+                            new Button { ImageSource = Images.Add, Margin = 10 } .Standard() .Round(48) .Bottom() .Left()
+                                .Row(1)
                                 .Bind(nameof(vm.CreateInformation)),
                         }
                     } .Standard()
                         .Row(Row.Information),
 
-                    new InformationDialog()
+                    new InformationDialog(EDockTo.End)
                         .RowSpan(3)
                         .Bind(InformationDialog.IsOpenProperty, nameof(vm.SelectedInformation), converter: new NullToBool())
                         .Invoke(l => l.Close += () =>
@@ -152,7 +160,7 @@ namespace PROAtas.Views.Pages
                                 toastService.ShortAlert("Aguarde a operação de salvar!");
                         }),
 
-                    new PersonDialog(vm)
+                    new PersonDialog(vm, EDockTo.End)
                         .Assign(out PersonDialog personDialog)
                         .RowSpan(3)
                         .Invoke(l => l.Close += () =>
@@ -163,7 +171,7 @@ namespace PROAtas.Views.Pages
                                 toastService.ShortAlert("Aguarde a operação de salvar!");
                         }),
 
-                    new TimeDialog { }
+                    new TimeDialog(EDockTo.End) { }
                         .Assign(out TimeDialog timeDialog)
                         .RowSpan(3)
                         .Invoke(l => l.Close += () =>
@@ -171,7 +179,7 @@ namespace PROAtas.Views.Pages
                             timeDialog.IsOpen = false;
                         }),
 
-                    new MinuteNameDialog { }
+                    new MinuteNameDialog(EDockTo.End) { }
                         .Assign(out MinuteNameDialog minuteNameDialog)
                         .RowSpan(3)
                         .Invoke(l => l.Close += () =>

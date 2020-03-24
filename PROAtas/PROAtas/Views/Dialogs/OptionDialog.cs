@@ -12,13 +12,13 @@ namespace PROAtas.Views.Dialogs
         public string LastWarning { get; set; }
 
         public OptionDialog(string title, string firstTitle = null, string secondTitle = null, string thirdTitle = null, string lastTitle = null,
-            ImageSource firstImage = null, ImageSource secondmage = null, ImageSource thirdImage = null, ImageSource fourthImage = null)
-        {
-            Build(title, firstTitle, secondTitle, thirdTitle, lastTitle, firstImage, secondmage, thirdImage, fourthImage);
-        }
+            ImageSource firstImage = null, ImageSource secondmage = null, ImageSource thirdImage = null, ImageSource lastImage = null,
+            Color? firstTextColor = null, Color? secondTextColor = null, Color? thirdTextColor = null, Color? lastTextColor = null, EDockTo? dockSide = null) : base(dockSide)
+            => Build(title, firstTitle, secondTitle, thirdTitle, lastTitle, firstImage, secondmage, thirdImage, lastImage, firstTextColor, secondTextColor, thirdTextColor, lastTextColor);
 
         private void Build(string title, string firstTitle = null, string secondTitle = null, string thirdTitle = null, string lastTitle = null,
-            ImageSource firstImage = null, ImageSource secondImage = null, ImageSource thirdImage = null, ImageSource lastImage = null)
+            ImageSource firstImage = null, ImageSource secondImage = null, ImageSource thirdImage = null, ImageSource lastImage = null,
+            Color? firstTextColor = null, Color? secondTextColor = null, Color? thirdTextColor = null, Color? lastTextColor = null)
         {
             var optionStack = new StackLayout
             {
@@ -35,6 +35,8 @@ namespace PROAtas.Views.Dialogs
                 var firstButton = new Button { Text = firstTitle, ImageSource = firstImage }.Standard() .CenterV() .FillExpandH();
                 firstButton.Clicked += FirstClick;
 
+                if (firstTextColor != null) firstButton.TextColor = firstTextColor ?? firstButton.TextColor;
+
                 optionStack.Children.Add(firstButton);
             }
 
@@ -43,6 +45,8 @@ namespace PROAtas.Views.Dialogs
             {
                 var secondButton = new Button { Text = secondTitle, ImageSource = secondImage }.Standard().CenterV() .FillExpandH();
                 secondButton.Clicked += SecondClick;
+
+                if (secondTextColor != null) secondButton.TextColor = secondTextColor ?? secondButton.TextColor;
 
                 optionStack.Children.Add(secondButton);
             }
@@ -53,6 +57,8 @@ namespace PROAtas.Views.Dialogs
                 var thirdButton = new Button { Text = thirdTitle, ImageSource = thirdImage }.Standard() .CenterV() .FillExpandH();
                 thirdButton.Clicked += ThirdClick;
 
+                if (thirdTextColor != null) thirdButton.TextColor = thirdTextColor ?? thirdButton.TextColor;
+
                 optionStack.Children.Add(thirdButton);
             }
 
@@ -61,6 +67,8 @@ namespace PROAtas.Views.Dialogs
             {
                 var lastButton = new Button { Text = lastTitle, ImageSource = lastImage, Margin = new Thickness(0, 20, 0, 0) } .Danger() .CenterV() .FillExpandH();
                 lastButton.Clicked += LastClick;
+
+                if (lastTextColor != null) lastButton.TextColor = lastTextColor ?? lastButton.TextColor;
 
                 optionStack.Children.Add(lastButton);
             }
@@ -94,9 +102,11 @@ namespace PROAtas.Views.Dialogs
                                 Content = optionStack,
                             } .Standard() .Center(),
                         }
-                    } .Center() .Transparent(),
+                    } .Center() .Transparent() .Assign(out StackLayout innerContent),
                 }
             };
+
+            InnerContent = innerContent;
         }
 
         

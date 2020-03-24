@@ -5,14 +5,11 @@ using PROAtas.Controls;
 using PROAtas.Converters;
 using PROAtas.Core;
 using PROAtas.ViewModel;
-using PROAtas.ViewModel.Elements;
 using PROAtas.Views.DataTemplates;
 using PROAtas.Views.Dialogs;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 using static CSharpForMarkup.EnumsForGridRowsAndColumns;
+using static PROAtas.Views.Dialogs.BaseDialog;
 
 namespace PROAtas.Views.Pages
 {
@@ -33,7 +30,8 @@ namespace PROAtas.Views.Pages
 
             var searchHandler = new CustomSearchHandler
             {
-                Placeholder = "Pesquisa...", BackgroundColor = Colors.TextIcons,
+                Placeholder = "Pesquisa...",
+                BackgroundColor = Colors.TextIcons,
             };
             searchHandler.SetBinding(CustomSearchHandler.SearchCommandProperty, nameof(vm.SearchMinute));
             Shell.SetSearchHandler(this, searchHandler);
@@ -64,8 +62,9 @@ namespace PROAtas.Views.Pages
                                 .Row(1),
                         }
                     } .Standard(),
-                    
-                    new OptionDialog("       Opções       ", "       Editar       ", "       Gerar Word       ", "       Gerar PDF       ", "       Deletar       ", Images.Edit, Images.Word, Images.PDF, Images.Delete) { LastWarning = "Deseja mesmo remover este arquivo?", Padding = -5 }
+
+                    new OptionDialog("Opções", "Editar", "Gerar Word", "Gerar PDF", "Deletar", Images.Edit, Images.Word, Images.PDF, Images.Delete, thirdTextColor: Colors.Success, dockSide: EDockTo.End)
+                        { LastWarning = "Deseja mesmo remover este arquivo?", Padding = -5 }
                         .Bind(OptionDialog.IsOpenProperty, nameof(vm.SelectedMinute), converter: new NullToBool())
                         .Bind(OptionDialog.FirstCommandProperty, nameof(vm.EditMinute))
                         .Bind(OptionDialog.SecondCommandProperty, nameof(vm.PrintWord))
@@ -76,7 +75,7 @@ namespace PROAtas.Views.Pages
                     new LoadingDialog()
                         .Bind(LoadingDialog.IsOpenProperty, nameof(vm.IsLoading)),
                 }
-            } .Standard();
+            }.Standard();
         }
     }
 }
