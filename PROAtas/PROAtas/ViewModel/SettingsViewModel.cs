@@ -289,37 +289,36 @@ namespace PROAtas.ViewModel
             {
                 IsLoading = true;
 
-                imageService.CreateDirectory();
-
                 var stream = await imageService.GetImageFromGalleryAsync();
                 if (stream != null)
                 {
-                    _ = Task.Run(() =>
+                    var imageStream = new MemoryStream(imageService.GetBytesFromStream(stream));
+                    var imageSource = ImageSource.FromStream(() => imageStream);
+
+                    var log = logService.LogAction(async () =>
                     {
-                        var log = logService.LogAction(async () =>
+                        var minuteImage = new MinuteImage()
                         {
-                            var minuteImage = new MinuteImage()
-                            {
-                                Name = Guid.NewGuid().ToString(),
-                                ImageBytes = imageService.GetBytesFromStream(stream),
-                            };
+                            Name = Guid.NewGuid().ToString(),
+                        };
 
-                            // Persisting the image on the folder and also on the database
-                            await imageService.SaveImageToDirectory(stream, minuteImage.Name);
-                            dataService.MinuteImageRepository.Add(minuteImage);
+                        // Persisting the image on the folder and also on the database
+                        await imageService.SaveImageToDirectory(imageSource, minuteImage.Name);
 
-                            InvokeMainThread(() =>
-                            {
-                                MinuteImage = new MinuteImageElement(minuteImage);
-                                MinuteImage.ImageSource = ImageSource.FromStream(() => stream);
+                        var imageBytes = imageService.GetBytesFromPath(minuteImage.Name);
+                        minuteImage.ImageBytes = imageBytes;
+                        dataService.MinuteImageRepository.Add(minuteImage);
 
-                                ImageCollection.Add(MinuteImage);
-                            });
-                        });
+                        var memoryStream = new MemoryStream(imageBytes);
 
-                        if (log != null) 
-                            InvokeMainThread(() => toastService.ShortAlert("Algo deu errado. Você precisa selecionar uma imagem!"));
+                        MinuteImage = new MinuteImageElement(minuteImage);
+                        MinuteImage.Source = ImageSource.FromStream(() => memoryStream);
+
+                        ImageCollection.Add(MinuteImage);
                     });
+
+                    if (log != null)
+                        toastService.ShortAlert("Algo deu errado. Você precisa selecionar uma imagem!");
                 }
 
                 IsLoading = false;
@@ -371,18 +370,20 @@ namespace PROAtas.ViewModel
             MarginRight = marginRight;
             MarginBottom = marginBottom;
 
+            imageService.CreateDirectory();
+
             var imageCollection = dataService.MinuteImageRepository.GetAll();
             var logoStream = new MemoryStream(imageService.GetBytesFromLogo());
             ImageCollection.Add(new MinuteImageElement(new MinuteImage { Id = 0 })
             {
-                ImageSource = ImageSource.FromStream(() => logoStream)
+                Source = ImageSource.FromStream(() => logoStream)
             });
 
             foreach (var minuteImage in imageCollection)
             {
                 var imageBytes = imageService.GetBytesFromPath(minuteImage.Name);
                 var imageStream = new MemoryStream(imageBytes);
-                ImageCollection.Add(new MinuteImageElement(minuteImage) { ImageSource = ImageSource.FromStream(() => imageStream) });
+                ImageCollection.Add(new MinuteImageElement(minuteImage) { Source = ImageSource.FromStream(() => imageStream) });
             }
 
             MinuteImage = ImageCollection.FirstOrDefault(l => l.Model.Id == selectedImage);

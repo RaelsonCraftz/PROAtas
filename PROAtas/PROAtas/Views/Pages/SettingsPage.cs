@@ -109,7 +109,7 @@ namespace PROAtas.Views.Pages
                     {
                         new Image { } .Top() .Size(128)
                             .Row(0)
-                            .Bind($"{nameof(vm.MinuteImage)}.{nameof(vm.MinuteImage.ImageSource)}"),
+                            .Bind($"{nameof(vm.MinuteImage)}.{nameof(vm.MinuteImage.Source)}"),
 
                         new ScrollView
                         {

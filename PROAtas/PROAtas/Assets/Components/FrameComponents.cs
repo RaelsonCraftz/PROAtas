@@ -97,7 +97,7 @@ namespace PROAtas.Assets.Components
 
                             Children =
                             {
-                                new CustomEntry { Keyboard = Keyboard.Numeric, SaveDelay = saveDelay, Placeholder = placeholder, PlaceholderColor = Colors.SecondaryText, HorizontalTextAlignment = TextAlignment.Center } .Standard()
+                                new CustomEntry { Keyboard = Keyboard.Numeric, SaveDelay = saveDelay, Placeholder = placeholder, PlaceholderColor = Colors.SecondaryText, HorizontalTextAlignment = TextAlignment.Center, Visual = VisualMarker.Default } .Standard()
                                     .Assign(out CustomEntry customEntry)
                                     .Col(0)
                                     .Bind(CustomEntry.TextProperty, inputPath, mode: BindingMode.OneWay)

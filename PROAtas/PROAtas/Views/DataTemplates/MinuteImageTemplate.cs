@@ -27,7 +27,7 @@ namespace PROAtas.Views.DataTemplates
 
                         // Frame content
                         Content = new Image { } .Fill() .Size(128)
-                            .Bind(nameof(MinuteImageElement.ImageSource)),
+                            .Bind(nameof(MinuteImageElement.Source)),
                     }
                 }
             };

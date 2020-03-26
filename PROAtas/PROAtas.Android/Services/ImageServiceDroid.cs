@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
 
 [assembly: Dependency(typeof(ImageServiceDroid))]
 namespace PROAtas.Droid.Services
@@ -65,7 +66,8 @@ namespace PROAtas.Droid.Services
         public byte[] GetBytesFromPath(string imageName)
         {
             // Get the file from path
-            Bitmap bitmap = BitmapFactory.DecodeFile($"{DirectoryPath}/{imageName}");
+            var path = System.IO.Path.Combine(DirectoryPath, $"{imageName}.png");
+            Bitmap bitmap = BitmapFactory.DecodeFile(path);
 
             // Convert stream as bytes
             using (var imageStream = new MemoryStream())
@@ -76,35 +78,17 @@ namespace PROAtas.Droid.Services
             }
         }
 
-        public async Task SaveImageToDirectory(Stream imageStream, string imageName)
+        public async Task SaveImageToDirectory(ImageSource imageSource, string imageName)
         {
-            using (var stream = new MemoryStream())
+            var image = await GetImageFromImageSource(imageSource, Android.App.Application.Context);
+            var path = System.IO.Path.Combine(DirectoryPath, $"{imageName}.png");
+
+            using (var outs = new FileOutputStream(path))
             {
-                await imageStream.CopyToAsync(stream);
-
-                // Creating the file
-                Java.IO.File myDir = new Java.IO.File(DirectoryPath);
-                myDir.Mkdir();
-                Java.IO.File file = new Java.IO.File(myDir, $"{imageName}");
-                if (file.Exists())
-                    file.Delete();
-
-                // Saving the content
-                try
+                using (var ms = new MemoryStream())
                 {
-                    FileOutputStream outs = new FileOutputStream(file);
-                    stream.Position = 0;
-                    outs.Write(stream.ToArray());
-                    outs.Flush();
-                    outs.Close();
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine($"Save image error: {e.Message}");
-                }
-                finally
-                {
-                    stream.Dispose();
+                    image.Compress(Bitmap.CompressFormat.Png, 100, ms);
+                    outs.Write(ms.ToArray());
                 }
             }
         }
@@ -127,5 +111,35 @@ namespace PROAtas.Droid.Services
             // Return Task object
             return MainActivity.Instance.PickImageTaskCompletionSource.Task;
         }
+
+        #region Helpers
+
+        private async Task<Bitmap> GetImageFromImageSource(ImageSource imageSource, Context context)
+        {
+            IImageSourceHandler handler;
+
+            if (imageSource is FileImageSource)
+            {
+                handler = new FileImageSourceHandler();
+            }
+            else if (imageSource is StreamImageSource)
+            {
+                handler = new StreamImagesourceHandler();
+            }
+            else if (imageSource is UriImageSource)
+            {
+                handler = new ImageLoaderSourceHandler();
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            var originalBitmap = await handler.LoadImageAsync(imageSource, context);
+
+            return originalBitmap;
+        }
+
+        #endregion
     }
 }

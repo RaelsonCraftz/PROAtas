@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace PROAtas.Services
 {
@@ -12,7 +13,7 @@ namespace PROAtas.Services
         byte[] GetBytesFromLogo();
         byte[] GetBytesFromStream(Stream imageStream);
         byte[] GetBytesFromPath(string imageName);
-        Task SaveImageToDirectory(Stream imageStream, string imageName);
+        Task SaveImageToDirectory(ImageSource imageSource, string imageName);
         Task<Stream> GetImageFromGalleryAsync();
     }
 }

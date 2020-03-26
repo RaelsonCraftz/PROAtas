@@ -14,12 +14,12 @@ namespace PROAtas.ViewModel.Elements
 
         #region Bindable Properties
 
-        public ImageSource ImageSource
+        public ImageSource Source
         {
-            get => _imageSource;
-            set { _imageSource = value; NotifyPropertyChanged(); }
+            get => _source;
+            set { _source = value; NotifyPropertyChanged(); }
         }
-        private ImageSource _imageSource;
+        private ImageSource _source;
 
         #endregion
     }
