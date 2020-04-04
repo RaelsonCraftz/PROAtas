@@ -71,9 +71,6 @@ namespace PROAtas.Views.Pages
                         .Bind(OptionDialog.ThirdCommandProperty, nameof(vm.PrintPDF))
                         .Bind(OptionDialog.LastCommandProperty, nameof(vm.DeleteMinute))
                         .Invoke(l => l.Close += () => vm.SelectedMinute = null),
-
-                    new LoadingDialog()
-                        .Bind(LoadingDialog.IsOpenProperty, nameof(vm.IsLoading)),
                 }
             }.Standard();
         }

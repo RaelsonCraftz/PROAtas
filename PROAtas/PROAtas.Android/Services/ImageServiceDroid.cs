@@ -48,8 +48,10 @@ namespace PROAtas.Droid.Services
             //Convert stream as bytes
             using (var imageStream = new MemoryStream())
             {
+                imageStream.Position = 0;
                 bitmap.Compress(Bitmap.CompressFormat.Png, 100, imageStream);
                 byte[] imageInByte = imageStream.ToArray();
+
                 return imageInByte;
             }
         }
@@ -58,7 +60,9 @@ namespace PROAtas.Droid.Services
         {
             using (var memoryStream = new MemoryStream())
             {
+                memoryStream.Position = 0;
                 imageStream.CopyTo(memoryStream);
+
                 return memoryStream.ToArray();
             }
         }
@@ -72,6 +76,7 @@ namespace PROAtas.Droid.Services
             // Convert stream as bytes
             using (var imageStream = new MemoryStream())
             {
+                imageStream.Position = 0;
                 bitmap.Compress(Bitmap.CompressFormat.Png, 100, imageStream);
                 byte[] imageInByte = imageStream.ToArray();
                 return imageInByte;
@@ -87,6 +92,8 @@ namespace PROAtas.Droid.Services
             {
                 using (var ms = new MemoryStream())
                 {
+                    ms.Position = 0;
+
                     image.Compress(Bitmap.CompressFormat.Png, 100, ms);
                     outs.Write(ms.ToArray());
                 }

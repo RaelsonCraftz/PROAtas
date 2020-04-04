@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Acr.UserDialogs;
+using Newtonsoft.Json;
 using PROAtas.Core;
 using PROAtas.Model;
 using PROAtas.Services;
@@ -43,13 +44,6 @@ namespace PROAtas.ViewModel
 
         #region Bindable Properties
 
-        public bool IsLoading
-        {
-            get => _isLoading;
-            set { _isLoading = value; NotifyPropertyChanged(); }
-        }
-        private bool _isLoading;
-
         public List<Minute> BaseMinutes { get; } = new List<Minute>();
         public ObservableCollection<MinuteElement> Minutes { get; } = new ObservableCollection<MinuteElement>();
 
@@ -78,12 +72,11 @@ namespace PROAtas.ViewModel
         }
 
         public ICommand CreateMinute => new Command(() => CreateMinuteExecute());
-        private void CreateMinuteExecute()
+        private async void CreateMinuteExecute()
         {
-            IsLoading = true;
-            Task.Run(() =>
+            using (var dialog = UserDialogs.Instance.Loading("Carregando...", maskType: MaskType.Black))
             {
-                var log = logService.LogAction(() =>
+                var log = await logService.LogActionAsync(Task.Run(() =>
                 {
                     var organizationName = App.Current.Properties[Constants.OrganizationName]?.ToString() ?? "Nova Organização";
 
@@ -101,21 +94,18 @@ namespace PROAtas.ViewModel
                     {
                         await Shell.Current.GoToAsync($"{nameof(MinutePage)}/?Model={jsonStr}", true);
                     });
-                });
-                if (log != null) 
-                    InvokeMainThread(() => toastService.ShortAlert(log));
-
-                InvokeMainThread(() => IsLoading = false);
-            });
+                }));
+                if (log != null)
+                    toastService.ShortAlert(log);
+            }
         }
 
         public ICommand EditMinute => new Command(() => EditMinuteExecute());
-        private void EditMinuteExecute()
+        private async void EditMinuteExecute()
         {
-            IsLoading = true;
-            Task.Run(() =>
+            using (var dialog = UserDialogs.Instance.Loading("Carregando...", maskType: MaskType.Black))
             {
-                var log = logService.LogAction(() =>
+                var log = await logService.LogActionAsync(Task.Run(() =>
                 {
                     var minute = new Minute();
                     minute.Id = SelectedMinute.Model.Id;
@@ -125,19 +115,16 @@ namespace PROAtas.ViewModel
                     minute.End = SelectedMinute.End.ToString(Formats.TimeFormat);
                     minute.Active = true;
 
-                    SelectedMinute = null;
-
                     var jsonStr = JsonConvert.SerializeObject(minute);
                     InvokeMainThread(async () =>
                     {
+                        SelectedMinute = null;
                         await Shell.Current.GoToAsync($"{nameof(MinutePage)}/?Model={jsonStr}", true);
                     });
-                });
-                if (log != null) 
-                    InvokeMainThread(() => toastService.ShortAlert(log));
-
-                InvokeMainThread(() => IsLoading = false);
-            });
+                }));
+                if (log != null)
+                    toastService.ShortAlert(log);
+            }
         }
 
         public ICommand PrintWord => new Command(() => PrintWordExecute());
@@ -145,10 +132,9 @@ namespace PROAtas.ViewModel
         {
             if (await permissionService.RequestStoragePermission())
             {
-                IsLoading = true;
-                _ = Task.Run(() =>
+                using (var dialog = UserDialogs.Instance.Loading("Carregando...", maskType: MaskType.Black))
                 {
-                    var log = logService.LogAction(() =>
+                    var log = await logService.LogActionAsync(Task.Run(() =>
                     {
                         byte[] localbyte;
                         if (Application.Current.Properties[Constants.SelectedMinuteImage]?.ToString() != "0")
@@ -171,31 +157,17 @@ namespace PROAtas.ViewModel
 
                         localDocument.Close();
 
-                        var arquivonome = SelectedMinute.Model.Name
-                            .Replace("&", " ")
-                            .Replace(@"""", "-")
-                            .Replace("?", "")
-                            .Replace("<", "-")
-                            .Replace(">", "-")
-                            .Replace("#", "")
-                            .Replace("{", "(")
-                            .Replace("}", ")")
-                            .Replace("%", " ")
-                            .Replace("~", "-")
-                            .Replace("/", "-")
-                            .Replace(@"\", "-");
-                        printService.Print(arquivonome + ".docx", "application/msword", stream);
+                        var arquivonome = RemoveSpecialChars(SelectedMinute.Model.Name);
+                        InvokeMainThread(() =>
+                        {
+                            printService.Print(arquivonome + ".docx", "application/msword", stream);
+                        });
+                    }));
+                    if (log != null)
+                        toastService.ShortAlert(log);
 
-                    });
-                    InvokeMainThread(() =>
-                    {
-                        if (log != null)
-                            toastService.ShortAlert(log);
-
-                        SelectedMinute = null;
-                        IsLoading = false;
-                    });
-                });
+                    SelectedMinute = null;
+                }
             }
             else
                 await DisplayAlert("Permissão", "Você precisa habilitar permissão de gravação para utilizar esta funcionalidade!", "OK");
@@ -208,8 +180,7 @@ namespace PROAtas.ViewModel
             {
                 if (await DisplayAlert("Aviso", "Para gerar um PDF você precisará ver um vídeo antes. Isto ajuda a financiar este aplicativo. Você concorda?\r\n\r\nREQUER INTERNET", "Sim", "Não"))
                 {
-                    IsLoading = true;
-                    IsRewarded = false;
+                    UserDialogs.Instance.ShowLoading("Carregando...", MaskType.Black);
                     adService.ShowVideo(
                         // Callback for success
                         () =>
@@ -250,31 +221,24 @@ namespace PROAtas.ViewModel
 
                                 localPDF.Close();
 
-                                var fileName = SelectedMinute.Model.Name
-                                    .Replace("&", " ")
-                                    .Replace(@"""", "-")
-                                    .Replace("?", "")
-                                    .Replace("<", "-")
-                                    .Replace(">", "-")
-                                    .Replace("#", "")
-                                    .Replace("{", "(")
-                                    .Replace("}", ")")
-                                    .Replace("%", " ")
-                                    .Replace("~", "-")
-                                    .Replace("/", "-")
-                                    .Replace(@"\", "-");
+                                var fileName = RemoveSpecialChars(SelectedMinute.Model.Name);
                                 printService.Print(fileName + ".pdf", "application/msword", arquivostream);
                             }
+
                             SelectedMinute = null;
                             IsRewarded = false;
-                            IsLoading = false;
+                            UserDialogs.Instance.HideLoading();
                         },
                         // Callback for failure
                         () =>
                         {
-                            IsLoading = false;
                             toastService.ShortAlert("Conexão falhou. Verifique a internet!");
+                            
+                            SelectedMinute = null;
+                            IsRewarded = false;
+                            UserDialogs.Instance.HideLoading();
                         }, Constants.AdVideo);
+
                 }
             }
             else
@@ -320,7 +284,7 @@ namespace PROAtas.ViewModel
             var marginBottom = int.Parse(App.Current.Properties[Constants.MarginBottom]?.ToString());
 
             WordDocument localDocument = new WordDocument();
-            
+
             IWSection localSection = localDocument.AddSection();
             localSection.PageSetup.Margins = new MarginsF(marginLeft * 28.35f, marginTop * 28.35f, marginRight * 28.35f, marginBottom * 28.35f);
 
@@ -406,7 +370,7 @@ namespace PROAtas.ViewModel
                             informationText = localParagraphInformation.AppendText($"- {info.Text};");
                         else
                             informationText = localParagraphInformation.AppendText($"{info.Text};");
-                        
+
                         // Text Font
                         informationText.CharacterFormat.Font = new Syncfusion.Drawing.Font(fontFamily, fontSize);
                     }
@@ -426,6 +390,23 @@ namespace PROAtas.ViewModel
             return localDocument;
         }
 
+        string RemoveSpecialChars(string str)
+        {
+            return str
+                .Replace("&", " ")
+                .Replace(@"""", "-")
+                .Replace("?", "")
+                .Replace("<", "-")
+                .Replace(">", "-")
+                .Replace("#", "")
+                .Replace("{", "(")
+                .Replace("}", ")")
+                .Replace("%", " ")
+                .Replace("~", "-")
+                .Replace("/", "-")
+                .Replace(@"\", "-");
+        }
+
         #endregion
 
         #region Initializers
@@ -435,18 +416,16 @@ namespace PROAtas.ViewModel
             var minutes = dataService.MinuteRepository.GetAll()?.Where(l => l.Active) ?? new List<Minute>();
             var people = dataService.PersonRepository.GetAll();
 
+            foreach (var minute in minutes)
+                minute.PeopleQuantity = people.Where(l => l.IdMinute == minute.Id)?.Count() ?? 0;
+
             BaseMinutes.Clear();
             Minutes.Clear();
             foreach (var minute in minutes)
             {
                 BaseMinutes.Add(minute);
-
-                minute.PeopleQuantity = people.Where(l => l.IdMinute == minute.Id)?.Count() ?? 0;
-
                 Minutes.Insert(0, new MinuteElement(minute));
             }
-
-            
         }
 
         public override void Leave()

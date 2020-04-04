@@ -129,18 +129,18 @@ namespace PROAtas.Views.Pages
                         },
 
                         // Actions
-                        Footer = new StackLayout 
-                        { 
+                        Footer = new StackLayout
+                        {
                             Orientation = StackOrientation.Horizontal,
 
                             Children =
                             {
-                                new Button 
-                                { 
+                                new Button
+                                {
                                     ImageSource = Images.Add, Margin = 10,
 
                                     Behaviors =
-                                    { 
+                                    {
                                         new MovingBehavior { MoveTo = EMoveTo.Start }
                                             .BindBehavior(MovingBehavior.IsActiveProperty, nameof(vm.SelectedTopic), converter: new NullToBool()),
                                     },

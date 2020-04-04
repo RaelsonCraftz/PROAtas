@@ -5,6 +5,7 @@ using PROAtas.ViewModel.Elements;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -46,12 +47,12 @@ namespace PROAtas.ViewModel
 
         public ObservableCollection<MinuteImageElement> ImageCollection { get; } = new ObservableCollection<MinuteImageElement>();
 
-        public MinuteImageElement MinuteImage
+        public ImageSource SelectedImage
         {
-            get => _minuteImage;
-            set { _minuteImage = value; NotifyPropertyChanged(); }
+            get => _selectedImage;
+            set { _selectedImage = value; NotifyPropertyChanged(); }
         }
-        private MinuteImageElement _minuteImage;
+        private ImageSource _selectedImage;
 
         public bool IsImageDialogOpen
         {
@@ -59,13 +60,6 @@ namespace PROAtas.ViewModel
             set { _isImageDialogOpen = value; NotifyPropertyChanged(); }
         }
         private bool _isImageDialogOpen;
-
-        public bool IsLoading
-        {
-            get => _isLoading;
-            set { _isLoading = value; NotifyPropertyChanged(); }
-        }
-        private bool _isLoading;
 
         public string User
         {
@@ -287,16 +281,15 @@ namespace PROAtas.ViewModel
         {
             if (await permissionService.RequestStoragePermission())
             {
-                IsLoading = true;
-
                 var stream = await imageService.GetImageFromGalleryAsync();
                 if (stream != null)
                 {
-                    var imageStream = new MemoryStream(imageService.GetBytesFromStream(stream));
-                    var imageSource = ImageSource.FromStream(() => imageStream);
-
-                    var log = logService.LogAction(async () =>
+                    var log = await logService.LogActionAsync(Task.Run(async () =>
                     {
+                        var imageStream = new MemoryStream(imageService.GetBytesFromStream(stream));
+                        imageStream.Position = 0;
+                        var imageSource = ImageSource.FromStream(() => imageStream);
+
                         var minuteImage = new MinuteImage()
                         {
                             Name = Guid.NewGuid().ToString(),
@@ -309,19 +302,23 @@ namespace PROAtas.ViewModel
                         minuteImage.ImageBytes = imageBytes;
                         dataService.MinuteImageRepository.Add(minuteImage);
 
+                        var minuteElement = new MinuteImageElement(minuteImage);
+
                         var memoryStream = new MemoryStream(imageBytes);
+                        memoryStream.Position = 0;
+                        minuteElement.Source = ImageSource.FromStream(() => memoryStream);
 
-                        MinuteImage = new MinuteImageElement(minuteImage);
-                        MinuteImage.Source = ImageSource.FromStream(() => memoryStream);
-
-                        ImageCollection.Add(MinuteImage);
-                    });
+                        Debug.WriteLine($"Base64: {Convert.ToBase64String(imageBytes)}");
+                        InvokeMainThread(() =>
+                        {
+                            SelectedImage = minuteElement.Source;
+                            //ImageCollection.Add(minuteElement);
+                        });
+                    }));
 
                     if (log != null)
                         toastService.ShortAlert("Algo deu errado. Você precisa selecionar uma imagem!");
                 }
-
-                IsLoading = false;
             }
             else
                 await DisplayAlert("Permissão", "Você precisa habilitar permissão de gravação para utilizar esta funcionalidade!", "OK");
@@ -374,19 +371,25 @@ namespace PROAtas.ViewModel
 
             var imageCollection = dataService.MinuteImageRepository.GetAll();
             var logoStream = new MemoryStream(imageService.GetBytesFromLogo());
+            logoStream.Position = 0;
+
+            var logoSource = ImageSource.FromStream(() => logoStream);
             ImageCollection.Add(new MinuteImageElement(new MinuteImage { Id = 0 })
             {
-                Source = ImageSource.FromStream(() => logoStream)
+                Source = logoSource,
             });
 
             foreach (var minuteImage in imageCollection)
             {
                 var imageBytes = imageService.GetBytesFromPath(minuteImage.Name);
                 var imageStream = new MemoryStream(imageBytes);
-                ImageCollection.Add(new MinuteImageElement(minuteImage) { Source = ImageSource.FromStream(() => imageStream) });
+                imageStream.Position = 0;
+
+                var imageSource = ImageSource.FromStream(() => imageStream);
+                ImageCollection.Add(new MinuteImageElement(minuteImage) { Source = imageSource });
             }
 
-            MinuteImage = ImageCollection.FirstOrDefault(l => l.Model.Id == selectedImage);
+            SelectedImage = ImageCollection.FirstOrDefault(l => l.Model.Id == selectedImage)?.Source;
         }
 
         public override void Leave()

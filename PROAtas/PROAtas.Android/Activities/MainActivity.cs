@@ -1,11 +1,9 @@
-﻿using Android;
+﻿using Acr.UserDialogs;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.V4.App;
-using Android.Support.V4.Content;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -22,6 +20,7 @@ namespace PROAtas.Droid
             base.OnCreate(savedInstanceState);
 
             Android.Gms.Ads.MobileAds.Initialize(this, "ca-app-pub-1711953563979738~4659313432");
+            UserDialogs.Init(this);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
@@ -49,7 +48,7 @@ namespace PROAtas.Droid
                 {
                     Android.Net.Uri uri = intent.Data;
                     Stream stream = ContentResolver.OpenInputStream(uri);
-
+                    
                     // Set the Stream as the completion of the Task
                     PickImageTaskCompletionSource.SetResult(stream);
                 }

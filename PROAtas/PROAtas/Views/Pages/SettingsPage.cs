@@ -16,6 +16,8 @@ namespace PROAtas.Views.Pages
 
         private void Build()
         {
+            Shell.SetFlyoutBehavior(this, FlyoutBehavior.Disabled);
+
             var app = App.Current;
             var vm = App.Current.settingsViewModel;
 
@@ -109,7 +111,7 @@ namespace PROAtas.Views.Pages
                     {
                         new Image { } .Top() .Size(128)
                             .Row(0)
-                            .Bind($"{nameof(vm.MinuteImage)}.{nameof(vm.MinuteImage.Source)}"),
+                            .Bind($"{nameof(vm.SelectedImage)}"),
 
                         new ScrollView
                         {
@@ -131,13 +133,13 @@ namespace PROAtas.Views.Pages
                             } .Padding(new Thickness(50, 0, 50, 0)),
                         } .Row(1) .Bottom(),
 
-                        new ImageStorageDialog(EDockTo.End) { }
-                            .Assign(out ImageStorageDialog imageStorageDialog)
-                            .RowSpan(2)
-                            .Invoke(l => l.Close += () =>
-                            {
-                                vm.IsImageDialogOpen = false;
-                            }),
+                        //new ImageStorageDialog(EDockTo.End) { }
+                        //    .Assign(out ImageStorageDialog imageStorageDialog)
+                        //    .RowSpan(2)
+                        //    .Invoke(l => l.Close += () =>
+                        //    {
+                        //        vm.IsImageDialogOpen = false;
+                        //    }),
                     },
                 }.Center(),
             });

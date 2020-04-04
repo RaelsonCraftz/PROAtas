@@ -50,12 +50,15 @@ namespace PROAtas.Views.Dialogs
 
         public BaseDialog()
         {
-            IsVisible = false;
+            Opacity = 0;
+            InputTransparent = true;
         }
 
         public BaseDialog(EDockTo? dockTo)
         {
-            IsVisible = false;
+            //IsVisible = false;
+            Opacity = 0;
+            InputTransparent = true;
             DockTo = dockTo ?? EDockTo.None;
         }
 
@@ -92,7 +95,7 @@ namespace PROAtas.Views.Dialogs
             {
                 Opening?.Invoke();
 
-                IsVisible = true;
+                InputTransparent = false;
 
                 _ = InnerContent?.TranslateTo(0, 0, 500, Easing.CubicOut);
                 await this.FadeTo(1, 500, Easing.Linear);
@@ -121,7 +124,7 @@ namespace PROAtas.Views.Dialogs
                 
                 await this.FadeTo(0, 500, Easing.Linear);
 
-                IsVisible = false;
+                InputTransparent = true;
             }
         }
 

@@ -4,6 +4,7 @@ using PROAtas.Services;
 using PROAtas.ViewModel.Elements;
 using PROAtas.Views.Pages;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -140,7 +141,7 @@ namespace PROAtas.ViewModel
                     Minute.Name = param;
                     MinuteName = param;
                 });
-                if (log != null) 
+                if (log != null)
                     toastService.ShortAlert(log);
             }
         }
@@ -166,7 +167,7 @@ namespace PROAtas.ViewModel
                     Minute.Date = param.ToString(Formats.DateFormat);
                     Date = param;
                 });
-                if (log != null) 
+                if (log != null)
                     toastService.ShortAlert(log);
             }
         }
@@ -192,7 +193,7 @@ namespace PROAtas.ViewModel
                     Minute.Start = param.ToString(Formats.TimeFormat);
                     Start = param;
                 });
-                if (log != null) 
+                if (log != null)
                     toastService.ShortAlert(log);
             }
         }
@@ -218,7 +219,7 @@ namespace PROAtas.ViewModel
                     Minute.End = param.ToString(Formats.TimeFormat);
                     End = param;
                 });
-                if (log != null) 
+                if (log != null)
                     toastService.ShortAlert(log);
             }
         }
@@ -238,7 +239,7 @@ namespace PROAtas.ViewModel
                 dataService.PersonRepository.Add(person);
                 People.Add(new PersonElement(person));
             });
-            if (log != null) 
+            if (log != null)
                 toastService.ShortAlert(log);
         }
 
@@ -287,7 +288,7 @@ namespace PROAtas.ViewModel
                         dataService.PersonRepository.Update(personModel);
                     }
                 });
-                if (log != null) 
+                if (log != null)
                     toastService.ShortAlert(log);
             }
         }
@@ -307,7 +308,7 @@ namespace PROAtas.ViewModel
                 dataService.TopicRepository.Add(topic);
                 Topics.Add(new TopicElement(topic));
             });
-            if (log != null) 
+            if (log != null)
                 toastService.ShortAlert(log);
         }
 
@@ -330,7 +331,7 @@ namespace PROAtas.ViewModel
                     foreach (var info in information)
                         Information.Add(new InformationElement(info));
                 });
-                if (log != null) 
+                if (log != null)
                     toastService.ShortAlert(log);
             }
         }
@@ -387,7 +388,7 @@ namespace PROAtas.ViewModel
                         dataService.TopicRepository.Update(topicModel);
                     }
                 });
-                if (log != null) 
+                if (log != null)
                     toastService.ShortAlert(log);
             }
         }
@@ -408,7 +409,7 @@ namespace PROAtas.ViewModel
                     dataService.InformationRepository.Add(information);
                     Information.Add(new InformationElement(information));
                 });
-                if (log != null) 
+                if (log != null)
                     toastService.ShortAlert(log);
             }
         }
@@ -424,7 +425,7 @@ namespace PROAtas.ViewModel
                 {
                     SelectedInformation = param;
                 });
-                if (log != null) 
+                if (log != null)
                     toastService.ShortAlert(log);
             }
         }
@@ -442,7 +443,7 @@ namespace PROAtas.ViewModel
                     dataService.InformationRepository.Update(information);
                     SelectedInformation.Text = param;
                 });
-                if (log != null) 
+                if (log != null)
                     toastService.ShortAlert(log);
             }
         }
@@ -477,6 +478,9 @@ namespace PROAtas.ViewModel
 
         public override void Initialize(Minute model = null)
         {
+            var topics = dataService.TopicRepository.GetAll().Where(l => l.IdMinute == model.Id).OrderBy(l => l.Order).ToList();
+            var people = dataService.PersonRepository.GetAll().Where(l => l.IdMinute == model.Id).ToList();
+
             Minute = model;
 
             MinuteName = model.Name;
@@ -484,11 +488,9 @@ namespace PROAtas.ViewModel
             Start = TimeSpan.ParseExact(model.Start, Formats.TimeFormat, CultureInfo.InvariantCulture);
             End = TimeSpan.ParseExact(model.End, Formats.TimeFormat, CultureInfo.InvariantCulture);
 
-            var topics = dataService.TopicRepository.GetAll().Where(l => l.IdMinute == Minute.Id).OrderBy(l => l.Order).ToList();
             foreach (var topic in topics)
                 Topics.Add(new TopicElement(topic));
 
-            var people = dataService.PersonRepository.GetAll().Where(l => l.IdMinute == Minute.Id).ToList();
             foreach (var person in people)
                 People.Add(new PersonElement(person));
         }

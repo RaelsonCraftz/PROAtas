@@ -57,7 +57,7 @@ namespace PROAtas.Droid.Services
                 intent.AddFlags(ActivityFlags.GrantReadUriPermission);
                 intent.AddFlags(ActivityFlags.NewTask);
                 intent.AddFlags(ActivityFlags.ClearTop);
-                Android.App.Application.Context.StartActivity(intent);
+                MainActivity.Instance.StartActivity(intent);
             }
         }
     }
