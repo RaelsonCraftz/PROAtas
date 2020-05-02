@@ -8,6 +8,7 @@ namespace PROAtas.Assets.Theme
         public static ImageSource About = ImageSource.FromFile($"ic{nameof(About)}.png");
         public static ImageSource AboutBlack = ImageSource.FromFile($"ic{nameof(AboutBlack)}.png");
         public static ImageSource Add = ImageSource.FromFile($"ic{nameof(Add)}.png");
+        public static ImageSource Check = ImageSource.FromFile($"ic{nameof(Check)}.png");
         public static ImageSource Close = ImageSource.FromFile($"ic{nameof(Close)}.png");
         public static ImageSource Collection = ImageSource.FromFile($"ic{nameof(Collection)}.png");
         public static ImageSource Date = ImageSource.FromFile($"ic{nameof(Date)}.png");
@@ -40,6 +41,7 @@ namespace PROAtas.Assets.Theme
         public static ImageSource TextBlack = ImageSource.FromFile($"ic{nameof(TextBlack)}.png");
         public static ImageSource Time = ImageSource.FromFile($"ic{nameof(Time)}.png");
         public static ImageSource Url = ImageSource.FromFile($"ic{nameof(Url)}.png");
+        public static ImageSource UrlBlack = ImageSource.FromFile($"ic{nameof(UrlBlack)}.png");
         public static ImageSource Warning = ImageSource.FromFile($"ic{nameof(Warning)}.png");
         public static ImageSource Word = ImageSource.FromFile($"ic{nameof(Word)}.png");
     }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Craftz.ViewModel;
 
 namespace PROAtas.ViewModel
 {
@@ -40,12 +37,12 @@ namespace PROAtas.ViewModel
 
         public override void Initialize()
         {
-            
+
         }
 
         public override void Leave()
         {
-            
+
         }
 
         #endregion

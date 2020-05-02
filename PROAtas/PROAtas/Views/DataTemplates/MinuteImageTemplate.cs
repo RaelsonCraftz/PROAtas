@@ -23,7 +23,7 @@ namespace PROAtas.Views.DataTemplates
                     // Outer Border
                     new Frame
                     {
-                        Padding = 5, CornerRadius = 6, BackgroundColor = Colors.Accent,
+                        Padding = 5, CornerRadius = 6, BackgroundColor = Colors.TextIcons,
 
                         // Frame content
                         Content = new Image { } .Fill() .Size(128)

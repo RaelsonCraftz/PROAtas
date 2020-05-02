@@ -1,14 +1,12 @@
-﻿using PROAtas.Model;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Craftz.ViewModel;
+using PROAtas.Model;
 
 namespace PROAtas.ViewModel.Elements
 {
     public class InformationElement : BaseElement<Information>
     {
         public InformationElement() { }
-        
+
         public InformationElement(Information model) : base(model)
         {
             this.Order = model.Order;

@@ -13,6 +13,7 @@ namespace PROAtas.Services
         byte[] GetBytesFromLogo();
         byte[] GetBytesFromStream(Stream imageStream);
         byte[] GetBytesFromPath(string imageName);
+        ImageSource GetImageFromFile(string imageName);
         Task SaveImageToDirectory(ImageSource imageSource, string imageName);
         Task<Stream> GetImageFromGalleryAsync();
     }

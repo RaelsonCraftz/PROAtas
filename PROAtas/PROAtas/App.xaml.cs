@@ -3,6 +3,8 @@ using PROAtas.Core;
 using PROAtas.Services;
 using PROAtas.ViewModel;
 using PROAtas.Views.Pages;
+using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace PROAtas
@@ -20,6 +22,7 @@ namespace PROAtas
         public IAdService adService = DependencyService.Get<IAdService>();
 
         public IPermissionService permissionService = new PermissionService();
+        public IDownloadService downloadService = new DownloadService();
         public IDataService dataService = new DataService();
         public ILogService logService = new LogService();
 
@@ -34,8 +37,15 @@ namespace PROAtas
 
         #endregion
 
+        public string clipboard = string.Empty;
+
         public App()
         {
+            // Set custom Flags (mostly experimental ones)
+            //Device.SetFlags(new[] { 
+            //    "",
+            //});
+
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjE5ODY0QDMxMzcyZTM0MmUzMFJ6YjhtVjhjYnRRdlZOSC9yK0lGcmFTd09PT1dnVHhWcGxhUGNxeXk3ajA9");
 
             InitializeComponent();
@@ -58,11 +68,7 @@ namespace PROAtas
             settingsViewModel = new SettingsViewModel();
             minuteViewModel = new MinuteViewModel();
 
-            // Shell Routes for Shell Navigation
-            Routing.RegisterRoute(nameof(HomePage), typeof(HomePage));
-            Routing.RegisterRoute(nameof(AboutPage), typeof(AboutPage));
-            Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
-            Routing.RegisterRoute(nameof(MinutePage), typeof(MinutePage));
+            
 
             MainPage = new AppShell { } .Standard();
 

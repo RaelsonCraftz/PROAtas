@@ -1,7 +1,5 @@
-﻿using PROAtas.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Craftz.Views;
+using PROAtas.ViewModel;
 
 namespace PROAtas.Views.Pages
 {

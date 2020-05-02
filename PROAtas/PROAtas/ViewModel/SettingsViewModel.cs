@@ -1,16 +1,15 @@
-﻿using PROAtas.Core;
+﻿using Acr.UserDialogs;
+using Craftz.ViewModel;
+using PROAtas.Core;
 using PROAtas.Model;
 using PROAtas.Services;
 using PROAtas.ViewModel.Elements;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace PROAtas.ViewModel
@@ -45,7 +44,12 @@ namespace PROAtas.ViewModel
             "Segoe Script",
         };
 
-        public ObservableCollection<MinuteImageElement> ImageCollection { get; } = new ObservableCollection<MinuteImageElement>();
+        public ObservableCollection<MinuteImageElement> ImageCollection
+        {
+            get => _imageCollection;
+            set { _imageCollection = value; NotifyPropertyChanged(); }
+        }
+        private ObservableCollection<MinuteImageElement> _imageCollection;
 
         public ImageSource SelectedImage
         {
@@ -54,12 +58,27 @@ namespace PROAtas.ViewModel
         }
         private ImageSource _selectedImage;
 
+        private byte[] byteImage;
+        public ImageSource DownloadedImage
+        {
+            get => _downloadedImage;
+            set { _downloadedImage = value; NotifyPropertyChanged(); SelectUrlImage.ChangeCanExecute(); }
+        }
+        private ImageSource _downloadedImage;
+
         public bool IsImageDialogOpen
         {
             get => _isImageDialogOpen;
             set { _isImageDialogOpen = value; NotifyPropertyChanged(); }
         }
         private bool _isImageDialogOpen;
+
+        public bool IsUrlDialogOpen
+        {
+            get => _isUrlDialogOpen;
+            set { _isUrlDialogOpen = value; NotifyPropertyChanged(); }
+        }
+        private bool _isUrlDialogOpen;
 
         public string User
         {
@@ -121,80 +140,100 @@ namespace PROAtas.ViewModel
 
         #region Commading
 
-        public ICommand SaveUser => new Command<string>(p => SaveUserExecute(p));
-        private void SaveUserExecute(string param)
+        public Command SaveUser
         {
-            if (param != null)
+            get { if (_saveUser == null) _saveUser = new Command<string>(SaveUserExecute); return _saveUser; }
+        }
+        private Command _saveUser;
+        private void SaveUserExecute(string user)
+        {
+            if (user != null)
             {
                 var log = logService.LogAction(() =>
                 {
-                    App.Current.Properties[Constants.UserName] = param;
+                    App.Current.Properties[Constants.UserName] = user;
                     App.Current.SavePropertiesAsync();
-                    User = param;
+                    User = user;
                 });
                 if (log != null) toastService.ShortAlert(log);
             }
         }
 
-        public ICommand SaveOrganization => new Command<string>(p => SaveOrganizationExecute(p));
-        private void SaveOrganizationExecute(string param)
+        public Command SaveOrganization
         {
-            if (param != null)
+            get { if (_saveOrganization == null) _saveOrganization = new Command<string>(SaveOrganizationExecute); return _saveOrganization; }
+        }
+        private Command _saveOrganization;
+        private void SaveOrganizationExecute(string organization)
+        {
+            if (organization != null)
             {
                 var log = logService.LogAction(() =>
                 {
-                    App.Current.Properties[Constants.OrganizationName] = param;
+                    App.Current.Properties[Constants.OrganizationName] = organization;
                     App.Current.SavePropertiesAsync();
-                    Organization = param;
+                    Organization = organization;
                 });
                 if (log != null) toastService.ShortAlert(log);
             }
         }
 
-        public ICommand ChangeFontSize => new Command<int>(p => ChangeFontSizeExecute(p));
-        private void ChangeFontSizeExecute(int param)
+        public Command ChangeFontSize
         {
-            if (param != 0)
+            get { if (_changeFontSize == null) _changeFontSize = new Command<int>(ChangeFontSizeExecute); return _changeFontSize; }
+        }
+        private Command _changeFontSize;
+        private void ChangeFontSizeExecute(int fontSize)
+        {
+            if (fontSize != 0)
             {
                 var log = logService.LogAction(() =>
                 {
-                    if (12 <= (FontSize + param) && (FontSize + param) <= 20)
+                    if (12 <= (FontSize + fontSize) && (FontSize + fontSize) <= 20)
                     {
-                        App.Current.Properties[Constants.FontSize] = FontSize + param;
+                        App.Current.Properties[Constants.FontSize] = FontSize + fontSize;
                         App.Current.SavePropertiesAsync();
-                        FontSize += param;
+                        FontSize += fontSize;
                     }
                 });
                 if (log != null) toastService.ShortAlert(log);
             }
         }
 
-        public ICommand ChangeFontFamily => new Command<string>(p => ChangeFontFamilyExecute(p));
-        private void ChangeFontFamilyExecute(string param)
+        public Command ChangeFontFamily
         {
-            if (param != null)
+            get { if (_changeFontFamily == null) _changeFontFamily = new Command<string>(ChangeFontFamilyExecute); return _changeFontFamily; }
+        }
+        private Command _changeFontFamily;
+        private void ChangeFontFamilyExecute(string fontFamily)
+        {
+            if (fontFamily != null)
             {
                 var log = logService.LogAction(() =>
                 {
-                    App.Current.Properties[Constants.FontFamily] = param;
+                    App.Current.Properties[Constants.FontFamily] = fontFamily;
                     App.Current.SavePropertiesAsync();
-                    FontFamily = param;
+                    FontFamily = fontFamily;
                 });
                 if (log != null) toastService.ShortAlert(log);
             }
         }
 
-        public ICommand ChangeMarginLeft => new Command<string>(p => ChangeMarginLeftExecute(p));
-        private void ChangeMarginLeftExecute(string param)
+        public Command ChangeMarginLeft
         {
-            if (param != null)
+            get { if (_changeMarginLeft == null) _changeMarginLeft = new Command<string>(ChangeMarginLeftExecute); return _changeMarginLeft; }
+        }
+        private Command _changeMarginLeft;
+        private void ChangeMarginLeftExecute(string left)
+        {
+            if (left != null)
             {
                 var log = logService.LogAction(() =>
                 {
-                    double.TryParse(param, out double value);
+                    double.TryParse(left, out double value);
                     double.TryParse(App.Current.Properties[Constants.MarginLeft].ToString(), out double margin);
 
-                    if (param == "+1" || param == "-1")
+                    if (left == "+1" || left == "-1")
                         margin += value;
                     else
                         margin = value;
@@ -207,17 +246,21 @@ namespace PROAtas.ViewModel
             }
         }
 
-        public ICommand ChangeMarginTop => new Command<string>(p => ChangeMarginTopExecute(p));
-        private void ChangeMarginTopExecute(string param)
+        public Command ChangeMarginTop
         {
-            if (param != null)
+            get { if (_changeMarginTop == null) _changeMarginTop = new Command<string>(ChangeMarginTopExecute); return _changeMarginTop; }
+        }
+        private Command _changeMarginTop;
+        private void ChangeMarginTopExecute(string top)
+        {
+            if (top != null)
             {
                 var log = logService.LogAction(() =>
                 {
-                    double.TryParse(param, out double value);
+                    double.TryParse(top, out double value);
                     double.TryParse(App.Current.Properties[Constants.MarginTop].ToString(), out double margin);
 
-                    if (param == "+1" || param == "-1")
+                    if (top == "+1" || top == "-1")
                         margin += value;
                     else
                         margin = value;
@@ -230,17 +273,21 @@ namespace PROAtas.ViewModel
             }
         }
 
-        public ICommand ChangeMarginRight => new Command<string>(p => ChangeMarginRightExecute(p));
-        private void ChangeMarginRightExecute(string param)
+        public Command ChangeMarginRight
         {
-            if (param != null)
+            get { if (_changeMarginRight == null) _changeMarginRight = new Command<string>(ChangeMarginRightExecute); return _changeMarginRight; }
+        }
+        private Command _changeMarginRight;
+        private void ChangeMarginRightExecute(string right)
+        {
+            if (right != null)
             {
                 var log = logService.LogAction(() =>
                 {
-                    double.TryParse(param, out double value);
+                    double.TryParse(right, out double value);
                     double.TryParse(App.Current.Properties[Constants.MarginRight].ToString(), out double margin);
 
-                    if (param == "+1" || param == "-1")
+                    if (right == "+1" || right == "-1")
                         margin += value;
                     else
                         margin = value;
@@ -253,17 +300,21 @@ namespace PROAtas.ViewModel
             }
         }
 
-        public ICommand ChangeMarginBottom => new Command<string>(p => ChangeMarginBottomExecute(p));
-        private void ChangeMarginBottomExecute(string param)
+        public Command ChangeMarginBottom
         {
-            if (param != null)
+            get { if (_changeMarginBottom == null) _changeMarginBottom = new Command<string>(ChangeMarginBottomExecute); return _changeMarginBottom; }
+        }
+        private Command _changeMarginBottom;
+        private void ChangeMarginBottomExecute(string bottom)
+        {
+            if (bottom != null)
             {
                 var log = logService.LogAction(() =>
                 {
-                    double.TryParse(param, out double value);
+                    double.TryParse(bottom, out double value);
                     double.TryParse(App.Current.Properties[Constants.MarginBottom].ToString(), out double margin);
 
-                    if (param == "+1" || param == "-1")
+                    if (bottom == "+1" || bottom == "-1")
                         margin += value;
                     else
                         margin = value;
@@ -276,8 +327,12 @@ namespace PROAtas.ViewModel
             }
         }
 
-        public ICommand ChooseCollection => new Command(() => ChooseCollectionExecute());
-        private async void ChooseCollectionExecute()
+        public Command OpenGallery
+        {
+            get { if (_openGallery == null) _openGallery = new Command(OpenGalleryExecute); return _openGallery; }
+        }
+        private Command _openGallery;
+        private async void OpenGalleryExecute()
         {
             if (await permissionService.RequestStoragePermission())
             {
@@ -297,22 +352,18 @@ namespace PROAtas.ViewModel
 
                         // Persisting the image on the folder and also on the database
                         await imageService.SaveImageToDirectory(imageSource, minuteImage.Name);
-
-                        var imageBytes = imageService.GetBytesFromPath(minuteImage.Name);
-                        minuteImage.ImageBytes = imageBytes;
                         dataService.MinuteImageRepository.Add(minuteImage);
 
                         var minuteElement = new MinuteImageElement(minuteImage);
+                        minuteElement.Source = imageService.GetImageFromFile(minuteImage.Name);
 
-                        var memoryStream = new MemoryStream(imageBytes);
-                        memoryStream.Position = 0;
-                        minuteElement.Source = ImageSource.FromStream(() => memoryStream);
+                        App.Current.Properties[Constants.SelectedMinuteImage] = minuteImage.Id;
+                        _ = App.Current.SavePropertiesAsync();
 
-                        Debug.WriteLine($"Base64: {Convert.ToBase64String(imageBytes)}");
                         InvokeMainThread(() =>
                         {
                             SelectedImage = minuteElement.Source;
-                            //ImageCollection.Add(minuteElement);
+                            ImageCollection.Add(minuteElement);
                         });
                     }));
 
@@ -324,16 +375,93 @@ namespace PROAtas.ViewModel
                 await DisplayAlert("Permissão", "Você precisa habilitar permissão de gravação para utilizar esta funcionalidade!", "OK");
         }
 
-        public ICommand ChooseUrl => new Command(() => ChooseUrlExecute());
-        private async void ChooseUrlExecute()
+        public Command OpenUrl
         {
+            get { if (_openUrl == null) _openUrl = new Command(OpenUrlExecute); return _openUrl; }
+        }
+        private Command _openUrl;
+        private void OpenUrlExecute() => IsUrlDialogOpen = true;
 
+        public Command DownloadUrl
+        {
+            get { if (_downloadUrl == null) _downloadUrl = new Command<byte[]>(DownloadUrlExecute); return _downloadUrl; }
+        }
+        private Command _downloadUrl;
+        private void DownloadUrlExecute(byte[] bytes)
+        {
+            if (bytes != null)
+            {
+                byteImage = bytes;
+                DownloadedImage = ImageSource.FromStream(() => new MemoryStream(bytes));
+            }
         }
 
-        public ICommand ChooseStorage => new Command(() => ChooseStorageExecute());
-        private async void ChooseStorageExecute()
+        public Command SelectUrlImage
         {
+            get { if (_selectUrlImage == null) _selectUrlImage = new Command(SelectUrlImageExecute, () => DownloadedImage != null); return _selectUrlImage; }
+        }
+        private Command _selectUrlImage;
+        private async void SelectUrlImageExecute()
+        {
+            if (await permissionService.RequestStoragePermission())
+            {
+                using (var dialog = UserDialogs.Instance.Loading("Carregando...", maskType: MaskType.Black))
+                {
+                    var log = await logService.LogActionAsync(Task.Run(async () =>
+                    {
+                        var minuteImage = new MinuteImage()
+                        {
+                            Name = Guid.NewGuid().ToString(),
+                        };
 
+                        // Persisting the image on the folder and also on the database
+                        await imageService.SaveImageToDirectory(ImageSource.FromStream(() => new MemoryStream(byteImage)), minuteImage.Name);
+                        dataService.MinuteImageRepository.Add(minuteImage);
+
+                        App.Current.Properties[Constants.SelectedMinuteImage] = minuteImage.Id;
+                        _ = App.Current.SavePropertiesAsync();
+
+                        var imageElement = new MinuteImageElement(minuteImage) { Source = imageService.GetImageFromFile(minuteImage.Name) };
+
+                        InvokeMainThread(() =>
+                        {
+                            ImageCollection.Add(imageElement);
+                            SelectedImage = imageElement.Source;
+                            DownloadedImage = null;
+
+                            IsUrlDialogOpen = false;
+                        });
+                    }));
+                    if (log != null)
+                        toastService.ShortAlert(log);
+                }
+            }
+            else
+                await DisplayAlert("Permissão", "Você precisa habilitar permissão de gravação para utilizar esta funcionalidade!", "OK");
+        }
+
+        public Command OpenStorage
+        {
+            get { if (_openStorage == null) _openStorage = new Command(OpenStorageExecute); return _openStorage; }
+        }
+        private Command _openStorage;
+        private void OpenStorageExecute() => IsImageDialogOpen = true;
+
+        public Command SelectCollection
+        {
+            get { if (_selectCollection == null) _selectCollection = new Command<MinuteImageElement>(SelectCollectionExecute); return _selectCollection; }
+        }
+        private Command _selectCollection;
+        private void SelectCollectionExecute(MinuteImageElement image)
+        {
+            if (image != null)
+            {
+                IsImageDialogOpen = false;
+
+                SelectedImage = image.Source;
+                App.Current.Properties[Constants.SelectedMinuteImage] = image.Model.Id;
+                _ = App.Current.SavePropertiesAsync();
+            }
         }
 
         #endregion
@@ -348,48 +476,50 @@ namespace PROAtas.ViewModel
 
         public override void Initialize()
         {
-            var user = App.Current.Properties[Constants.UserName].ToString();
-            var organization = App.Current.Properties[Constants.OrganizationName].ToString();
-            var fontSize = int.Parse(App.Current.Properties[Constants.FontSize].ToString());
-            var fontFamily = App.Current.Properties[Constants.FontFamily].ToString();
-            var marginLeft = double.Parse(App.Current.Properties[Constants.MarginLeft].ToString());
-            var marginTop = double.Parse(App.Current.Properties[Constants.MarginTop].ToString());
-            var marginRight = double.Parse(App.Current.Properties[Constants.MarginRight].ToString());
-            var marginBottom = double.Parse(App.Current.Properties[Constants.MarginBottom].ToString());
-            var selectedImage = int.Parse(App.Current.Properties[Constants.SelectedMinuteImage].ToString());
-
-            User = user;
-            Organization = organization;
-            FontSize = fontSize;
-            FontFamily = fontFamily;
-            MarginLeft = marginLeft;
-            MarginTop = marginTop;
-            MarginRight = marginRight;
-            MarginBottom = marginBottom;
-
-            imageService.CreateDirectory();
-
-            var imageCollection = dataService.MinuteImageRepository.GetAll();
-            var logoStream = new MemoryStream(imageService.GetBytesFromLogo());
-            logoStream.Position = 0;
-
-            var logoSource = ImageSource.FromStream(() => logoStream);
-            ImageCollection.Add(new MinuteImageElement(new MinuteImage { Id = 0 })
+            Task.Run(() =>
             {
-                Source = logoSource,
+                var user = App.Current.Properties[Constants.UserName].ToString();
+                var organization = App.Current.Properties[Constants.OrganizationName].ToString();
+                var fontSize = int.Parse(App.Current.Properties[Constants.FontSize].ToString());
+                var fontFamily = App.Current.Properties[Constants.FontFamily].ToString();
+                var marginLeft = double.Parse(App.Current.Properties[Constants.MarginLeft].ToString());
+                var marginTop = double.Parse(App.Current.Properties[Constants.MarginTop].ToString());
+                var marginRight = double.Parse(App.Current.Properties[Constants.MarginRight].ToString());
+                var marginBottom = double.Parse(App.Current.Properties[Constants.MarginBottom].ToString());
+                var selectedImage = int.Parse(App.Current.Properties[Constants.SelectedMinuteImage].ToString());
+
+                imageService.CreateDirectory();
+
+                var images = dataService.MinuteImageRepository.GetAll();
+                var logoSource = ImageSource.FromFile("icLogo.png");
+
+                var imageCollection = new List<MinuteImageElement>();
+                imageCollection.Add(new MinuteImageElement(new MinuteImage { Id = 0 })
+                {
+                    Source = logoSource,
+                });
+
+                foreach (var minuteImage in images)
+                {
+                    var imageSource = imageService.GetImageFromFile(minuteImage.Name);
+                    imageCollection.Add(new MinuteImageElement(minuteImage) { Source = imageSource });
+                }
+
+                InvokeMainThread(() =>
+                {
+                    User = user;
+                    Organization = organization;
+                    FontSize = fontSize;
+                    FontFamily = fontFamily;
+                    MarginLeft = marginLeft;
+                    MarginTop = marginTop;
+                    MarginRight = marginRight;
+                    MarginBottom = marginBottom;
+
+                    ImageCollection = new ObservableCollection<MinuteImageElement>(imageCollection);
+                    SelectedImage = imageCollection.FirstOrDefault(l => l.Model.Id == selectedImage)?.Source;
+                });
             });
-
-            foreach (var minuteImage in imageCollection)
-            {
-                var imageBytes = imageService.GetBytesFromPath(minuteImage.Name);
-                var imageStream = new MemoryStream(imageBytes);
-                imageStream.Position = 0;
-
-                var imageSource = ImageSource.FromStream(() => imageStream);
-                ImageCollection.Add(new MinuteImageElement(minuteImage) { Source = imageSource });
-            }
-
-            SelectedImage = ImageCollection.FirstOrDefault(l => l.Model.Id == selectedImage)?.Source;
         }
 
         public override void Leave()

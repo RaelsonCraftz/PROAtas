@@ -3,12 +3,12 @@ using System.Windows.Input;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-namespace PROAtas.Views.Dialogs
+namespace Craftz.Views
 {
     public class BaseDialog : ContentView
     {
         public enum EDockTo { Start, Top, End, Bottom, None, }
-        
+
         public delegate void OnOpening();
         public event OnOpening Opening;
 
@@ -18,11 +18,11 @@ namespace PROAtas.Views.Dialogs
         public delegate void OnClose();
         public event OnClose Close;
 
-        public View InnerContent 
-        { 
+        public View InnerContent
+        {
             get { return _innerContent; }
-            set 
-            { 
+            set
+            {
                 _innerContent = value;
 
                 switch (DockTo)
@@ -121,7 +121,7 @@ namespace PROAtas.Views.Dialogs
                     default:
                         break;
                 }
-                
+
                 await this.FadeTo(0, 500, Easing.Linear);
 
                 InputTransparent = true;

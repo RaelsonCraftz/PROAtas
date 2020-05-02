@@ -7,9 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PROAtas.Android", "PROAtas\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PROAtas.iOS", "PROAtas\PROAtas.iOS\PROAtas.iOS.csproj", "{634B089C-907D-4062-8FBA-86F49B7785F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PROAtas", "PROAtas\PROAtas\PROAtas.csproj", "{7F52B926-7B6D-47D7-9FAA-7218F7A1C680}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PROAtas", "PROAtas\PROAtas\PROAtas.csproj", "{7F52B926-7B6D-47D7-9FAA-7218F7A1C680}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PROAtas.Model", "PROAtas.Model\PROAtas.Model.csproj", "{A6F92636-7509-49D9-A9FB-361FD97F7EC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PROAtas.Model", "PROAtas.Model\PROAtas.Model.csproj", "{A6F92636-7509-49D9-A9FB-361FD97F7EC9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.Craftz", "Xamarin.Craftz\Xamarin.Craftz.csproj", "{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +89,18 @@ Global
 		{A6F92636-7509-49D9-A9FB-361FD97F7EC9}.Release|iPhone.Build.0 = Release|Any CPU
 		{A6F92636-7509-49D9-A9FB-361FD97F7EC9}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{A6F92636-7509-49D9-A9FB-361FD97F7EC9}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}.Release|iPhone.Build.0 = Release|Any CPU
+		{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{0AA82AAF-1CC4-4177-A069-F4F3AFDAF785}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,5 @@
-﻿using CSharpForMarkup;
+﻿using Craftz.Views;
+using CSharpForMarkup;
 using PROAtas.Assets.Styles;
 using PROAtas.Assets.Theme;
 using System;
@@ -32,7 +33,7 @@ namespace PROAtas.Views.Dialogs
             // If there's a First command, add to stack
             if (!string.IsNullOrEmpty(firstTitle))
             {
-                var firstButton = new Button { Text = firstTitle, ImageSource = firstImage }.Standard() .CenterV() .FillExpandH();
+                var firstButton = new Button { Text = firstTitle, ImageSource = firstImage }.Standard().CenterV().FillExpandH();
                 firstButton.Clicked += FirstClick;
 
                 if (firstTextColor != null) firstButton.TextColor = firstTextColor ?? firstButton.TextColor;
@@ -43,7 +44,7 @@ namespace PROAtas.Views.Dialogs
             // If there's a Second command, add to stack
             if (!string.IsNullOrEmpty(secondTitle))
             {
-                var secondButton = new Button { Text = secondTitle, ImageSource = secondImage }.Standard().CenterV() .FillExpandH();
+                var secondButton = new Button { Text = secondTitle, ImageSource = secondImage }.Standard().CenterV().FillExpandH();
                 secondButton.Clicked += SecondClick;
 
                 if (secondTextColor != null) secondButton.TextColor = secondTextColor ?? secondButton.TextColor;
@@ -54,7 +55,7 @@ namespace PROAtas.Views.Dialogs
             // If there's a Third command, add to stack
             if (!string.IsNullOrEmpty(thirdTitle))
             {
-                var thirdButton = new Button { Text = thirdTitle, ImageSource = thirdImage }.Standard() .CenterV() .FillExpandH();
+                var thirdButton = new Button { Text = thirdTitle, ImageSource = thirdImage }.Standard().CenterV().FillExpandH();
                 thirdButton.Clicked += ThirdClick;
 
                 if (thirdTextColor != null) thirdButton.TextColor = thirdTextColor ?? thirdButton.TextColor;
@@ -65,7 +66,7 @@ namespace PROAtas.Views.Dialogs
             // If there's a Last command, add to stack
             if (!string.IsNullOrEmpty(lastTitle))
             {
-                var lastButton = new Button { Text = lastTitle, ImageSource = lastImage, Margin = new Thickness(0, 20, 0, 0) } .Danger() .CenterV() .FillExpandH();
+                var lastButton = new Button { Text = lastTitle, ImageSource = lastImage, Margin = new Thickness(0, 20, 0, 0) }.Danger().CenterV().FillExpandH();
                 lastButton.Clicked += LastClick;
 
                 if (lastTextColor != null) lastButton.TextColor = lastTextColor ?? lastButton.TextColor;
@@ -109,7 +110,7 @@ namespace PROAtas.Views.Dialogs
             InnerContent = innerContent;
         }
 
-        
+
 
         public ICommand FirstCommand
         {
@@ -141,22 +142,22 @@ namespace PROAtas.Views.Dialogs
 
         private void FirstClick(object sender, EventArgs e)
         {
-            FirstCommand.Execute(null);
+            FirstCommand?.Execute(null);
         }
 
         private void SecondClick(object sender, EventArgs e)
         {
-            SecondCommand.Execute(null);
+            SecondCommand?.Execute(null);
         }
 
         private void ThirdClick(object sender, EventArgs e)
         {
-            ThirdCommand.Execute(null);
+            ThirdCommand?.Execute(null);
         }
 
         private void LastClick(object sender, EventArgs e)
         {
-            LastCommand.Execute(null);
+            LastCommand?.Execute(null);
         }
     }
 }

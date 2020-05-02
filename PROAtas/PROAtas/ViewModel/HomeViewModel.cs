@@ -1,4 +1,5 @@
 ﻿using Acr.UserDialogs;
+using Craftz.ViewModel;
 using Newtonsoft.Json;
 using PROAtas.Core;
 using PROAtas.Model;
@@ -11,12 +12,10 @@ using Syncfusion.Pdf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace PROAtas.ViewModel
@@ -92,7 +91,7 @@ namespace PROAtas.ViewModel
                     var jsonStr = JsonConvert.SerializeObject(minute);
                     InvokeMainThread(async () =>
                     {
-                        await Shell.Current.GoToAsync($"{nameof(MinutePage)}/?Model={jsonStr}", true);
+                        await Shell.Current.GoToAsync($"{nameof(MinutePage)}/?model={jsonStr}", true);
                     });
                 }));
                 if (log != null)
@@ -119,7 +118,7 @@ namespace PROAtas.ViewModel
                     InvokeMainThread(async () =>
                     {
                         SelectedMinute = null;
-                        await Shell.Current.GoToAsync($"{nameof(MinutePage)}/?Model={jsonStr}", true);
+                        await Shell.Current.GoToAsync($"{nameof(MinutePage)}/?model={jsonStr}", true);
                     });
                 }));
                 if (log != null)
@@ -233,7 +232,7 @@ namespace PROAtas.ViewModel
                         () =>
                         {
                             toastService.ShortAlert("Conexão falhou. Verifique a internet!");
-                            
+
                             SelectedMinute = null;
                             IsRewarded = false;
                             UserDialogs.Instance.HideLoading();

@@ -1,8 +1,8 @@
-﻿using PROAtas.Core;
+﻿using Craftz.ViewModel;
+using PROAtas.Core;
 using PROAtas.Model;
 using PROAtas.Services;
 using PROAtas.ViewModel.Elements;
-using PROAtas.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -98,9 +98,20 @@ namespace PROAtas.ViewModel
         }
         private TimeSpan _end;
 
-        public ObservableCollection<PersonElement> People { get; } = new ObservableCollection<PersonElement>();
+        public ObservableCollection<PersonElement> People
+        {
+            get => _people;
+            set { _people = value; NotifyPropertyChanged(); }
+        }
+        private ObservableCollection<PersonElement> _people = new ObservableCollection<PersonElement>();
 
-        public ObservableCollection<TopicElement> Topics { get; } = new ObservableCollection<TopicElement>();
+        public ObservableCollection<TopicElement> Topics
+        {
+            get => _topics;
+            set { _topics = value; NotifyPropertyChanged(); }
+        }
+        private ObservableCollection<TopicElement> _topics = new ObservableCollection<TopicElement>();
+
         public TopicElement SelectedTopic
         {
             get => _selectedTopic;
@@ -108,7 +119,13 @@ namespace PROAtas.ViewModel
         }
         private TopicElement _selectedTopic;
 
-        public ObservableCollection<InformationElement> Information { get; } = new ObservableCollection<InformationElement>();
+        public ObservableCollection<InformationElement> Information
+        {
+            get => _information;
+            set { _information = value; NotifyPropertyChanged(); }
+        }
+        private ObservableCollection<InformationElement> _information = new ObservableCollection<InformationElement>();
+
         public InformationElement SelectedInformation
         {
             get => _selectedInformation;
@@ -313,24 +330,30 @@ namespace PROAtas.ViewModel
         }
 
         public ICommand SelectTopic => new Command<TopicElement>(p => SelectTopicExecute(p));
-        private void SelectTopicExecute(TopicElement param)
+        private async void SelectTopicExecute(TopicElement param)
         {
             if (param != null)
             {
+                ClearTopicSelection(param);
+
+                param.IsSelected = true;
+                SelectedTopic = param;
+
                 HasError = false;
 
-                var log = logService.LogAction(() =>
+                var log = await logService.LogActionAsync(Task.Run(() =>
                 {
-                    ClearTopicSelection(param);
 
-                    param.IsSelected = true;
-                    SelectedTopic = param;
+                    var information = dataService.InformationRepository.GetAll().Where(l => l.IdTopic == param.Model.Id).ToList();
 
-                    Information.Clear();
-                    var information = dataService.InformationRepository.GetAll().Where(l => l.IdTopic == param.Model.Id);
-                    foreach (var info in information)
-                        Information.Add(new InformationElement(info));
-                });
+                    var informationElements = new List<InformationElement>();
+                    information.ForEach(l => informationElements.Add(new InformationElement(l)));
+
+                    InvokeMainThread(() =>
+                    {
+                        Information = new ObservableCollection<InformationElement>(informationElements);
+                    });
+                }));
                 if (log != null)
                     toastService.ShortAlert(log);
             }
@@ -476,36 +499,41 @@ namespace PROAtas.ViewModel
 
         #region Initializers
 
-        public override void Initialize(Minute model = null)
+        public override void Initialize(Minute model)
         {
-            var topics = dataService.TopicRepository.GetAll().Where(l => l.IdMinute == model.Id).OrderBy(l => l.Order).ToList();
-            var people = dataService.PersonRepository.GetAll().Where(l => l.IdMinute == model.Id).ToList();
+            Task.Run(() =>
+            {
+                var topics = dataService.TopicRepository.GetAll().Where(l => l.IdMinute == model.Id).OrderBy(l => l.Order).ToList();
+                var people = dataService.PersonRepository.GetAll().Where(l => l.IdMinute == model.Id).ToList();
 
-            Minute = model;
+                var topicElements = new List<TopicElement>();
+                topics.ForEach(l => topicElements.Add(new TopicElement(l)));
 
-            MinuteName = model.Name;
-            Date = DateTime.ParseExact(model.Date, Formats.DateFormat, CultureInfo.InvariantCulture);
-            Start = TimeSpan.ParseExact(model.Start, Formats.TimeFormat, CultureInfo.InvariantCulture);
-            End = TimeSpan.ParseExact(model.End, Formats.TimeFormat, CultureInfo.InvariantCulture);
+                var peopleElements = new List<PersonElement>();
+                people.ForEach(l => peopleElements.Add(new PersonElement(l)));
 
-            foreach (var topic in topics)
-                Topics.Add(new TopicElement(topic));
+                InvokeMainThread(() =>
+                {
+                    Minute = model;
 
-            foreach (var person in people)
-                People.Add(new PersonElement(person));
+                    MinuteName = model.Name;
+                    Date = DateTime.ParseExact(model.Date, Formats.DateFormat, CultureInfo.InvariantCulture);
+                    Start = TimeSpan.ParseExact(model.Start, Formats.TimeFormat, CultureInfo.InvariantCulture);
+                    End = TimeSpan.ParseExact(model.End, Formats.TimeFormat, CultureInfo.InvariantCulture);
+
+                    Information.Clear();
+                    Topics = new ObservableCollection<TopicElement>(topicElements);
+                    People = new ObservableCollection<PersonElement>(peopleElements);
+                });
+            });
         }
 
         public override void Leave()
         {
-            Minute = null;
             HasError = false;
 
             SelectedTopic = null;
             SelectedInformation = null;
-
-            Topics.Clear();
-            Information.Clear();
-            People.Clear();
         }
 
         #endregion

@@ -1,34 +1,45 @@
-﻿using CSharpForMarkup;
+﻿using Craftz.Views;
+using CSharpForMarkup;
 using PROAtas.Assets.Components;
 using PROAtas.Assets.Styles;
 using PROAtas.Assets.Theme;
+using PROAtas.Behaviors;
+using PROAtas.Services;
 using PROAtas.ViewModel;
 using PROAtas.Views.Dialogs;
+using System;
+using Xamarin.Essentials;
 using Xamarin.Forms;
+using static Craftz.Views.BaseDialog;
 using static CSharpForMarkup.EnumsForGridRowsAndColumns;
-using static PROAtas.Views.Dialogs.BaseDialog;
 
 namespace PROAtas.Views.Pages
 {
-    public class SettingsPage : TabbedPage
+    public class SettingsPage : BaseTabbedPage<SettingsViewModel>
     {
+        #region Service Container
+
+        private readonly IToastService toastService = App.Current.toastService;
+
+        #endregion
+
         public SettingsPage() => Build();
 
+        private UrlDownloadDialog urlDialog;
         private void Build()
         {
-            Shell.SetFlyoutBehavior(this, FlyoutBehavior.Disabled);
-
             var app = App.Current;
-            var vm = App.Current.settingsViewModel;
+            var vm = ViewModel = App.Current.settingsViewModel;
 
             Title = "Configurações";
 
+            Behaviors.Add(new ActiveTabbedPageBehavior());
+
             // Main settings
-            Children.Add(new BasePage<SettingsViewModel>
+            Children.Add(new BasePage
             {
                 Title = "Geral",
                 IconImageSource = Images.Organization,
-                ViewModel = vm,
 
                 Content = new ScrollView
                 {
@@ -57,14 +68,16 @@ namespace PROAtas.Views.Pages
                 },
             });
 
-            Children.Add(new BasePage<SettingsViewModel>
+            Children.Add(new BasePage
             {
                 Title = "Margem",
                 IconImageSource = Images.Margin,
-                ViewModel = vm,
 
                 Content = new Grid
                 {
+                    RowSpacing = 0,
+                    ColumnSpacing = 0,
+
                     RowDefinitions = Rows.Define(
                         (0, GridLength.Star),
                         (1, GridLength.Star),
@@ -92,57 +105,113 @@ namespace PROAtas.Views.Pages
                 }
             });
 
-            Children.Add(new BasePage<SettingsViewModel>
+            Children.Add(new BasePage
             {
                 Title = "Imagem",
                 IconImageSource = Images.Image,
-                ViewModel = vm,
 
-                Content = new Grid
+                Content = new AbsoluteLayout
                 {
-                    RowDefinitions = Rows.Define(
-                        (0, new GridLength(2, GridUnitType.Star)),
-                        (1, GridLength.Auto)),
-
-                    RowSpacing = 5,
-                    ColumnSpacing = 0,
-
                     Children =
                     {
-                        new Image { } .Top() .Size(128)
-                            .Row(0)
-                            .Bind($"{nameof(vm.SelectedImage)}"),
-
-                        new ScrollView
+                        new StackLayout
                         {
-                            Content = new StackLayout
+                            Spacing = 5,
+
+                            Children =
                             {
-                                Spacing = 5,
+                                new Image { } .CenterExpand() .Size(128)
+                                    .Bind($"{nameof(vm.SelectedImage)}"),
 
-                                Children =
+                                new ScrollView
                                 {
-                                    new Button { ImageSource = Images.Collection, Text = "Imagens" } .Standard() .FillExpandH()
-                                        .Bind(nameof(vm.ChooseCollection)),
+                                    Content = new StackLayout
+                                    {
+                                        Spacing = 5, Padding = 20,
 
-                                    new Button { ImageSource = Images.Url, Text = "Url" } .Standard() .FillExpandH()
-                                        .Bind(nameof(vm.ChooseUrl)),
+                                        Children =
+                                        {
+                                            new Button { ImageSource = Images.Collection, Text = "Galeria" } .Standard() .FillH()
+                                                .Bind(nameof(vm.OpenGallery)),
 
-                                    new Button { ImageSource = Images.Storage, Text = "Armazenados" } .Standard() .FillExpandH()
-                                        .Bind(nameof(vm.ChooseStorage)),
-                                }
-                            } .Padding(new Thickness(50, 0, 50, 0)),
-                        } .Row(1) .Bottom(),
+                                            new Button { ImageSource = Images.Url, Text = "Url" } .Standard() .FillH()
+                                                .Bind(nameof(vm.OpenUrl)),
 
-                        //new ImageStorageDialog(EDockTo.End) { }
-                        //    .Assign(out ImageStorageDialog imageStorageDialog)
-                        //    .RowSpan(2)
-                        //    .Invoke(l => l.Close += () =>
-                        //    {
-                        //        vm.IsImageDialogOpen = false;
-                        //    }),
-                    },
-                }.Center(),
+                                            new Button { ImageSource = Images.Storage, Text = "Armazenados" } .Standard() .FillH()
+                                                .Bind(nameof(vm.OpenStorage)),
+                                        }
+                                    } .Padding(new Thickness(50, 0, 50, 0)),
+                                },
+                            },
+                        } .Padding(new Thickness(0, 50, 0, 50)) .Invoke(c =>
+                        {
+                            AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0.5, 0.5, 1, 1));
+                            AbsoluteLayout.SetLayoutFlags(c, AbsoluteLayoutFlags.All);
+                        }),
+                        
+                        new ImageCollectionDialog(vm, EDockTo.Start) { }
+                            .Bind(ImageCollectionDialog.IsOpenProperty, nameof(vm.IsImageDialogOpen))
+                            .Invoke(c =>
+                            {
+                                AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0.5, 0.5, 1, 1));
+                                AbsoluteLayout.SetLayoutFlags(c, AbsoluteLayoutFlags.All);
+
+                                c.Opening += () =>
+                                {
+                                    c.imageCollection.SelectedItem = null;
+                                };
+
+                                c.Close += () =>
+                                {
+                                    vm.IsImageDialogOpen = false;
+                                };
+                            }),
+
+                        new UrlDownloadDialog(EDockTo.Start) { }
+                            .Assign(out urlDialog)
+                            .Bind(ImageCollectionDialog.IsOpenProperty, nameof(vm.IsUrlDialogOpen))
+                            .Invoke(c =>
+                            {
+                                AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0.5, 0.5, 1, 1));
+                                AbsoluteLayout.SetLayoutFlags(c, AbsoluteLayoutFlags.All);
+
+                                c.Opening += async () =>
+                                {
+                                    vm.DownloadedImage = null;
+                                    c.downloadEntry.Text = string.Empty;
+                                    c.downloadEntry.IsSavingEnabled = true;
+
+                                    if (Clipboard.HasText)
+                                        if (Uri.TryCreate(await Clipboard.GetTextAsync(), UriKind.Absolute, out Uri url) && (url.Scheme == Uri.UriSchemeHttp || url.Scheme == Uri.UriSchemeHttps))
+                                        {
+                                            c.downloadEntry.Text = url.AbsoluteUri;
+
+                                            toastService.ShortAlert("Texto copiado para a url de Download!");
+                                        }
+                                };
+
+                                c.Close += () =>
+                                {
+                                    c.downloadEntry.IsSavingEnabled = false;
+                                    vm.IsUrlDialogOpen = false;
+                                };
+                            }),
+                    }
+                }
             });
+        }
+
+        protected override async void OnStart()
+        {
+            base.OnStart();
+
+            if (ViewModel.IsUrlDialogOpen && Clipboard.HasText)
+                if (Uri.TryCreate(await Clipboard.GetTextAsync(), UriKind.Absolute, out Uri url) && (url.Scheme == Uri.UriSchemeHttp || url.Scheme == Uri.UriSchemeHttps))
+                {
+                    urlDialog.downloadEntry.Text = url.AbsoluteUri;
+
+                    toastService.ShortAlert("Texto copiado para a url de Download!");
+                }
         }
     }
 }

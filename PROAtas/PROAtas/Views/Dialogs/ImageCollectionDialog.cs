@@ -1,4 +1,5 @@
-﻿using CSharpForMarkup;
+﻿using Craftz.Views;
+using CSharpForMarkup;
 using PROAtas.Assets.Styles;
 using PROAtas.Assets.Theme;
 using PROAtas.ViewModel;
@@ -8,13 +9,14 @@ using static CSharpForMarkup.EnumsForGridRowsAndColumns;
 
 namespace PROAtas.Views.Dialogs
 {
-    public class ImageStorageDialog : BaseDialog
+    public class ImageCollectionDialog : BaseDialog
     {
         enum Row { Header, Content, Action }
 
-        public ImageStorageDialog(EDockTo? dockSide = null) : base(dockSide) => Build();
+        public ImageCollectionDialog(object parentViewModel, EDockTo? dockSide = null) : base(dockSide) => Build(parentViewModel);
 
-        private void Build()
+        public CollectionView imageCollection;
+        private void Build(object parentViewModel)
         {
             Content = new Grid
             {
@@ -61,10 +63,12 @@ namespace PROAtas.Views.Dialogs
                                         new Image { Source = Images.Storage } .Center()
                                             .Row(Row.Header),
 
-                                        new CollectionView { ItemTemplate = MinuteImageTemplate.New() } .GridStyle(ItemsLayoutOrientation.Vertical, 3, 5)
-                                            .Assign(out CollectionView imageCollection)
+                                        new CollectionView { ItemTemplate = MinuteImageTemplate.New(), SelectionMode = SelectionMode.Single, } .GridStyle(ItemsLayoutOrientation.Vertical, 3, 5)
+                                            .Assign(out imageCollection)
                                             .Row(Row.Content)
-                                            .Bind(CollectionView.ItemsSourceProperty, nameof(SettingsViewModel.ImageCollection)),
+                                            .Bind(CollectionView.ItemsSourceProperty, nameof(SettingsViewModel.ImageCollection))
+                                            .Bind(CollectionView.SelectionChangedCommandProperty, nameof(SettingsViewModel.SelectCollection), source: parentViewModel)
+                                            .Bind(CollectionView.SelectionChangedCommandParameterProperty, nameof(CollectionView.SelectedItem), source: imageCollection),
                                     }
                                 }
                             } .Standard() .Row(1),

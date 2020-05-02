@@ -19,7 +19,7 @@ namespace PROAtas.Droid.Services
 
         public ImageServiceDroid()
         {
-
+            
         }
 
         public bool CreateDirectory()
@@ -81,6 +81,15 @@ namespace PROAtas.Droid.Services
                 byte[] imageInByte = imageStream.ToArray();
                 return imageInByte;
             }
+        }
+
+        public ImageSource GetImageFromFile(string imageName)
+        {
+            // Get the file from path
+            var path = System.IO.Path.Combine(DirectoryPath, $"{imageName}.png");
+
+            // Return Image Source
+            return ImageSource.FromFile(path);
         }
 
         public async Task SaveImageToDirectory(ImageSource imageSource, string imageName)

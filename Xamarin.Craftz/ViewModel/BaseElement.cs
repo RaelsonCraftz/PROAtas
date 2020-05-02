@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 
-namespace PROAtas.ViewModel.Elements
+namespace Craftz.ViewModel
 {
     public class BaseElement<TModel> : INotifyPropertyChanged
     {
@@ -23,6 +20,8 @@ namespace PROAtas.ViewModel.Elements
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion

@@ -1,11 +1,9 @@
-﻿using CSharpForMarkup;
+﻿using Craftz.Views;
+using CSharpForMarkup;
 using PROAtas.Assets.Styles;
 using PROAtas.Assets.Theme;
 using PROAtas.ViewModel;
 using PROAtas.Views.DataTemplates;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 using static CSharpForMarkup.EnumsForGridRowsAndColumns;
 

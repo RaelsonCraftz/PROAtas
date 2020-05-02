@@ -1,4 +1,5 @@
-﻿using CSharpForMarkup;
+﻿using Craftz.Views;
+using CSharpForMarkup;
 using PROAtas.Assets.Components;
 using PROAtas.Assets.Styles;
 using PROAtas.Assets.Theme;
@@ -13,9 +14,9 @@ using PROAtas.Views.DataTemplates;
 using PROAtas.Views.Dialogs;
 using System.Linq;
 using Xamarin.Forms;
+using static Craftz.Views.BaseDialog;
 using static CSharpForMarkup.EnumsForGridRowsAndColumns;
 using static PROAtas.Behaviors.MovingBehavior;
-using static PROAtas.Views.Dialogs.BaseDialog;
 
 namespace PROAtas.Views.Pages
 {
@@ -29,7 +30,9 @@ namespace PROAtas.Views.Pages
 
         public MinutePage() => Build();
 
-        enum Row { TopicList, Information, Banner }
+        enum Row { Minute, Banner }
+
+        enum Col { TopicList, Information }
 
         private void Build()
         {
@@ -43,9 +46,12 @@ namespace PROAtas.Views.Pages
             Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                (Row.TopicList, 90),
-                (Row.Information, GridLength.Star),
-                (Row.Banner, new GridLength(50))),
+                    (Row.Minute, GridLength.Star),
+                    (Row.Banner, 50)),
+
+                ColumnDefinitions = Columns.Define(
+                    (Col.TopicList, 90),
+                    (Col.Information, GridLength.Star)),
 
                 Children =
                 {
@@ -57,7 +63,7 @@ namespace PROAtas.Views.Pages
 
                         Footer = new StackLayout
                         {
-                            Orientation = StackOrientation.Horizontal,
+                            Orientation = StackOrientation.Vertical,
 
                             Children =
                             {
@@ -65,13 +71,14 @@ namespace PROAtas.Views.Pages
                                     .Bind(nameof(vm.CreateTopic)),
                             }
                         },
-
-                    } .HorizontalListStyle() .Single()
+                    } .VerticalListStyle() .Single()
                         .Assign(out CollectionView topicCollection)
-                        .Row(Row.TopicList)
+                        .Row(Row.Minute) .Col(Col.TopicList)
                         .Bind(CollectionView.ItemsSourceProperty, nameof(vm.Topics))
                         .Invoke(l => l.SelectionChanged += (sender, e) =>
                         {
+
+
                             if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
                                 vm.SelectTopic?.Execute(e.CurrentSelection?.FirstOrDefault());
                             else if (e.CurrentSelection?.FirstOrDefault() != vm.SelectedTopic)
@@ -103,7 +110,7 @@ namespace PROAtas.Views.Pages
                                     {
                                         ColumnDefinitions = Columns.Define(
                                             (0, GridLength.Star),
-                                            (1, GridLength.Auto)),
+                                            (1, 32)),
 
                                         RowSpacing = 0, ColumnSpacing = 10,
 
@@ -112,7 +119,7 @@ namespace PROAtas.Views.Pages
                                             new Frame { } .FramedCustomEntry(Images.TextBlack, "Nome do tópico", nameof(vm.SaveTopicTitle), $"{nameof(vm.SelectedTopic)}.{nameof(vm.SelectedTopic.Text)}", isSavingPath: nameof(vm.IsSavingTopic))
                                                 .Col(0),
 
-                                            new Button { ImageSource = Images.Delete } .Standard() .Danger() .Round(40) .Center()
+                                            new Button { ImageSource = Images.Delete } .Standard() .Danger() .Round(32) .Center()
                                                 .Col(1)
                                                 .Bind(nameof(vm.DeleteTopic)),
                                         },
@@ -129,10 +136,8 @@ namespace PROAtas.Views.Pages
                         },
 
                         // Actions
-                        Footer = new StackLayout
+                        Footer = new Grid
                         {
-                            Orientation = StackOrientation.Horizontal,
-
                             Children =
                             {
                                 new Button
@@ -141,19 +146,19 @@ namespace PROAtas.Views.Pages
 
                                     Behaviors =
                                     {
-                                        new MovingBehavior { MoveTo = EMoveTo.Start }
+                                        new MovingBehavior { MoveTo = EMoveTo.End }
                                             .BindBehavior(MovingBehavior.IsActiveProperty, nameof(vm.SelectedTopic), converter: new NullToBool()),
                                     },
-                                } .Standard() .Round(48) .SetTranslationX(-58)
+                                } .Standard() .Round(48) .SetTranslationX(60) .Right()
                                     .Bind(nameof(vm.CreateInformation)),
                             },
                         } .Center(),
                     } .VerticalListStyle() .Single()
-                        .Row(Row.Information)
+                        .Row(Row.Minute) .Col(Col.Information)
                         .Bind(CollectionView.ItemsSourceProperty, nameof(vm.Information)),
 
                     new InformationDialog(EDockTo.End)
-                        .RowSpan(2)
+                        .ColSpan(2)
                         .Bind(InformationDialog.IsOpenProperty, nameof(vm.SelectedInformation), converter: new NullToBool())
                         .Invoke(l => l.Close += () =>
                         {
@@ -165,7 +170,7 @@ namespace PROAtas.Views.Pages
 
                     new PersonDialog(vm, EDockTo.End)
                         .Assign(out PersonDialog personDialog)
-                        .RowSpan(2)
+                        .ColSpan(2)
                         .Invoke(l => l.Close += () =>
                         {
                             if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
@@ -176,7 +181,7 @@ namespace PROAtas.Views.Pages
 
                     new TimeDialog(EDockTo.End) { }
                         .Assign(out TimeDialog timeDialog)
-                        .RowSpan(2)
+                        .ColSpan(2)
                         .Invoke(l => l.Close += () =>
                         {
                             timeDialog.IsOpen = false;
@@ -184,7 +189,7 @@ namespace PROAtas.Views.Pages
 
                     new MinuteNameDialog(EDockTo.End) { }
                         .Assign(out MinuteNameDialog minuteNameDialog)
-                        .RowSpan(2)
+                        .ColSpan(2)
                         .Invoke(l => l.Close += () =>
                         {
                             if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
@@ -194,7 +199,7 @@ namespace PROAtas.Views.Pages
                         }),
 
                     new AdMobView { AdUnitId = Constants.AdMinute }
-                        .Row(2),
+                        .Row(Row.Banner) .ColSpan(2),
                 }
             }.Standard();
 

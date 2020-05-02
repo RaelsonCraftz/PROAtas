@@ -19,9 +19,9 @@ namespace PROAtas.Assets.Components
             frame.Content = new Grid
             {
                 ColumnDefinitions = Columns.Define(
-                    (0, GridLength.Auto),
-                    (1, GridLength.Star),
-                    (2, GridLength.Star)),
+                    (0, 32),
+                    (1, Star),
+                    (2, Star)),
 
                 RowSpacing = 0, ColumnSpacing = 5,
 
@@ -37,16 +37,16 @@ namespace PROAtas.Assets.Components
                     new Grid
                     {
                         ColumnDefinitions = Columns.Define(
-                            (0, GridLength.Auto),
-                            (1, GridLength.Star),
-                            (2, GridLength.Auto)),
+                            (0, 32),
+                            (1, Star),
+                            (2, 32)),
 
                         RowSpacing = 0, ColumnSpacing = 5,
 
                         Children =
                         {
                             // Decrease input button by 1
-                            new Button { ImageSource = Images.Remove, CommandParameter = -1 } .Danger() .Round(32)
+                            new Button { ImageSource = Images.Remove, CommandParameter = -1 } .Danger() .Round(32) .Center()
                                 .Col(0)
                                 .Bind(sendPath),
 
@@ -57,10 +57,10 @@ namespace PROAtas.Assets.Components
                     
                                 Content = new Label { FontSize = 14, TextColor = Colors.PrimaryText } .Center()
                                             .Bind(inputPath),
-                            } .Col(1),
+                            } .Col(1) .Height(32),
 
                             // Increase input button by 1
-                            new Button { ImageSource = Images.Add, CommandParameter = 1 } .Success() .Round(32)
+                            new Button { ImageSource = Images.Add, CommandParameter = 1 } .Success() .Round(32) .Center()
                                 .Col(2)
                                 .Bind(sendPath),
                         }
@@ -77,9 +77,9 @@ namespace PROAtas.Assets.Components
             frame.Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (0, GridLength.Auto),
-                    (1, GridLength.Auto),
-                    (2, GridLength.Auto)),
+                    (0, 32),
+                    (1, Star),
+                    (2, 32)),
 
                 RowSpacing = 5, ColumnSpacing = 0,
 
@@ -92,8 +92,8 @@ namespace PROAtas.Assets.Components
                         Content = new Grid
                         {
                             ColumnDefinitions = Columns.Define(
-                                (0, GridLength.Star),
-                                (1, GridLength.Auto)),
+                                (0, Star),
+                                (1, 32)),
 
                             Children =
                             {
@@ -156,7 +156,7 @@ namespace PROAtas.Assets.Components
             frame.Content = new Grid
             {
                 ColumnDefinitions = Columns.Define(
-                    (0, GridLength.Auto),
+                    (0, 32),
                     (1, GridLength.Star),
                     (2, GridLength.Star)),
 
@@ -177,7 +177,7 @@ namespace PROAtas.Assets.Components
                     {
                         Padding = 5, CornerRadius = 6, BackgroundColor = Colors.TextIcons,
 
-                        Content = new CustomPicker { ItemsSource = itemsSource, BackgroundColor = Colors.TextIcons, Visual = VisualMarker.Material }
+                        Content = new CustomPicker { ItemsSource = itemsSource, BackgroundColor = Colors.TextIcons }
                             .Assign(out CustomPicker customPicker)
                             .Bind(CustomPicker.CommandProperty, sendPath)
                             .Bind(CustomPicker.SelectedItemProperty, itemPath),
@@ -193,7 +193,7 @@ namespace PROAtas.Assets.Components
 
         public static TFrame FramedCustomEntry<TFrame>(this TFrame frame, ImageSource headerImage, string placeholder, string savePath, string textPath, object saveSource = null, string isSavingPath = null, bool hasSaveParameter = false, int saveDelay = 1500) where TFrame : Frame
         {
-            var customEntry = new CustomEntry { SaveDelay = saveDelay, Placeholder = placeholder, PlaceholderColor = Colors.SecondaryText };
+            var customEntry = new CustomEntry { SaveDelay = saveDelay, Placeholder = placeholder, PlaceholderColor = Colors.SecondaryText, Visual = VisualMarker.Default };
 
             frame.CornerRadius = 6;
             frame.Padding = 5;
@@ -201,7 +201,7 @@ namespace PROAtas.Assets.Components
             frame.Content = new Grid
             {
                 ColumnDefinitions = Columns.Define(
-                    (0, GridLength.Auto),
+                    (0, 32),
                     (1, GridLength.Star)),
 
                 RowSpacing = 0, ColumnSpacing = 5,
@@ -263,7 +263,7 @@ namespace PROAtas.Assets.Components
             frame.Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (0, GridLength.Auto),
+                    (0, 32),
                     (1, GridLength.Star)),
 
                 GestureRecognizers =
@@ -302,7 +302,7 @@ namespace PROAtas.Assets.Components
             frame.Content = new Grid
             {
                 ColumnDefinitions = Columns.Define(
-                    (0, GridLength.Auto),
+                    (0, 32),
                     (1, GridLength.Star)),
 
                 RowDefinitions = Rows.Define(
@@ -353,7 +353,7 @@ namespace PROAtas.Assets.Components
             frame.Content = new Grid
             {
                 ColumnDefinitions = Columns.Define(
-                    (0, GridLength.Auto),
+                    (0, 32),
                     (1, GridLength.Star)),
 
                 RowDefinitions = Rows.Define(
@@ -397,7 +397,7 @@ namespace PROAtas.Assets.Components
             return frame;
         }
 
-        public static TFrame FramedEntry<TFrame>(this TFrame frame, string header, string entryBindingPath) where TFrame : Frame
+        public static TFrame FramedEntry<TFrame>(this TFrame frame, string header, string entryBindingPath = null) where TFrame : Frame
         {
             frame.CornerRadius = 6;
             frame.Padding = 5;
@@ -428,7 +428,7 @@ namespace PROAtas.Assets.Components
             frame.Content = new Grid
             {
                 RowDefinitions = Rows.Define(
-                    (0, GridLength.Auto),
+                    (0, 32),
                     (1, GridLength.Star)),
 
                 Children =

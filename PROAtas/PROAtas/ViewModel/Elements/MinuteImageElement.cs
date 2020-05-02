@@ -1,4 +1,5 @@
-﻿using PROAtas.Model;
+﻿using Craftz.ViewModel;
+using PROAtas.Model;
 using Xamarin.Forms;
 
 namespace PROAtas.ViewModel.Elements

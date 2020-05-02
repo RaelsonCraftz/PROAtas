@@ -1,8 +1,7 @@
 ﻿using CSharpForMarkup;
 using PROAtas.Assets.Theme;
-using System;
-using Xamarin.Forms;
 using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace PROAtas.Views.Pages
 {
@@ -12,6 +11,9 @@ namespace PROAtas.Views.Pages
 
         private void Build()
         {
+            // Shell Routes for Shell Navigation
+            Routing.RegisterRoute(nameof(MinutePage), typeof(MinutePage));
+
             FlyoutHeader = new Grid()
             {
                 Padding = 10,
@@ -34,7 +36,8 @@ namespace PROAtas.Views.Pages
 
             Items.Add(new FlyoutItem()
             {
-                Title = "Início", Icon = Images.HomeBlack,
+                Title = "Início",
+                Icon = Images.HomeBlack,
                 Items =
                 {
                     new ShellContent { Content = new HomePage(), Route = "Home", }

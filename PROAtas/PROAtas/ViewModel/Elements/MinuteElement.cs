@@ -1,9 +1,8 @@
-﻿using PROAtas.Core;
+﻿using Craftz.ViewModel;
+using PROAtas.Core;
 using PROAtas.Model;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 
 namespace PROAtas.ViewModel.Elements
 {
