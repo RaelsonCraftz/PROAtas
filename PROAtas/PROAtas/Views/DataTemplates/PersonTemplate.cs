@@ -2,6 +2,7 @@
 using PROAtas.Assets.Components;
 using PROAtas.Assets.Styles;
 using PROAtas.Assets.Theme;
+using PROAtas.Controls;
 using PROAtas.ViewModel;
 using PROAtas.ViewModel.Elements;
 using System;
@@ -18,6 +19,8 @@ namespace PROAtas.Views.DataTemplates
 
         public static DataTemplate New(object viewModel) => new DataTemplate(() =>
         {
+            CustomEntry personEntry;
+            
             // Outer Grid
             var grid = new Grid
             {
@@ -43,8 +46,16 @@ namespace PROAtas.Views.DataTemplates
 
                             Children =
                             {
-                                new Frame { } .FramedCustomEntry(Images.PersonBlack, "Nome da pessoa", nameof(MinuteViewModel.SavePerson), nameof(PersonElement.Name), isSavingPath: nameof(PersonElement.IsSaving), saveSource: viewModel, hasSaveParameter: true)
-                                    .Col(Col.Content),
+                                new Frame { } .FramedCustomEntry(out personEntry, Images.PersonBlack)
+                                    .Col(Col.Content)
+                                    .Invoke(c =>
+                                    {
+                                        personEntry.Placeholder = "Nome da pessoa";
+                                        personEntry.Bind(CustomEntry.SaveCommandProperty, nameof(MinuteViewModel.SavePerson), source: viewModel);
+                                        personEntry.Bind(CustomEntry.SaveCommandParameterProperty);
+                                        personEntry.Bind(CustomEntry.TextProperty, nameof(PersonElement.Name));
+                                        personEntry.Bind(CustomEntry.IsSavingProperty, nameof(PersonElement.IsSaving));
+                                    }),
 
                                 new Button { ImageSource = Images.Delete } .Danger() .Round(40) .Center()
                                     .Col(Col.Action)

@@ -40,13 +40,18 @@ namespace PROAtas.Assets.Styles
             return collection;
         }
 
-        public static TCollectionView Single<TCollectionView>(this TCollectionView collection) where TCollectionView : CollectionView
+        public static TCollectionView SingleSelection<TCollectionView>(this TCollectionView collection) where TCollectionView : CollectionView
         {
             collection.SelectionMode = SelectionMode.Single;
 
             return collection;
         }
 
-        
+        public static TCollectionView NoSelection<TCollectionView>(this TCollectionView collection) where TCollectionView : CollectionView
+        {
+            collection.SelectionMode = SelectionMode.None;
+
+            return collection;
+        }
     }
 }

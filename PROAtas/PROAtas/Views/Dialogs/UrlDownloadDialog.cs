@@ -20,91 +20,69 @@ namespace PROAtas.Views.Dialogs
         public DownloadEntry downloadEntry;
         private void Build()
         {
-            Content = new AbsoluteLayout
+            Content = new Frame
             {
-                Children =
+                Content = new StackLayout
                 {
-                    // Black mask
-                    new BoxView
-                    {
-                        GestureRecognizers = { new TapGestureRecognizer() .Invoke(l => l.Tapped += CancelDialog) }
-                    } .Mask() .Invoke(c =>
-                    {
-                        AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0.5, 0.5, 1, 1));
-                        AbsoluteLayout.SetLayoutFlags(c, AbsoluteLayoutFlags.All);
-                    }),
+                    Spacing = 10,
 
-                    new Frame
+                    Children =
                     {
-                        Content = new StackLayout
+                        new Image { Source = Images.Url },
+
+                        new Frame
                         {
-                            Spacing = 10,
+                            Padding = 5, BackgroundColor = Colors.TextIcons,
 
-                            Children =
+                            Content = new Grid
                             {
-                                new Image { Source = Images.Url },
+                                ColumnDefinitions = Columns.Define(
+                                    (0, 32),
+                                    (1, Star),
+                                    (2, 32)),
 
-                                new Frame
+                                Children =
                                 {
-                                    Padding = 5, BackgroundColor = Colors.TextIcons,
-
-                                    Content = new Grid
+                                    // Downloading Entry
+                                    new DownloadEntry { Margin = 0, Placeholder = "Url", IsEnabled = false, Visual = VisualMarker.Default } .Standard()
+                                        .Assign(out downloadEntry)
+                                        .Col(1)
+                                        .Bind(DownloadEntry.SaveCommandProperty, nameof(SettingsViewModel.DownloadUrl)),
+                                    
+                                    // Busy indicator
+                                    new ActivityIndicator { Color = Colors.Primary } .Size(32)
+                                        .Col(0)
+                                        .Bind(nameof(DownloadEntry.IsSaving), source: downloadEntry),
+                                    
+                                    // Header image
+                                    new Image
                                     {
-                                        ColumnDefinitions = Columns.Define(
-                                            (0, 32),
-                                            (1, Star),
-                                            (2, 32)),
-
-                                        Children =
+                                        Source = Images.UrlBlack,
+                                        Behaviors =
                                         {
-                                            // Downloading Entry
-                                            new DownloadEntry { Margin = 0, Placeholder = "Url", IsEnabled = false, Visual = VisualMarker.Default } .Standard()
-                                                .Assign(out downloadEntry)
-                                                .Col(1)
-                                                .Bind(DownloadEntry.SaveCommandProperty, nameof(SettingsViewModel.DownloadUrl)),
-                                            
-                                            // Busy indicator
-                                            new ActivityIndicator { Color = Colors.Primary } .Size(32)
-                                                .Col(0)
-                                                .Bind(nameof(DownloadEntry.IsSaving), source: downloadEntry),
-                                            
-                                            // Header image
-                                            new Image
-                                            {
-                                                Source = Images.UrlBlack,
-                                                Behaviors =
-                                                {
-                                                    new MovingBehavior { MoveTo = EMoveTo.End }
-                                                        .BindBehavior(MovingBehavior.IsActiveProperty, nameof(DownloadEntry.IsSaving), source: downloadEntry, converter: new BoolToInvert()),
-                                                    new FadingBehavior { }
-                                                        .BindBehavior(FadingBehavior.IsActiveProperty, nameof(DownloadEntry.IsSaving), source: downloadEntry, converter: new BoolToInvert())
-                                                }
-                                            } .Col(0) .Size(32),
+                                            new MovingBehavior { MoveTo = EMoveTo.End }
+                                                .BindBehavior(MovingBehavior.IsActiveProperty, nameof(DownloadEntry.IsSaving), source: downloadEntry, converter: new BoolToInvert()),
+                                            new FadingBehavior { }
+                                                .BindBehavior(FadingBehavior.IsActiveProperty, nameof(DownloadEntry.IsSaving), source: downloadEntry, converter: new BoolToInvert())
                                         }
-                                    } .Standard(),
-                                },
-
-                                new Frame
-                                {
-                                    BackgroundColor = Colors.TextIcons,
-
-                                    Content = new Image { } .Size(96)
-                                        .Bind(nameof(SettingsViewModel.DownloadedImage))
-                                } .Padding(5) .Size(128) .CenterExpand(),
-
-                                new Button { ImageSource = Images.Check } .Success() .Round(48) .Right()
-                                    .Bind(nameof(SettingsViewModel.SelectUrlImage))
-                            }
+                                    } .Col(0) .Size(32),
+                                }
+                            } .Standard(),
                         },
-                    } .Standard() .Invoke(c =>
-                    {
-                        InnerContent = c;
 
-                        AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0.5, 0.5, 0.8, 0.7));
-                        AbsoluteLayout.SetLayoutFlags(c, AbsoluteLayoutFlags.All);
-                    }),
-                }
-            };
+                        new Frame
+                        {
+                            BackgroundColor = Colors.TextIcons,
+
+                            Content = new Image { } .Size(96)
+                                .Bind(nameof(SettingsViewModel.DownloadedImage))
+                        } .Padding(5) .Size(128) .CenterExpand(),
+
+                        new Button { ImageSource = Images.Check } .Success() .Round(48) .Right()
+                            .Bind(nameof(SettingsViewModel.SelectUrlImage))
+                    }
+                },
+            } .Standard();
         }
     }
 }

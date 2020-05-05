@@ -19,7 +19,7 @@ namespace PROAtas.Assets.Styles
 
         public static TLabel BodyText<TLabel>(this TLabel label) where TLabel : Label
         {
-            label.FontSize = 14;
+            label.FontSize = 12;
             label.TextColor = Colors.TextIcons;
 
             return label;

@@ -28,89 +28,60 @@ namespace PROAtas.Views.Dialogs
                     // Header
                     new Label { Text = title } .HeaderText() .Center(),
                 }
-            };
-
-            // If there's a First command, add to stack
-            if (!string.IsNullOrEmpty(firstTitle))
+            }.Invoke(c =>
             {
-                var firstButton = new Button { Text = firstTitle, ImageSource = firstImage }.Standard().CenterV().FillExpandH();
-                firstButton.Clicked += FirstClick;
-
-                if (firstTextColor != null) firstButton.TextColor = firstTextColor ?? firstButton.TextColor;
-
-                optionStack.Children.Add(firstButton);
-            }
-
-            // If there's a Second command, add to stack
-            if (!string.IsNullOrEmpty(secondTitle))
-            {
-                var secondButton = new Button { Text = secondTitle, ImageSource = secondImage }.Standard().CenterV().FillExpandH();
-                secondButton.Clicked += SecondClick;
-
-                if (secondTextColor != null) secondButton.TextColor = secondTextColor ?? secondButton.TextColor;
-
-                optionStack.Children.Add(secondButton);
-            }
-
-            // If there's a Third command, add to stack
-            if (!string.IsNullOrEmpty(thirdTitle))
-            {
-                var thirdButton = new Button { Text = thirdTitle, ImageSource = thirdImage }.Standard().CenterV().FillExpandH();
-                thirdButton.Clicked += ThirdClick;
-
-                if (thirdTextColor != null) thirdButton.TextColor = thirdTextColor ?? thirdButton.TextColor;
-
-                optionStack.Children.Add(thirdButton);
-            }
-
-            // If there's a Last command, add to stack
-            if (!string.IsNullOrEmpty(lastTitle))
-            {
-                var lastButton = new Button { Text = lastTitle, ImageSource = lastImage, Margin = new Thickness(0, 20, 0, 0) }.Danger().CenterV().FillExpandH();
-                lastButton.Clicked += LastClick;
-
-                if (lastTextColor != null) lastButton.TextColor = lastTextColor ?? lastButton.TextColor;
-
-                optionStack.Children.Add(lastButton);
-            }
-
-            Content = new Grid
-            {
-                Children =
+                // If there's a First command, add to stack
+                if (!string.IsNullOrEmpty(firstTitle))
                 {
-                    // Black mask
-                    new BoxView
-                    {
-                        GestureRecognizers = { new TapGestureRecognizer { } .Invoke(l => l.Tapped += CancelDialog) }
-                    } .Mask(),
+                    var firstButton = new Button { Text = firstTitle, ImageSource = firstImage }.Standard().CenterV().FillExpandH();
+                    firstButton.Clicked += FirstClick;
 
-                    // Options Dialog
-                    new StackLayout
-                    {
-                        Spacing = 10,
+                    if (firstTextColor != null) firstButton.TextColor = firstTextColor ?? firstButton.TextColor;
 
-                        // Dialog Content
-                        Children =
-                        {
-                            // Close button
-                            new ImageButton { Source = Images.Close, BackgroundColor = Color.Transparent } .Center()
-                                .Invoke(l => l.Clicked += CancelDialog),
-
-                            // Border
-                            new Frame
-                            {
-                                // Option List
-                                Content = optionStack,
-                            } .Standard() .Center(),
-                        }
-                    } .Center() .Transparent() .Assign(out StackLayout innerContent),
+                    c.Children.Add(firstButton);
                 }
-            };
 
-            InnerContent = innerContent;
+                // If there's a Second command, add to stack
+                if (!string.IsNullOrEmpty(secondTitle))
+                {
+                    var secondButton = new Button { Text = secondTitle, ImageSource = secondImage }.Standard().CenterV().FillExpandH();
+                    secondButton.Clicked += SecondClick;
+
+                    if (secondTextColor != null) secondButton.TextColor = secondTextColor ?? secondButton.TextColor;
+
+                    c.Children.Add(secondButton);
+                }
+
+                // If there's a Third command, add to stack
+                if (!string.IsNullOrEmpty(thirdTitle))
+                {
+                    var thirdButton = new Button { Text = thirdTitle, ImageSource = thirdImage }.Standard().CenterV().FillExpandH();
+                    thirdButton.Clicked += ThirdClick;
+
+                    if (thirdTextColor != null) thirdButton.TextColor = thirdTextColor ?? thirdButton.TextColor;
+
+                    c.Children.Add(thirdButton);
+                }
+
+                // If there's a Last command, add to stack
+                if (!string.IsNullOrEmpty(lastTitle))
+                {
+                    var lastButton = new Button { Text = lastTitle, ImageSource = lastImage, Margin = new Thickness(0, 20, 0, 0) }.Danger().CenterV().FillExpandH();
+                    lastButton.Clicked += LastClick;
+
+                    if (lastTextColor != null) lastButton.TextColor = lastTextColor ?? lastButton.TextColor;
+
+                    c.Children.Add(lastButton);
+                }
+            });
+            
+            // Options Dialog
+            Content = new Frame
+            {
+                // Option List
+                Content = optionStack,
+            } .Standard();
         }
-
-
 
         public ICommand FirstCommand
         {

@@ -4,6 +4,7 @@ using PROAtas.Assets.Components;
 using PROAtas.Assets.Styles;
 using PROAtas.Assets.Theme;
 using PROAtas.Behaviors;
+using PROAtas.Controls;
 using PROAtas.Services;
 using PROAtas.ViewModel;
 using PROAtas.Views.Dialogs;
@@ -26,14 +27,14 @@ namespace PROAtas.Views.Pages
         public SettingsPage() => Build();
 
         private UrlDownloadDialog urlDialog;
+        private CustomEntry userEntry;
+        private CustomEntry organizationEntry;
         private void Build()
         {
             var app = App.Current;
             var vm = ViewModel = App.Current.settingsViewModel;
 
             Title = "Configurações";
-
-            Behaviors.Add(new ActiveTabbedPageBehavior());
 
             // Main settings
             Children.Add(new BasePage
@@ -52,12 +53,24 @@ namespace PROAtas.Views.Pages
                         {
                             new Frame
                             {
-                                Content = new Frame { } .FramedCustomEntry(Images.PersonBlack, "Usuário", nameof(vm.SaveUser), nameof(vm.User)),
+                                Content = new Frame { } .FramedCustomEntry(out userEntry, Images.PersonBlack)
+                                    .Invoke(c =>
+                                    {
+                                        userEntry.Placeholder = "Usuário";
+                                        userEntry.Bind(CustomEntry.SaveCommandProperty, nameof(vm.SaveUser));
+                                        userEntry.Bind(CustomEntry.TextProperty, nameof(vm.User));
+                                    }),
                             } .Standard(),
 
                             new Frame
                             {
-                                Content = new Frame { } .FramedCustomEntry(Images.OrganizationBlack, "Organização", nameof(vm.SaveOrganization), nameof(vm.Organization)),
+                                Content = new Frame { } .FramedCustomEntry(out organizationEntry, Images.OrganizationBlack)
+                                    .Invoke(c =>
+                                    {
+                                        organizationEntry.Placeholder = "Organização";
+                                        organizationEntry.Bind(CustomEntry.SaveCommandProperty, nameof(vm.SaveOrganization));
+                                        organizationEntry.Bind(CustomEntry.TextProperty, nameof(vm.Organization));
+                                    }),
                             } .Standard(),
 
                             new Frame { } .FramedHorizontalLabelInput(Images.FontSize, "Tamanho", nameof(vm.FontSize), nameof(vm.ChangeFontSize)),

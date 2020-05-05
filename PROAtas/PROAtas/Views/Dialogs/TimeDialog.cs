@@ -11,78 +11,38 @@ namespace PROAtas.Views.Dialogs
 {
     public class TimeDialog : BaseDialog
     {
-        enum Row { Header, Content }
-
         public TimeDialog(EDockTo? dockSide = null) : base(dockSide) => Build();
 
         private void Build()
         {
-            Content = new Grid
+            Content = new Frame
             {
-                Children =
+                Content = new StackLayout
                 {
-                    // Black mask
-                    new BoxView
+                    // Dialog Content
+                    Children =
                     {
-                        GestureRecognizers = { new TapGestureRecognizer() .Invoke(l => l.Tapped += CancelDialog) }
-                    } .Mask(),
+                        new Image { Source = Images.Time } .Center(),
 
-                    new Grid
-                    {
-                        RowDefinitions = Rows.Define(
-                            (0, GridLength.Auto),
-                            (1, GridLength.Star)),
-
-                        Margin = new Thickness(50, 80, 50, 80),
-                        RowSpacing = 5, ColumnSpacing = 0,
-
-                        Children =
+                        new ScrollView
                         {
-                            // Close button
-                            new ImageButton { Source = Images.Close, BackgroundColor = Color.Transparent } .Center()
-                                .Row(0)
-                                .Invoke(l => l.Clicked += CancelDialog),
-
-                            // Border
-                            new Frame
+                            Content = new StackLayout
                             {
-                                Content = new Grid
+                                Spacing = 5,
+
+                                Children =
                                 {
-                                    RowDefinitions = Rows.Define(
-                                        (Row.Header, GridLength.Auto),
-                                        (Row.Content, GridLength.Star)),
+                                    new Frame { } .FramedDatePicker(Images.Date, "Data", nameof(MinuteViewModel.SaveDate), nameof(MinuteViewModel.Date)),
 
-                                    // Dialog Content
-                                    Children =
-                                    {
-                                        new Image { Source = Images.Time } .Center()
-                                            .Row(Row.Header),
+                                    new Frame { } .FramedTimePicker(Images.Time, "Início", nameof(MinuteViewModel.SaveStart), nameof(MinuteViewModel.Start)),
 
-                                        new ScrollView
-                                        {
-                                            Content = new StackLayout
-                                            {
-                                                Spacing = 5,
-
-                                                Children =
-                                                {
-                                                    new Frame { } .FramedDatePicker(Images.Date, "Data", nameof(MinuteViewModel.SaveDate), nameof(MinuteViewModel.Date)),
-
-                                                    new Frame { } .FramedTimePicker(Images.Time, "Início", nameof(MinuteViewModel.SaveStart), nameof(MinuteViewModel.Start)),
-
-                                                    new Frame { } .FramedTimePicker(Images.Time, "Fim", nameof(MinuteViewModel.SaveEnd), nameof(MinuteViewModel.End)),
-                                                }
-                                            }
-                                        } .Row(Row.Content),
-                                    },
+                                    new Frame { } .FramedTimePicker(Images.Time, "Fim", nameof(MinuteViewModel.SaveEnd), nameof(MinuteViewModel.End)),
                                 }
-                            } .Standard() .Row(1),
-                        }
-                    } .Transparent() .Assign(out Grid innerContent)
+                            }
+                        } .FillExpand(),
+                    },
                 }
-            };
-
-            InnerContent = innerContent;
+            } .Standard();
         }
     }
 }

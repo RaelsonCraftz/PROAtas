@@ -34,6 +34,7 @@ namespace PROAtas.Views.Pages
 
         enum Col { TopicList, Information }
 
+        public CustomEntry topicEntry;
         private void Build()
         {
             Shell.SetFlyoutBehavior(this, FlyoutBehavior.Disabled);
@@ -43,181 +44,218 @@ namespace PROAtas.Views.Pages
             var app = App.Current;
             var vm = ViewModel = app.minuteViewModel;
 
-            Content = new Grid
+            Content = new AbsoluteLayout
             {
-                RowDefinitions = Rows.Define(
-                    (Row.Minute, GridLength.Star),
-                    (Row.Banner, 50)),
-
-                ColumnDefinitions = Columns.Define(
-                    (Col.TopicList, 90),
-                    (Col.Information, GridLength.Star)),
-
                 Children =
                 {
-                    // Topic list
-                    new CollectionView
+                    // Page Content
+                    new Grid
                     {
-                        BackgroundColor = Colors.Primary,
-                        ItemTemplate = TopicTemplate.New(), ItemSizingStrategy = ItemSizingStrategy.MeasureAllItems,
+                        RowDefinitions = Rows.Define(
+                            (Row.Minute, GridLength.Star),
+                            (Row.Banner, 50)),
 
-                        Footer = new StackLayout
+                        ColumnDefinitions = Columns.Define(
+                            (Col.TopicList, 70),
+                            (Col.Information, GridLength.Star)),
+
+                        Children =
                         {
-                            Orientation = StackOrientation.Vertical,
-
-                            Children =
+                            // Topic Collection
+                            new CollectionView
                             {
-                                new Button { ImageSource = Images.Add } .Standard() .Round(40) .Center()
-                                    .Bind(nameof(vm.CreateTopic)),
-                            }
-                        },
-                    } .VerticalListStyle() .Single()
-                        .Assign(out CollectionView topicCollection)
-                        .Row(Row.Minute) .Col(Col.TopicList)
-                        .Bind(CollectionView.ItemsSourceProperty, nameof(vm.Topics))
-                        .Invoke(l => l.SelectionChanged += (sender, e) =>
-                        {
+                                BackgroundColor = Colors.Primary,
 
-
-                            if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
-                                vm.SelectTopic?.Execute(e.CurrentSelection?.FirstOrDefault());
-                            else if (e.CurrentSelection?.FirstOrDefault() != vm.SelectedTopic)
-                            {
-                                topicCollection.SelectedItem = vm.SelectedTopic;
-                                toastService.ShortAlert("Aguarde a operação de salvar!");
-                            }
-                        }),
-
-                    // Information list beloging to the selected topic
-                    new CollectionView
-                    {
-                        // Topic title with a button to delete the topic
-                        Header = new Grid
-                        {
-                            Behaviors =
-                            {
-                                new MovingBehavior { MoveTo = EMoveTo.Top }
-                                    .BindBehavior(MovingBehavior.IsActiveProperty, nameof(vm.SelectedTopic), converter: new NullToBool())
-                            },
-
-                            Children =
-                            {
-                                new Frame
+                                GestureRecognizers =
                                 {
-                                    Padding = 5, CornerRadius = 6, BackgroundColor = Colors.Accent,
-
-                                    Content = new Grid
-                                    {
-                                        ColumnDefinitions = Columns.Define(
-                                            (0, GridLength.Star),
-                                            (1, 32)),
-
-                                        RowSpacing = 0, ColumnSpacing = 10,
-
-                                        Children =
-                                        {
-                                            new Frame { } .FramedCustomEntry(Images.TextBlack, "Nome do tópico", nameof(vm.SaveTopicTitle), $"{nameof(vm.SelectedTopic)}.{nameof(vm.SelectedTopic.Text)}", isSavingPath: nameof(vm.IsSavingTopic))
-                                                .Col(0),
-
-                                            new Button { ImageSource = Images.Delete } .Standard() .Danger() .Round(32) .Center()
-                                                .Col(1)
-                                                .Bind(nameof(vm.DeleteTopic)),
-                                        },
-                                    }
+                                    new TapGestureRecognizer { } .Invoke(c => c.Tapped += (s, e) => topicEntry.Unfocus()),
                                 },
-                            },
-                        } .Padding(5) .SetTranslationY(-100),
 
-                        ItemTemplate = InformationTemplate.New(vm), ItemSizingStrategy = ItemSizingStrategy.MeasureAllItems,
+                                // BODY - List of topics
+                                ItemTemplate = TopicTemplate.New(vm),
+
+                                // FOOTER - Action
+                                Footer = new ContentView
+                                {
+                                    Content = new Button { ImageSource = Images.Add } .Standard() .Round(40) .Center()
+                                        .Bind(nameof(vm.CreateTopic)),
+                                },
+                            } .VerticalListStyle() .NoSelection()
+                                .Row(Row.Minute) .Col(Col.TopicList)
+                                .Bind(CollectionView.ItemsSourceProperty, nameof(vm.Topics)),
+
+                            // Information Collection
+                            new CollectionView
+                            {
+                                // BODY - List of information
+                                ItemTemplate = InformationTemplate.New(vm), ItemSizingStrategy = ItemSizingStrategy.MeasureAllItems,
+                                Behaviors =
+                                {
+                                    new FadingBehavior { }
+                                        .BindBehavior(FadingBehavior.IsActiveProperty, nameof(vm.SelectedTopic), converter: new NullToBool()),
+                                },
+
+                                // HEADER - Topic title with a button to delete the topic
+                                Header = new ContentView
+                                {
+                                    Padding = 5,
+
+                                    Content = new Frame
+                                    {
+                                        Padding = 5, CornerRadius = 6, BackgroundColor = Colors.Accent,
+
+                                        Behaviors =
+                                        {
+                                            new MovingBehavior { MoveTo = EMoveTo.Top }
+                                                .BindBehavior(MovingBehavior.IsActiveProperty, nameof(vm.SelectedTopic), converter: new NullToBool())
+                                        },
+
+                                        Content = new StackLayout
+                                        {
+                                            Spacing = 10, Orientation = StackOrientation.Horizontal,
+
+                                            Children =
+                                            {
+                                                new Frame { } .FramedCustomEntry(out topicEntry, Images.TextBlack) .FillExpandH()
+                                                    .Invoke(c =>
+                                                    {
+                                                        topicEntry.Placeholder = "Nome do tópico";
+                                                        topicEntry.Bind(CustomEntry.TextProperty, $"{nameof(vm.SelectedTopic)}.{nameof(vm.SelectedTopic.Text)}", mode: BindingMode.TwoWay);
+                                                        topicEntry.Bind(CustomEntry.SaveCommandProperty, nameof(vm.SaveTopicTitle));
+                                                        topicEntry.Bind(CustomEntry.IsSavingProperty, nameof(vm.IsSavingTopic));
+                                                        topicEntry.Bind(CustomEntry.IsSavingEnabledProperty, nameof(vm.IsSavingEnabled));
+                                                    }),
+
+                                                new Button { ImageSource = Images.Delete } .Standard() .Danger() .Round(40) .Center()
+                                                    .Bind(nameof(vm.DeleteTopic)),
+                                            },
+                                        }
+                                    } .Padding(5) .SetTranslationY(-100),
+                                },
+
+                                // FOOTER - Actions
+                                Footer = new ContentView
+                                {
+                                    Content = new Button
+                                    {
+                                        ImageSource = Images.Add, Opacity = 0, Margin = new Thickness(5, 0, 5, 0),
+
+                                        Behaviors =
+                                        {
+                                            new FadingBehavior { }
+                                                .BindBehavior(FadingBehavior.IsActiveProperty, nameof(vm.SelectedTopic), converter: new NullToBool()),
+                                            new MovingBehavior { MoveTo = EMoveTo.End }
+                                                .BindBehavior(MovingBehavior.IsActiveProperty, nameof(vm.SelectedTopic), converter: new NullToBool()),
+                                        },
+                                    } .Standard() .Round(40) .SetTranslationX(60) .CenterV() .Right() .Width(40)
+                                        .Bind(nameof(vm.CreateInformation)),
+                                }
+
+                            } .VerticalListStyle() .SingleSelection() .FillExpandV()
+                                .Row(Row.Minute) .Col(Col.Information)
+                                .Bind(CollectionView.ItemsSourceProperty, nameof(vm.Information)),
+
+                            new AdMobView { AdUnitId = Constants.AdMinute }
+                                .Row(Row.Banner) .ColSpan(2),
+                        }
+                    } .Standard(),
+
+                    // Black mask
+                    new BoxView
+                    {
+                        BackgroundColor = Color.Black, Opacity = 0, InputTransparent = true,
+
                         Behaviors =
                         {
-                            new FadingBehavior { }
-                                .BindBehavior(FadingBehavior.IsActiveProperty, nameof(vm.SelectedTopic), converter: new NullToBool()),
+                            new FadingBehavior(0.5)
+                                .BindBehavior(FadingBehavior.IsActiveProperty, nameof(vm.IsLocked))
                         },
 
-                        // Actions
-                        Footer = new Grid
-                        {
-                            Children =
-                            {
-                                new Button
-                                {
-                                    ImageSource = Images.Add, Margin = 10,
+                        GestureRecognizers = { new TapGestureRecognizer() .Invoke(l => l.Tapped += (s, e) => vm.ClearDialogs()) }
+                    } .Invoke(c =>
+                    {
+                        AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0, 0, 1, 1));
+                        AbsoluteLayout.SetLayoutFlags(c, AbsoluteLayoutFlags.SizeProportional);
+                    }),
 
-                                    Behaviors =
-                                    {
-                                        new MovingBehavior { MoveTo = EMoveTo.End }
-                                            .BindBehavior(MovingBehavior.IsActiveProperty, nameof(vm.SelectedTopic), converter: new NullToBool()),
-                                    },
-                                } .Standard() .Round(48) .SetTranslationX(60) .Right()
-                                    .Bind(nameof(vm.CreateInformation)),
-                            },
-                        } .Center(),
-                    } .VerticalListStyle() .Single()
-                        .Row(Row.Minute) .Col(Col.Information)
-                        .Bind(CollectionView.ItemsSourceProperty, nameof(vm.Information)),
-
-                    new InformationDialog(EDockTo.End)
-                        .ColSpan(2)
+                    // Dialogs
+                    new InformationDialog(EDockTo.Start) .Center()
                         .Bind(InformationDialog.IsOpenProperty, nameof(vm.SelectedInformation), converter: new NullToBool())
-                        .Invoke(l => l.Close += () =>
+                        .Invoke(c =>
                         {
-                            if (!vm.IsSavingInformation)
-                                vm.SelectedInformation = null;
-                            else
-                                toastService.ShortAlert("Aguarde a operação de salvar!");
+                            AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0.5, 0.5, 0.8, 0.7));
+                            AbsoluteLayout.SetLayoutFlags(c, AbsoluteLayoutFlags.All);
+
+                            c.Close += () =>
+                            {
+                                if (!vm.IsSavingInformation)
+                                    vm.SelectedInformation = null;
+                                else
+                                    toastService.ShortAlert("Aguarde a operação de salvar!");
+                            };
                         }),
 
-                    new PersonDialog(vm, EDockTo.End)
-                        .Assign(out PersonDialog personDialog)
-                        .ColSpan(2)
-                        .Invoke(l => l.Close += () =>
+                    new PersonDialog(vm, EDockTo.Start) .Center()
+                        .Bind(InformationDialog.IsOpenProperty, nameof(vm.IsPeopleOpen))
+                        .Invoke(c =>
                         {
-                            if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
-                                personDialog.IsOpen = false;
-                            else
-                                toastService.ShortAlert("Aguarde a operação de salvar!");
+                            AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0.5, 0.5, 0.8, 0.7));
+                            AbsoluteLayout.SetLayoutFlags(c, AbsoluteLayoutFlags.All);
+
+                            c.Close += () =>
+                            {
+                                if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
+                                    vm.IsPeopleOpen = false;
+                                else
+                                    toastService.ShortAlert("Aguarde a operação de salvar!");
+                            };
                         }),
 
-                    new TimeDialog(EDockTo.End) { }
-                        .Assign(out TimeDialog timeDialog)
-                        .ColSpan(2)
-                        .Invoke(l => l.Close += () =>
+                    new TimeDialog(EDockTo.Start)
+                        .Bind(InformationDialog.IsOpenProperty, nameof(vm.IsTimeOpen))
+                        .Invoke(c =>
                         {
-                            timeDialog.IsOpen = false;
+                            AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0.5, 0.5, 0.8, 0.7));
+                            AbsoluteLayout.SetLayoutFlags(c, AbsoluteLayoutFlags.All);
+
+                            c.Close += () =>
+                            {
+                                vm.IsTimeOpen = false;
+                            };
                         }),
 
-                    new MinuteNameDialog(EDockTo.End) { }
-                        .Assign(out MinuteNameDialog minuteNameDialog)
-                        .ColSpan(2)
-                        .Invoke(l => l.Close += () =>
+                    new MinuteNameDialog(EDockTo.Start) .Center()
+                        .Bind(InformationDialog.IsOpenProperty, nameof(vm.IsMinuteNameOpen))
+                        .Invoke(c =>
                         {
-                            if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
-                                minuteNameDialog.IsOpen = false;
-                            else
-                                toastService.ShortAlert("Aguarde a operação de salvar!");
-                        }),
+                            AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0.5, 0.3, 0.8, 1));
+                            AbsoluteLayout.SetLayoutFlags(c, AbsoluteLayoutFlags.All);
 
-                    new AdMobView { AdUnitId = Constants.AdMinute }
-                        .Row(Row.Banner) .ColSpan(2),
+                            c.Close += () =>
+                            {
+                                if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
+                                    vm.IsMinuteNameOpen = false;
+                                else
+                                    toastService.ShortAlert("Aguarde a operação de salvar!");
+                            };
+                        }),
                 }
-            }.Standard();
+            };
 
             ToolbarItems.Add(new ToolbarItem
             {
                 IconImageSource = Images.Minute,
-            }.Invoke(l => l.Clicked += (s, e) =>
+            }.Invoke(c => c.Clicked += (s, e) =>
             {
-                if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
+                if (!vm.IsSaving)
                 {
-                    vm.SelectedTopic = null;
-                    vm.SelectedInformation = null;
-                    topicCollection.SelectedItem = null;
-                    vm.ClearTopicSelection();
-                    timeDialog.IsOpen = false;
-                    personDialog.IsOpen = false;
-
-                    minuteNameDialog.IsOpen = true;
+                    if (vm.IsMinuteNameOpen)
+                        vm.IsMinuteNameOpen = false;
+                    else
+                    {
+                        vm.ClearDialogs();
+                        vm.IsMinuteNameOpen = true;
+                    }
                 }
                 else
                     toastService.ShortAlert("Aguarde a operação de salvar!");
@@ -226,18 +264,17 @@ namespace PROAtas.Views.Pages
             ToolbarItems.Add(new ToolbarItem
             {
                 IconImageSource = Images.People,
-            }.Invoke(l => l.Clicked += (s, e) =>
+            }.Invoke(c => c.Clicked += (s, e) =>
             {
-                if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
+                if (!vm.IsSaving)
                 {
-                    vm.SelectedTopic = null;
-                    vm.SelectedInformation = null;
-                    topicCollection.SelectedItem = null;
-                    vm.ClearTopicSelection();
-                    timeDialog.IsOpen = false;
-                    minuteNameDialog.IsOpen = false;
-
-                    personDialog.IsOpen = true;
+                    if (vm.IsPeopleOpen)
+                        vm.IsPeopleOpen = false;
+                    else
+                    {
+                        vm.ClearDialogs();
+                        vm.IsPeopleOpen = true;
+                    }
                 }
                 else
                     toastService.ShortAlert("Aguarde a operação de salvar!");
@@ -246,18 +283,17 @@ namespace PROAtas.Views.Pages
             ToolbarItems.Add(new ToolbarItem
             {
                 IconImageSource = Images.Time,
-            }.Invoke(l => l.Clicked += (s, e) =>
+            }.Invoke(c => c.Clicked += (s, e) =>
             {
-                if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
+                if (!vm.IsSaving)
                 {
-                    vm.SelectedTopic = null;
-                    vm.SelectedInformation = null;
-                    topicCollection.SelectedItem = null;
-                    vm.ClearTopicSelection();
-                    personDialog.IsOpen = false;
-                    minuteNameDialog.IsOpen = false;
-
-                    timeDialog.IsOpen = true;
+                    if (vm.IsTimeOpen)
+                        vm.IsTimeOpen = false;
+                    else
+                    {
+                        vm.ClearDialogs();
+                        vm.IsTimeOpen = true;
+                    }
                 }
                 else
                     toastService.ShortAlert("Aguarde a operação de salvar!");

@@ -70,6 +70,16 @@ namespace PROAtas.ViewModel
             }
         }
 
+        public Command SelectMinute
+        {
+            get { if (_selectMinute == null) _selectMinute = new Command<MinuteElement>(SelectMinuteExecute); return _selectMinute; }
+        }
+        private Command _selectMinute;
+        private void SelectMinuteExecute(MinuteElement minuteElement)
+        {
+            SelectedMinute = minuteElement;
+        }
+
         public ICommand CreateMinute => new Command(() => CreateMinuteExecute());
         private async void CreateMinuteExecute()
         {

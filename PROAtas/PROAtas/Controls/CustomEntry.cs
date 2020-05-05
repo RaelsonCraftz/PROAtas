@@ -7,7 +7,7 @@ namespace PROAtas.Controls
 {
     public class CustomEntry : Entry
     {
-        private CancellationTokenSource cancellationTokenSource;
+        private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
         public int SaveDelay { get; set; } = 1500;
 
@@ -15,26 +15,29 @@ namespace PROAtas.Controls
         {
             base.OnTextChanged(oldTextValue, newTextValue);
 
-            if (IsFocused)
+            if (IsSavingEnabled && !IsSaving)
             {
-                // Cancels the current execution
-                if (cancellationTokenSource != null) cancellationTokenSource.Cancel();
-
-                // Creates a new instance for the cancellation token
                 IsSaving = true;
-                cancellationTokenSource = new CancellationTokenSource();
 
                 // Executes a background operation
                 Task.Run(async () =>
                 {
+                    // Cancels the current execution
+                    if (cancellationTokenSource != null) cancellationTokenSource.Cancel();
+
+                    // Creates a new instance for the cancellation token
+                    cancellationTokenSource = new CancellationTokenSource();
+                    
                     // Takes the token reference reference that will be cancelled after the next character inserted
-                    var token = cancellationTokenSource.Token;
+                    var tokenSource = cancellationTokenSource;
                     // Await a certain time before trying another search
                     await Task.Delay(SaveDelay);
 
                     // If the token wasn't cancelled (when another character is inserted), do the search
-                    if (!token.IsCancellationRequested)
+                    if (!tokenSource.Token.IsCancellationRequested)
                     {
+                        tokenSource.Dispose();
+                        
                         Dispatcher.BeginInvokeOnMainThread(() =>
                         {
                             if (SaveCommandParameter == null)
@@ -70,5 +73,12 @@ namespace PROAtas.Controls
             set { SetValue(IsSavingProperty, value); }
         }
         public static readonly BindableProperty IsSavingProperty = BindableProperty.Create(nameof(IsSaving), typeof(bool), typeof(CustomEntry), false);
+
+        public bool IsSavingEnabled
+        {
+            get { return (bool)GetValue(IsSavingEnabledProperty); }
+            set { SetValue(IsSavingEnabledProperty, value); }
+        }
+        public static readonly BindableProperty IsSavingEnabledProperty = BindableProperty.Create(nameof(IsSavingEnabled), typeof(bool), typeof(CustomEntry), true);
     }
 }

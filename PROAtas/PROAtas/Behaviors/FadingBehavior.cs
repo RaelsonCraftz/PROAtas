@@ -7,6 +7,12 @@ namespace PROAtas.Behaviors
     public class FadingBehavior : Behavior<VisualElement>
     {
         private VisualElement Control;
+        private double fadeTo;
+
+        public FadingBehavior(double fadeTo = 1)
+        {
+            this.fadeTo = fadeTo;
+        }
 
         #region Behavior Implementation
 
@@ -56,15 +62,17 @@ namespace PROAtas.Behaviors
         {
             if (Control != null)
             {
+                ViewExtensions.CancelAnimations(Control);
+                
                 if (IsActive)
                 {
-                    Control.IsVisible = true;
-                    await Control.FadeTo(1, 250, Easing.Linear);
+                    Control.InputTransparent = false;
+                    await Control.FadeTo(fadeTo, 250, Easing.Linear);
                 }
                 else
                 {
+                    Control.InputTransparent = true;
                     await Control.FadeTo(0, 250, Easing.Linear);
-                    Control.IsVisible = false;
                 }
             }
         }

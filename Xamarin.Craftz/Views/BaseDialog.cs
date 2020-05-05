@@ -18,49 +18,39 @@ namespace Craftz.Views
         public delegate void OnClose();
         public event OnClose Close;
 
-        public View InnerContent
-        {
-            get { return _innerContent; }
-            set
-            {
-                _innerContent = value;
-
-                switch (DockTo)
-                {
-                    case EDockTo.Start:
-                        _innerContent.TranslationX = -DeviceDisplay.MainDisplayInfo.Width / DeviceDisplay.MainDisplayInfo.Density;
-                        break;
-                    case EDockTo.Top:
-                        _innerContent.TranslationY = -DeviceDisplay.MainDisplayInfo.Height / DeviceDisplay.MainDisplayInfo.Density;
-                        break;
-                    case EDockTo.End:
-                        _innerContent.TranslationX = DeviceDisplay.MainDisplayInfo.Width / DeviceDisplay.MainDisplayInfo.Density;
-                        break;
-                    case EDockTo.Bottom:
-                        _innerContent.TranslationX = DeviceDisplay.MainDisplayInfo.Height / DeviceDisplay.MainDisplayInfo.Density;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-        private View _innerContent;
-
         public EDockTo DockTo { get; set; }
 
-        public BaseDialog()
+        public BaseDialog(EDockTo? dockTo = null, double translateToX = 100, double translateToY = 100)
         {
             Opacity = 0;
             InputTransparent = true;
+
+            this.translateToY = translateToX;
+            this.translateToX = translateToY;
+
+            DockTo = dockTo ?? EDockTo.None;
+
+            switch (DockTo)
+            {
+                case EDockTo.Start:
+                    this.TranslationX = -this.translateToY;
+                    break;
+                case EDockTo.Top:
+                    this.TranslationY = -this.translateToX;
+                    break;
+                case EDockTo.End:
+                    this.TranslationX = this.translateToY;
+                    break;
+                case EDockTo.Bottom:
+                    this.TranslationX = this.translateToX;
+                    break;
+                default:
+                    break;
+            }
         }
 
-        public BaseDialog(EDockTo? dockTo)
-        {
-            //IsVisible = false;
-            Opacity = 0;
-            InputTransparent = true;
-            DockTo = dockTo ?? EDockTo.None;
-        }
+        private readonly double translateToX;
+        private readonly double translateToY;
 
         public bool IsOpen
         {
@@ -91,44 +81,46 @@ namespace Craftz.Views
 
         private async void Animate()
         {
+            ViewExtensions.CancelAnimations(this);
+
             if (IsOpen)
             {
                 Opening?.Invoke();
-
+                
                 InputTransparent = false;
 
-                _ = InnerContent?.TranslateTo(0, 0, 500, Easing.CubicOut);
+                _ = this?.TranslateTo(0, 0, 500, Easing.CubicOut);
                 await this.FadeTo(1, 500, Easing.Linear);
             }
             else
             {
                 Closing?.Invoke();
 
+                InputTransparent = true;
+
                 switch (DockTo)
                 {
                     case EDockTo.Start:
-                        _ = InnerContent?.TranslateTo(-Width, 0, 500, Easing.CubicOut);
+                        _ = this?.TranslateTo(-translateToY, 0, 500, Easing.CubicOut);
                         break;
                     case EDockTo.Top:
-                        _ = InnerContent?.TranslateTo(0, -Height, 500, Easing.CubicOut);
+                        _ = this?.TranslateTo(0, -translateToX, 500, Easing.CubicOut);
                         break;
                     case EDockTo.End:
-                        _ = InnerContent?.TranslateTo(Width, 0, 500, Easing.CubicOut);
+                        _ = this?.TranslateTo(translateToY, 0, 500, Easing.CubicOut);
                         break;
                     case EDockTo.Bottom:
-                        _ = InnerContent?.TranslateTo(0, Height, 500, Easing.CubicOut);
+                        _ = this?.TranslateTo(0, translateToX, 500, Easing.CubicOut);
                         break;
                     default:
                         break;
                 }
 
                 await this.FadeTo(0, 500, Easing.Linear);
-
-                InputTransparent = true;
             }
         }
 
-        protected void CancelDialog(object sender, EventArgs e)
+        public void CancelDialog()
         {
             Close?.Invoke();
         }

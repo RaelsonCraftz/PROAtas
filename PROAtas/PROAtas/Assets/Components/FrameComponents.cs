@@ -191,10 +191,8 @@ namespace PROAtas.Assets.Components
             return frame;
         }
 
-        public static TFrame FramedCustomEntry<TFrame>(this TFrame frame, ImageSource headerImage, string placeholder, string savePath, string textPath, object saveSource = null, string isSavingPath = null, bool hasSaveParameter = false, int saveDelay = 1500) where TFrame : Frame
+        public static TFrame FramedCustomEntry<TFrame>(this TFrame frame, out CustomEntry customEntry, ImageSource headerImage) where TFrame : Frame
         {
-            var customEntry = new CustomEntry { SaveDelay = saveDelay, Placeholder = placeholder, PlaceholderColor = Colors.SecondaryText, Visual = VisualMarker.Default };
-
             frame.CornerRadius = 6;
             frame.Padding = 5;
             frame.BackgroundColor = Colors.TextIcons;
@@ -206,13 +204,13 @@ namespace PROAtas.Assets.Components
 
                 RowSpacing = 0, ColumnSpacing = 5,
 
-                GestureRecognizers =
-                {
-                    new TapGestureRecognizer { } .Invoke(l => l.Tapped += (s, e) => customEntry.Focus())
-                },
-
                 Children =
                 {
+                    // Required bindings
+                    new CustomEntry { SaveDelay = 1500, PlaceholderColor = Colors.SecondaryText, Visual = VisualMarker.Default } .Standard()
+                        .Assign(out customEntry)
+                        .Col(1),
+
                     // Header image
                     new Image
                     {
@@ -230,25 +228,8 @@ namespace PROAtas.Assets.Components
                     new ActivityIndicator { Color = Colors.Primary } .Size(32)
                         .Col(0)
                         .Bind(nameof(CustomEntry.IsSaving), source: customEntry),
-
-                    // Required bindings
-                    customEntry .Standard()
-                        .Col(1)
-                        .Bind(CustomEntry.TextProperty, textPath, mode: BindingMode.TwoWay)
-                        .Bind(CustomEntry.SaveCommandProperty, savePath, source: saveSource),
-
                 }
             };
-
-            // Optional bindings
-            if (!string.IsNullOrEmpty(isSavingPath))
-                customEntry.Bind(CustomEntry.IsSavingProperty, isSavingPath, mode: BindingMode.OneWayToSource);
-
-            if (!string.IsNullOrEmpty(textPath))
-                customEntry.Bind(CustomEntry.TextProperty, textPath);
-
-            if (hasSaveParameter)
-                customEntry.Bind(CustomEntry.SaveCommandParameterProperty);
 
             return frame;
         }
@@ -302,12 +283,12 @@ namespace PROAtas.Assets.Components
             frame.Content = new Grid
             {
                 ColumnDefinitions = Columns.Define(
-                    (0, 32),
+                    (0, 18),
                     (1, GridLength.Star)),
 
                 RowDefinitions = Rows.Define(
-                    (0, GridLength.Auto),
-                    (1, GridLength.Auto)),
+                    (0, 32),
+                    (1, 48)),
 
                 RowSpacing = 0, ColumnSpacing = 5,
 
@@ -326,9 +307,9 @@ namespace PROAtas.Assets.Components
                     // Date picker
                     new Frame
                     {
-                        Padding = 5, CornerRadius = 6, BackgroundColor = Colors.Accent,
+                        Padding = new Thickness(5, 0, 5, 0), CornerRadius = 6, BackgroundColor = Colors.Accent,
 
-                        Content = new CustomDatePicker { FontSize = 20, TextColor = Colors.TextIcons, BackgroundColor = Colors.Accent, Visual = VisualMarker.Material }
+                        Content = new CustomDatePicker { FontSize = 14, TextColor = Colors.TextIcons, BackgroundColor = Colors.Accent, Visual = VisualMarker.Default }
                             .Assign(out CustomDatePicker datePicker)
                             .Bind(CustomDatePicker.CommandProperty, saveDatePath)
                             .Bind(CustomDatePicker.DateProperty, datePath),
@@ -353,12 +334,12 @@ namespace PROAtas.Assets.Components
             frame.Content = new Grid
             {
                 ColumnDefinitions = Columns.Define(
-                    (0, 32),
+                    (0, 18),
                     (1, GridLength.Star)),
 
                 RowDefinitions = Rows.Define(
-                    (0, GridLength.Auto),
-                    (1, GridLength.Auto)),
+                    (0, 32),
+                    (1, 48)),
 
                 RowSpacing = 0,
                 ColumnSpacing = 5,
@@ -378,9 +359,9 @@ namespace PROAtas.Assets.Components
                     // Time picker
                     new Frame
                     {
-                        Padding = 5, CornerRadius = 6, BackgroundColor = Colors.Accent,
+                        Padding = new Thickness(5, 0, 5, 0), CornerRadius = 6, BackgroundColor = Colors.Accent,
 
-                        Content = new CustomTimePicker { FontSize = 20, TextColor = Colors.TextIcons, BackgroundColor = Colors.Accent, Visual = VisualMarker.Material }
+                        Content = new CustomTimePicker { FontSize = 14, TextColor = Colors.TextIcons, BackgroundColor = Colors.Accent, Visual = VisualMarker.Default }
                             .Assign(out CustomTimePicker timePicker)
                             .Bind(CustomTimePicker.CommandProperty, saveTimePath)
                             .Bind(CustomTimePicker.TimeProperty, timePath),

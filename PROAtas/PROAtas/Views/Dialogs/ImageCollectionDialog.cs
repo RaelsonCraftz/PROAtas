@@ -11,73 +11,31 @@ namespace PROAtas.Views.Dialogs
 {
     public class ImageCollectionDialog : BaseDialog
     {
-        enum Row { Header, Content, Action }
-
         public ImageCollectionDialog(object parentViewModel, EDockTo? dockSide = null) : base(dockSide) => Build(parentViewModel);
 
         public CollectionView imageCollection;
         private void Build(object parentViewModel)
         {
-            Content = new Grid
+            Content = new Frame
             {
-                Children =
+                // Image Collection
+                Content = new CollectionView
                 {
-                    // Black mask
-                    new BoxView
+                    // HEADER - Image
+                    Header = new ContentView
                     {
-                        GestureRecognizers = { new TapGestureRecognizer() .Invoke(l => l.Tapped += CancelDialog) }
-                    } .Mask(),
+                        Content = new Image { Source = Images.Storage }.Center(),
+                    },
 
-                    new Grid
-                    {
-                        RowDefinitions = Rows.Define(
-                            (0, GridLength.Auto),
-                            (1, GridLength.Star)),
-
-                        Margin = new Thickness(50, 30, 50, 30),
-                        RowSpacing = 5, ColumnSpacing = 0,
-
-                        Children =
-                        {
-                            // Close button
-                            new ImageButton { Source = Images.Close, BackgroundColor = Color.Transparent } .Center()
-                                .Row(0)
-                                .Invoke(l => l.Clicked += CancelDialog),
-
-                            // Border
-                            new Frame
-                            {
-                                Content = new Grid
-                                {
-                                    RowDefinitions = Rows.Define(
-                                        (Row.Header, GridLength.Auto),
-                                        (Row.Content, GridLength.Star),
-                                        (Row.Action, GridLength.Auto)),
-
-                                    Padding = 5,
-                                    RowSpacing = 5, ColumnSpacing = 0,
-
-                                    // Dialog Content
-                                    Children =
-                                    {
-                                        new Image { Source = Images.Storage } .Center()
-                                            .Row(Row.Header),
-
-                                        new CollectionView { ItemTemplate = MinuteImageTemplate.New(), SelectionMode = SelectionMode.Single, } .GridStyle(ItemsLayoutOrientation.Vertical, 3, 5)
-                                            .Assign(out imageCollection)
-                                            .Row(Row.Content)
-                                            .Bind(CollectionView.ItemsSourceProperty, nameof(SettingsViewModel.ImageCollection))
-                                            .Bind(CollectionView.SelectionChangedCommandProperty, nameof(SettingsViewModel.SelectCollection), source: parentViewModel)
-                                            .Bind(CollectionView.SelectionChangedCommandParameterProperty, nameof(CollectionView.SelectedItem), source: imageCollection),
-                                    }
-                                }
-                            } .Standard() .Row(1),
-                        }
-                    } .Transparent() .Assign(out Grid innerContent)
-                }
-            };
-
-            InnerContent = innerContent;
+                    // BODY - Minute images list
+                    ItemTemplate = MinuteImageTemplate.New(),
+                    SelectionMode = SelectionMode.Single,
+                } .GridStyle(ItemsLayoutOrientation.Vertical, 3, 5)
+                    .Assign(out imageCollection)
+                    .Bind(CollectionView.ItemsSourceProperty, nameof(SettingsViewModel.ImageCollection))
+                    .Bind(CollectionView.SelectionChangedCommandProperty, nameof(SettingsViewModel.SelectCollection), source: parentViewModel)
+                    .Bind(CollectionView.SelectionChangedCommandParameterProperty, nameof(CollectionView.SelectedItem), source: imageCollection),
+            } .Standard();
         }
     }
 }

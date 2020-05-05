@@ -11,6 +11,15 @@ namespace PROAtas.Behaviors
 
         private VisualElement Control;
 
+        public MovingBehavior(double translateToX = 0, double translateToY = 0)
+        {
+            this.translateToX = translateToX;
+            this.translateToY = translateToY;
+        }
+
+        private double translateToX;
+        private double translateToY;
+
         #region Behavior Implementation
 
         private void BindingContextAttached(object sender, EventArgs args)
@@ -61,22 +70,24 @@ namespace PROAtas.Behaviors
         {
             if (Control != null)
             {
-                await Task.Delay(100);
-                if (IsActive) await Control.TranslateTo(0, 0, 500, Easing.CubicOut);
+                ViewExtensions.CancelAnimations(Control);
+
+                if (IsActive) 
+                    await Control.TranslateTo(0, 0, 500, Easing.CubicOut);
                 else
                     switch (MoveTo)
                     {
                         case EMoveTo.Start:
-                            await Control.TranslateTo(-Control.Width, 0, 500, Easing.CubicOut);
+                            await Control.TranslateTo(translateToX == 0 ? -Control.Width : -translateToX, 0, 500, Easing.CubicOut);
                             break;
                         case EMoveTo.Top:
-                            await Control.TranslateTo(0, -Control.Height, 500, Easing.CubicOut);
+                            await Control.TranslateTo(0, translateToY == 0 ? -Control.Height : -translateToY, 500, Easing.CubicOut);
                             break;
                         case EMoveTo.End:
-                            await Control.TranslateTo(Control.Width, 0, 500, Easing.CubicOut);
+                            await Control.TranslateTo(translateToX == 0 ? Control.Width : translateToX, 0, 500, Easing.CubicOut);
                             break;
                         case EMoveTo.Bottom:
-                            await Control.TranslateTo(0, Control.Height, 500, Easing.CubicOut);
+                            await Control.TranslateTo(0, translateToY == 0 ? Control.Height : translateToY, 500, Easing.CubicOut);
                             break;
                     }
             }

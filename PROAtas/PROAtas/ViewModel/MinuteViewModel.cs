@@ -28,12 +28,36 @@ namespace PROAtas.ViewModel
 
         public Minute Minute { get; set; }
 
+        public bool IsLocked
+        {
+            get => SelectedInformation != null || IsPeopleOpen || IsTimeOpen || IsMinuteNameOpen;
+        }
+
+        public bool IsSaving
+        {
+            get => IsSavingTopic || IsSavingInformation || IsSavingMinuteName || People.Any(l => l.IsSaving);
+        }
+
+        public bool IsPeopleOpen
+        {
+            get => _isPeopleOpen;
+            set { _isPeopleOpen = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(IsLocked)); }
+        }
+        private bool _isPeopleOpen;
+
         public bool IsTimeOpen
         {
             get => _isTimeOpen;
-            set { _isTimeOpen = value; NotifyPropertyChanged(); }
+            set { _isTimeOpen = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(IsLocked)); }
         }
         private bool _isTimeOpen;
+
+        public bool IsMinuteNameOpen
+        {
+            get => _isMinuteNameOpen;
+            set { _isMinuteNameOpen = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(IsLocked)); }
+        }
+        private bool _isMinuteNameOpen;
 
         public bool IsSavingTopic
         {
@@ -55,6 +79,13 @@ namespace PROAtas.ViewModel
             set { _isSavingMinuteName = value; NotifyPropertyChanged(); }
         }
         private bool _isSavingMinuteName;
+
+        public bool IsSavingEnabled
+        {
+            get => _isSavingEnabled;
+            set { _isSavingEnabled = value; NotifyPropertyChanged(); }
+        }
+        private bool _isSavingEnabled;
 
         public bool HasError
         {
@@ -129,7 +160,7 @@ namespace PROAtas.ViewModel
         public InformationElement SelectedInformation
         {
             get => _selectedInformation;
-            set { _selectedInformation = value; NotifyPropertyChanged(); }
+            set { _selectedInformation = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(IsLocked)); }
         }
         private InformationElement _selectedInformation;
 
@@ -334,10 +365,12 @@ namespace PROAtas.ViewModel
         {
             if (param != null)
             {
+                IsSavingEnabled = false;
+
                 ClearTopicSelection(param);
 
                 param.IsSelected = true;
-                SelectedTopic = param;
+                SelectedTopic = new TopicElement(param.Model);
 
                 HasError = false;
 
@@ -356,6 +389,8 @@ namespace PROAtas.ViewModel
                 }));
                 if (log != null)
                     toastService.ShortAlert(log);
+
+                IsSavingEnabled = true;
             }
         }
 
@@ -368,10 +403,13 @@ namespace PROAtas.ViewModel
 
                 var log = logService.LogAction(() =>
                 {
-                    var topic = SelectedTopic.Model;
-                    topic.Text = param;
+                    var topic = Topics.FirstOrDefault(l => l.Model.Id == SelectedTopic.Model.Id);
+                    if (topic != null)
+                    {
+                        topic.Text = param;
 
-                    dataService.TopicRepository.Update(topic);
+                        dataService.TopicRepository.Update(topic.Model);
+                    }
                 });
                 if (log != null)
                 {
@@ -493,6 +531,14 @@ namespace PROAtas.ViewModel
             foreach (var topic in Topics)
                 if (topic != param)
                     topic.IsSelected = false;
+        }
+
+        public void ClearDialogs()
+        {
+            SelectedInformation = null;
+            IsPeopleOpen = false;
+            IsTimeOpen = false;
+            IsMinuteNameOpen = false;
         }
 
         #endregion
