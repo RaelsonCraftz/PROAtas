@@ -8,12 +8,16 @@ namespace PROAtas.Assets.Theme
         public static ImageSource About = ImageSource.FromFile($"ic{nameof(About)}.png");
         public static ImageSource AboutBlack = ImageSource.FromFile($"ic{nameof(AboutBlack)}.png");
         public static ImageSource Add = ImageSource.FromFile($"ic{nameof(Add)}.png");
+        public static ImageSource AppStore = ImageSource.FromFile($"ic{nameof(AppStore)}.png");
         public static ImageSource Check = ImageSource.FromFile($"ic{nameof(Check)}.png");
         public static ImageSource Close = ImageSource.FromFile($"ic{nameof(Close)}.png");
+        public static ImageSource CloseBlack = ImageSource.FromFile($"ic{nameof(CloseBlack)}.png");
         public static ImageSource Collection = ImageSource.FromFile($"ic{nameof(Collection)}.png");
+        public static ImageSource Copy = ImageSource.FromFile($"ic{nameof(Copy)}.png");
         public static ImageSource Date = ImageSource.FromFile($"ic{nameof(Date)}.png");
         public static ImageSource Delete = ImageSource.FromFile($"ic{nameof(Delete)}.png");
         public static ImageSource Edit = ImageSource.FromFile($"ic{nameof(Edit)}.png");
+        public static ImageSource Email = ImageSource.FromFile($"ic{nameof(Email)}.png");
         public static ImageSource FontSize = ImageSource.FromFile($"ic{nameof(FontSize)}.png");
         public static ImageSource Home = ImageSource.FromFile($"ic{nameof(Home)}.png");
         public static ImageSource HomeBlack = ImageSource.FromFile($"ic{nameof(HomeBlack)}.png");
@@ -31,6 +35,7 @@ namespace PROAtas.Assets.Theme
         public static ImageSource People = ImageSource.FromFile($"ic{nameof(People)}.png");
         public static ImageSource Person = ImageSource.FromFile($"ic{nameof(Person)}.png");
         public static ImageSource PersonBlack = ImageSource.FromFile($"ic{nameof(PersonBlack)}.png");
+        public static ImageSource PlayStore = ImageSource.FromFile($"ic{nameof(PlayStore)}.png");
         public static ImageSource Remove = ImageSource.FromFile($"ic{nameof(Remove)}.png");
         public static ImageSource Send = ImageSource.FromFile($"ic{nameof(Send)}.png");
         public static ImageSource Settings = ImageSource.FromFile($"ic{nameof(Settings)}.png");

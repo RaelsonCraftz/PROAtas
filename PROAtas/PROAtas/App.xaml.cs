@@ -68,17 +68,15 @@ namespace PROAtas
             settingsViewModel = new SettingsViewModel();
             minuteViewModel = new MinuteViewModel();
 
-            
-
             MainPage = new AppShell { } .Standard();
 
             var version = App.Current.Properties[Constants.Version]?.ToString();
-            if (version != "v11")
+            if (version != "v13")
             {
-                Current.Properties[Constants.Version] = "v11";
+                Current.Properties[Constants.Version] = "v13";
                 Current.SavePropertiesAsync();
 
-                Application.Current.MainPage.DisplayAlert("Versão 11", "Olá!\r\n\r\nEsta é a versão 11 do PRO Atas. As principais mudanças são:\r\n\r\n- Layout completamente revisado;\r\n- As modificações nas atas agora são salvas automaticamente;\r\n- O banco de dados precisou ser remodulado, por isso as atas antigas não está mais listadas;\r\n- Inúmeros bugs foram corrigidos\r\n\r\nEste aplicativo é desenvolvido por Raelson por iniciativa própria. Caso precise entrar em contato, enviar e-mail para raelsoncraftz@gmail.com", "Legal!");
+                Application.Current.MainPage.DisplayAlert("Versão 13", "Olá!\r\n\r\nEsta é a versão 13 do PRO Atas. As principais mudanças são:\r\n\r\n- Agora é possível mudar a imagem do cabeçalho da ata em 'Configurações';\r\n- Página 'Sobre Mim' acrescentada;\r\n- Performance do aplicativo substancialmente melhorada;\r\n- Melhorias gerais na experiência de uso;\r\n- Alguns bugs foram corrigidos;\r\n\r\nEste aplicativo é desenvolvido por Raelson por iniciativa própria. Caso precise entrar em contato, enviar e-mail para raelsoncraftz@gmail.com", "Legal!");
             }
         }
 

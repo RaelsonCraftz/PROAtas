@@ -54,7 +54,7 @@ namespace PROAtas.Views.DataTemplates
                                         personEntry.Bind(CustomEntry.SaveCommandProperty, nameof(MinuteViewModel.SavePerson), source: viewModel);
                                         personEntry.Bind(CustomEntry.SaveCommandParameterProperty);
                                         personEntry.Bind(CustomEntry.TextProperty, nameof(PersonElement.Name));
-                                        personEntry.Bind(CustomEntry.IsSavingProperty, nameof(PersonElement.IsSaving));
+                                        personEntry.Bind(CustomEntry.IsSavingProperty, nameof(PersonElement.IsSaving), BindingMode.OneWayToSource);
                                     }),
 
                                 new Button { ImageSource = Images.Delete } .Danger() .Round(40) .Center()

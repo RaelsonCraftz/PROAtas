@@ -129,19 +129,11 @@ namespace PROAtas.ViewModel
         }
         private TimeSpan _end;
 
-        public ObservableCollection<PersonElement> People
-        {
-            get => _people;
-            set { _people = value; NotifyPropertyChanged(); }
-        }
-        private ObservableCollection<PersonElement> _people = new ObservableCollection<PersonElement>();
+        public ObservableCollection<PersonElement> People { get; } = new ObservableCollection<PersonElement>();
 
-        public ObservableCollection<TopicElement> Topics
-        {
-            get => _topics;
-            set { _topics = value; NotifyPropertyChanged(); }
-        }
-        private ObservableCollection<TopicElement> _topics = new ObservableCollection<TopicElement>();
+        public ObservableCollection<TopicElement> Topics { get; } = new ObservableCollection<TopicElement>();
+
+        public ObservableCollection<InformationElement> Information { get; } = new ObservableCollection<InformationElement>();
 
         public TopicElement SelectedTopic
         {
@@ -149,13 +141,6 @@ namespace PROAtas.ViewModel
             set { _selectedTopic = value; NotifyPropertyChanged(); }
         }
         private TopicElement _selectedTopic;
-
-        public ObservableCollection<InformationElement> Information
-        {
-            get => _information;
-            set { _information = value; NotifyPropertyChanged(); }
-        }
-        private ObservableCollection<InformationElement> _information = new ObservableCollection<InformationElement>();
 
         public InformationElement SelectedInformation
         {
@@ -360,37 +345,54 @@ namespace PROAtas.ViewModel
                 toastService.ShortAlert(log);
         }
 
+        private object choosingTopic = new object();
         public ICommand SelectTopic => new Command<TopicElement>(p => SelectTopicExecute(p));
         private async void SelectTopicExecute(TopicElement param)
         {
             if (param != null)
             {
-                IsSavingEnabled = false;
-
-                ClearTopicSelection(param);
-
-                param.IsSelected = true;
-                SelectedTopic = new TopicElement(param.Model);
-
-                HasError = false;
-
-                var log = await logService.LogActionAsync(Task.Run(() =>
+                if (!IsSaving)
                 {
+                    IsSavingEnabled = false;
 
-                    var information = dataService.InformationRepository.GetAll().Where(l => l.IdTopic == param.Model.Id).ToList();
+                    ClearTopicSelection(param.Model.Id);
 
-                    var informationElements = new List<InformationElement>();
-                    information.ForEach(l => informationElements.Add(new InformationElement(l)));
-
-                    InvokeMainThread(() =>
+                    if (!param.IsSelected)
                     {
-                        Information = new ObservableCollection<InformationElement>(informationElements);
-                    });
-                }));
-                if (log != null)
-                    toastService.ShortAlert(log);
+                        param.IsSelected = true;
+                        SelectedTopic = new TopicElement(param.Model);
 
-                IsSavingEnabled = true;
+                        var log = await logService.LogActionAsync(Task.Run(() =>
+                        {
+
+                            var information = dataService.InformationRepository.GetAll().Where(l => l.IdTopic == param.Model.Id).ToList();
+
+                            var informationElements = new List<InformationElement>();
+                            information.ForEach(l => informationElements.Add(new InformationElement(l)));
+
+                            InvokeMainThread(() =>
+                            {
+                                foreach (var info in informationElements)
+                                    Information.Add(info);
+
+                            });
+                        }));
+                        if (log != null)
+                        {
+                            toastService.ShortAlert(log);
+                        }
+
+                    }
+                    else
+                    {
+                        param.IsSelected = false;
+                        SelectedTopic = null;
+                    }
+                
+                    IsSavingEnabled = true;
+                }
+                else
+                    toastService.ShortAlert("Aguarde a operação de salvar!");
             }
         }
 
@@ -407,6 +409,7 @@ namespace PROAtas.ViewModel
                     if (topic != null)
                     {
                         topic.Text = param;
+                        topic.Model.Text = param;
 
                         dataService.TopicRepository.Update(topic.Model);
                     }
@@ -436,7 +439,7 @@ namespace PROAtas.ViewModel
 
                     // Removing the topic
                     dataService.TopicRepository.Remove(topic);
-                    Topics.Remove(SelectedTopic);
+                    Topics.Remove(Topics.FirstOrDefault(l => l.Model.Id == SelectedTopic.Model.Id));
                     SelectedTopic = null;
 
                     // Renaming the order of all topics
@@ -526,11 +529,17 @@ namespace PROAtas.ViewModel
 
         #region Helpers
 
-        public void ClearTopicSelection(TopicElement param = null)
+        public void ClearTopicSelection(int param = 0)
         {
-            foreach (var topic in Topics)
-                if (topic != param)
-                    topic.IsSelected = false;
+            lock (choosingTopic)
+            {
+                foreach (var topic in Topics)
+                    if (topic.Model.Id != param)
+                        topic.IsSelected = false;
+
+                for (int i = Information.Count - 1; i >= 0; i--)
+                    Information.RemoveAt(i);
+            }
         }
 
         public void ClearDialogs()
@@ -568,8 +577,12 @@ namespace PROAtas.ViewModel
                     End = TimeSpan.ParseExact(model.End, Formats.TimeFormat, CultureInfo.InvariantCulture);
 
                     Information.Clear();
-                    Topics = new ObservableCollection<TopicElement>(topicElements);
-                    People = new ObservableCollection<PersonElement>(peopleElements);
+
+                    foreach (var topic in topicElements)
+                        Topics.Add(topic);
+
+                    foreach (var person in peopleElements)
+                        People.Add(person);
                 });
             });
         }
@@ -577,6 +590,10 @@ namespace PROAtas.ViewModel
         public override void Leave()
         {
             HasError = false;
+
+            People.Clear();
+            Topics.Clear();
+            Information.Clear();
 
             SelectedTopic = null;
             SelectedInformation = null;

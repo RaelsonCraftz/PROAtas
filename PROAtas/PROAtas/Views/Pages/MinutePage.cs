@@ -12,7 +12,6 @@ using PROAtas.Services;
 using PROAtas.ViewModel;
 using PROAtas.Views.DataTemplates;
 using PROAtas.Views.Dialogs;
-using System.Linq;
 using Xamarin.Forms;
 using static Craftz.Views.BaseDialog;
 using static CSharpForMarkup.EnumsForGridRowsAndColumns;
@@ -39,6 +38,17 @@ namespace PROAtas.Views.Pages
         {
             Shell.SetFlyoutBehavior(this, FlyoutBehavior.Disabled);
 
+            Shell.SetBackButtonBehavior(this, new BackButtonBehavior
+            {
+                Command = new Command(async () =>
+                {
+                    if (ViewModel.IsSaving)
+                        toastService.ShortAlert("Aguarde a operação de salvar!");
+                    else
+                        await Shell.Current.Navigation.PopAsync(true);
+                }),
+            });
+            
             Title = "Ata";
 
             var app = App.Current;
@@ -52,12 +62,12 @@ namespace PROAtas.Views.Pages
                     new Grid
                     {
                         RowDefinitions = Rows.Define(
-                            (Row.Minute, GridLength.Star),
+                            (Row.Minute, Star),
                             (Row.Banner, 50)),
 
                         ColumnDefinitions = Columns.Define(
                             (Col.TopicList, 70),
-                            (Col.Information, GridLength.Star)),
+                            (Col.Information, Star)),
 
                         Children =
                         {
@@ -68,7 +78,10 @@ namespace PROAtas.Views.Pages
 
                                 GestureRecognizers =
                                 {
-                                    new TapGestureRecognizer { } .Invoke(c => c.Tapped += (s, e) => topicEntry.Unfocus()),
+                                    new TapGestureRecognizer { } .Invoke(c => c.Tapped += (s, e) =>
+                                    {
+                                        topicEntry.Unfocus();
+                                    }),
                                 },
 
                                 // BODY - List of topics
@@ -77,18 +90,25 @@ namespace PROAtas.Views.Pages
                                 // FOOTER - Action
                                 Footer = new ContentView
                                 {
+                                    Padding = 5,
+
                                     Content = new Button { ImageSource = Images.Add } .Standard() .Round(40) .Center()
                                         .Bind(nameof(vm.CreateTopic)),
                                 },
-                            } .VerticalListStyle() .NoSelection()
+                            } .VerticalListStyle() .SingleSelection()
                                 .Row(Row.Minute) .Col(Col.TopicList)
-                                .Bind(CollectionView.ItemsSourceProperty, nameof(vm.Topics)),
+                                .Bind(CollectionView.ItemsSourceProperty, nameof(vm.Topics))
+                                .Bind(CollectionView.SelectionChangedCommandProperty, nameof(vm.SelectTopic), source: vm)
+                                .Invoke(c => 
+                                {
+                                    c.Bind(CollectionView.SelectionChangedCommandParameterProperty, nameof(CollectionView.SelectedItem), source: c); 
+                                }),
 
                             // Information Collection
                             new CollectionView
                             {
                                 // BODY - List of information
-                                ItemTemplate = InformationTemplate.New(vm), ItemSizingStrategy = ItemSizingStrategy.MeasureAllItems,
+                                ItemTemplate = InformationTemplate.New(vm),
                                 Behaviors =
                                 {
                                     new FadingBehavior { }
@@ -120,9 +140,9 @@ namespace PROAtas.Views.Pages
                                                     .Invoke(c =>
                                                     {
                                                         topicEntry.Placeholder = "Nome do tópico";
-                                                        topicEntry.Bind(CustomEntry.TextProperty, $"{nameof(vm.SelectedTopic)}.{nameof(vm.SelectedTopic.Text)}", mode: BindingMode.TwoWay);
+                                                        topicEntry.Bind(CustomEntry.TextProperty, $"{nameof(vm.SelectedTopic)}.{nameof(vm.SelectedTopic.Text)}");
                                                         topicEntry.Bind(CustomEntry.SaveCommandProperty, nameof(vm.SaveTopicTitle));
-                                                        topicEntry.Bind(CustomEntry.IsSavingProperty, nameof(vm.IsSavingTopic));
+                                                        topicEntry.Bind(CustomEntry.IsSavingProperty, nameof(vm.IsSavingTopic), BindingMode.OneWayToSource);
                                                         topicEntry.Bind(CustomEntry.IsSavingEnabledProperty, nameof(vm.IsSavingEnabled));
                                                     }),
 
@@ -136,9 +156,11 @@ namespace PROAtas.Views.Pages
                                 // FOOTER - Actions
                                 Footer = new ContentView
                                 {
+                                    Padding = 5,
+
                                     Content = new Button
                                     {
-                                        ImageSource = Images.Add, Opacity = 0, Margin = new Thickness(5, 0, 5, 0),
+                                        ImageSource = Images.Add,
 
                                         Behaviors =
                                         {
@@ -147,7 +169,7 @@ namespace PROAtas.Views.Pages
                                             new MovingBehavior { MoveTo = EMoveTo.End }
                                                 .BindBehavior(MovingBehavior.IsActiveProperty, nameof(vm.SelectedTopic), converter: new NullToBool()),
                                         },
-                                    } .Standard() .Round(40) .SetTranslationX(60) .CenterV() .Right() .Width(40)
+                                    } .Standard() .Round(40) .SetTranslationX(50) .Right()
                                         .Bind(nameof(vm.CreateInformation)),
                                 }
 
@@ -171,7 +193,17 @@ namespace PROAtas.Views.Pages
                                 .BindBehavior(FadingBehavior.IsActiveProperty, nameof(vm.IsLocked))
                         },
 
-                        GestureRecognizers = { new TapGestureRecognizer() .Invoke(l => l.Tapped += (s, e) => vm.ClearDialogs()) }
+                        GestureRecognizers = 
+                        { 
+                            new TapGestureRecognizer() .Invoke(l => 
+                            l.Tapped += (s, e) =>
+                            {
+                                if (!vm.IsSaving)
+                                    vm.ClearDialogs();
+                                else
+                                    toastService.ShortAlert("Aguarde a operação de salvar!");
+                            })
+                        },
                     } .Invoke(c =>
                     {
                         AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0, 0, 1, 1));
@@ -179,7 +211,7 @@ namespace PROAtas.Views.Pages
                     }),
 
                     // Dialogs
-                    new InformationDialog(EDockTo.Start) .Center()
+                    new InformationDialog(EDockTo.Start)
                         .Bind(InformationDialog.IsOpenProperty, nameof(vm.SelectedInformation), converter: new NullToBool())
                         .Invoke(c =>
                         {
@@ -188,14 +220,14 @@ namespace PROAtas.Views.Pages
 
                             c.Close += () =>
                             {
-                                if (!vm.IsSavingInformation)
+                                if (!vm.IsSaving)
                                     vm.SelectedInformation = null;
                                 else
                                     toastService.ShortAlert("Aguarde a operação de salvar!");
                             };
                         }),
 
-                    new PersonDialog(vm, EDockTo.Start) .Center()
+                    new PersonDialog(vm, EDockTo.Start)
                         .Bind(InformationDialog.IsOpenProperty, nameof(vm.IsPeopleOpen))
                         .Invoke(c =>
                         {
@@ -204,7 +236,7 @@ namespace PROAtas.Views.Pages
 
                             c.Close += () =>
                             {
-                                if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
+                                if (!vm.IsSaving)
                                     vm.IsPeopleOpen = false;
                                 else
                                     toastService.ShortAlert("Aguarde a operação de salvar!");
@@ -224,16 +256,16 @@ namespace PROAtas.Views.Pages
                             };
                         }),
 
-                    new MinuteNameDialog(EDockTo.Start) .Center()
+                    new MinuteNameDialog(EDockTo.Start)
                         .Bind(InformationDialog.IsOpenProperty, nameof(vm.IsMinuteNameOpen))
                         .Invoke(c =>
                         {
-                            AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0.5, 0.3, 0.8, 1));
-                            AbsoluteLayout.SetLayoutFlags(c, AbsoluteLayoutFlags.All);
+                            AbsoluteLayout.SetLayoutBounds(c, new Rectangle(0.5, 0.2, 0.8, 100));
+                            AbsoluteLayout.SetLayoutFlags(c, AbsoluteLayoutFlags.PositionProportional | AbsoluteLayoutFlags.WidthProportional);
 
                             c.Close += () =>
                             {
-                                if (!vm.IsSavingTopic && !vm.IsSavingInformation && !vm.IsSavingMinuteName && !vm.People.Any(p => p.IsSaving))
+                                if (!vm.IsSaving)
                                     vm.IsMinuteNameOpen = false;
                                 else
                                     toastService.ShortAlert("Aguarde a operação de salvar!");
@@ -298,6 +330,23 @@ namespace PROAtas.Views.Pages
                 else
                     toastService.ShortAlert("Aguarde a operação de salvar!");
             }));
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if (ViewModel.IsSaving)
+            {
+                toastService.ShortAlert("Aguarde a operação de salvar!");
+                return true;
+            }
+
+            if (ViewModel.IsMinuteNameOpen || ViewModel.IsPeopleOpen || ViewModel.IsTimeOpen || ViewModel.SelectedInformation != null)
+            { 
+                ViewModel.ClearDialogs();
+                return true;
+            }
+
+            return false;
         }
     }
 }

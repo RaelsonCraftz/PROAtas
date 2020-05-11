@@ -49,8 +49,8 @@ namespace PROAtas.Views.Pages
                     new Grid
                     {
                         RowDefinitions = Rows.Define(
-                                    (Row.Content, GridLength.Star),
-                                    (Row.Banner, new GridLength(50))),
+                                    (Row.Content, Star),
+                                    (Row.Banner, 50)),
 
                         Children =
                         {
@@ -61,7 +61,7 @@ namespace PROAtas.Views.Pages
                                 .Bind(CollectionView.SelectionChangedCommandProperty, nameof(HomeViewModel.SelectMinute), source: vm)
                                 .Bind(CollectionView.SelectionChangedCommandParameterProperty, nameof(CollectionView.SelectedItem), source: minuteCollection),
 
-                            new Button { ImageSource = Images.Add, Margin = 10 } .Standard() .Bottom() .Right() .Round()
+                            new Button { ImageSource = Images.Add, Margin = 10 } .Standard() .Bottom() .Right() .Round(40)
                                 .Row(0)
                                 .Bind(nameof(vm.CreateMinute)),
 
@@ -91,7 +91,7 @@ namespace PROAtas.Views.Pages
                     // Dialogs
                     new OptionDialog("Opções", "Editar", "Gerar Word", "Gerar PDF", "Deletar", Images.Edit, Images.Word, Images.PDF, Images.Delete, thirdTextColor: Colors.Success, dockSide: EDockTo.Start)
                             { LastWarning = "Deseja mesmo remover este arquivo?" }
-                        .Assign(out optionDialog) . Center()
+                        .Assign(out optionDialog) .Center()
                         .Bind(OptionDialog.IsOpenProperty, nameof(vm.SelectedMinute), converter: new NullToBool())
                         .Bind(OptionDialog.FirstCommandProperty, nameof(vm.EditMinute))
                         .Bind(OptionDialog.SecondCommandProperty, nameof(vm.PrintWord))
@@ -114,6 +114,17 @@ namespace PROAtas.Views.Pages
         private void CloseDialogs()
         {
             optionDialog.CancelDialog();
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if (ViewModel.SelectedMinute != null)
+            {
+                CloseDialogs();
+                return true;
+            }
+
+            return false;
         }
     }
 }

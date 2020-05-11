@@ -7,7 +7,7 @@ namespace PROAtas.Controls
 {
     public class CustomEntry : Entry
     {
-        private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource cancellationTokenSource;
 
         public int SaveDelay { get; set; } = 1500;
 
@@ -15,29 +15,27 @@ namespace PROAtas.Controls
         {
             base.OnTextChanged(oldTextValue, newTextValue);
 
-            if (IsSavingEnabled && !IsSaving)
+            if (IsFocused)
             {
                 IsSaving = true;
+                
+                // Cancels the current execution
+                cancellationTokenSource?.Cancel();
 
+                // Creates a new instance for the cancellation token
+                cancellationTokenSource = new CancellationTokenSource();
+                
                 // Executes a background operation
                 Task.Run(async () =>
                 {
-                    // Cancels the current execution
-                    if (cancellationTokenSource != null) cancellationTokenSource.Cancel();
-
-                    // Creates a new instance for the cancellation token
-                    cancellationTokenSource = new CancellationTokenSource();
-                    
-                    // Takes the token reference reference that will be cancelled after the next character inserted
-                    var tokenSource = cancellationTokenSource;
+                    // Takes the token reference that will be cancelled after the next character inserted
+                    var token = cancellationTokenSource.Token;
                     // Await a certain time before trying another search
                     await Task.Delay(SaveDelay);
 
                     // If the token wasn't cancelled (when another character is inserted), do the search
-                    if (!tokenSource.Token.IsCancellationRequested)
+                    if (!token.IsCancellationRequested)
                     {
-                        tokenSource.Dispose();
-                        
                         Dispatcher.BeginInvokeOnMainThread(() =>
                         {
                             if (SaveCommandParameter == null)
@@ -48,7 +46,6 @@ namespace PROAtas.Controls
                             IsSaving = false;
                         });
                     }
-
                 }, cancellationTokenSource.Token);
             }
         }

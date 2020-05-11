@@ -11,10 +11,16 @@ namespace PROAtas.Core
         public const string AdHome = "ca-app-pub-3940256099942544/6300978111";
         public const string AdMinute = "ca-app-pub-3940256099942544/6300978111";
         public const string AdVideo = "ca-app-pub-3940256099942544/5224354917";
+        public const string AdOrganizacao = "ca-app-pub-3940256099942544/6300978111";
+        public const string AdMargem = "ca-app-pub-3940256099942544/6300978111";
+        public const string AdImagem = "ca-app-pub-3940256099942544/6300978111";
 #else
         public const string AdHome = "ca-app-pub-1711953563979738/2709482100";
         public const string AdMinute = "ca-app-pub-1711953563979738/3033886902";
         public const string AdVideo = "ca-app-pub-1711953563979738/2537994585";
+        public const string AdOrganizacao = "ca-app-pub-1711953563979738/6412535655";
+        public const string AdMargem = "ca-app-pub-1711953563979738/3594800623";
+        public const string AdImagem = "ca-app-pub-1711953563979738/9421842373";
 #endif
 
         // Preference keys

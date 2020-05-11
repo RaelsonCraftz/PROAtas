@@ -54,15 +54,26 @@ namespace PROAtas.Views.Pages
                 }
             });
 
-            //Items.Add(new FlyoutItem()
-            //{
-            //    Title = "Sobre",
-            //    Icon = Images.About,
-            //    Items =
-            //    {
-            //        new ShellContent { Content = new AboutPage(), Route = "About", }
-            //    }
-            //});
+            Items.Add(new MenuItem()
+            {
+                Text = "Sobre Mim",
+                IconImageSource = Images.AboutBlack,
+                Command = new Command(async () =>
+                {
+                    await Current.Navigation.PushModalAsync(new AboutPage(), true);
+                    FlyoutIsPresented = false;
+                }),
+            });
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            var page = (Shell.Current?.CurrentItem?.CurrentItem as IShellSectionController)?.PresentedPage;
+
+            if (page.SendBackButtonPressed())
+                return true;
+            else
+                return base.OnBackButtonPressed();
         }
     }
 }

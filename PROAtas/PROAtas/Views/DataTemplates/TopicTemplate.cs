@@ -36,12 +36,14 @@ namespace PROAtas.Views.DataTemplates
 
                             Children =
                             {
-                                new Button { Padding = 5, CornerRadius = 6, BackgroundColor = Colors.DarkPrimary, }
-                                    .Bind(nameof(MinuteViewModel.SelectTopic), source: viewModel)
-                                    .Bind(Button.CommandParameterProperty)
-                                    .Bind(Button.BackgroundColorProperty, nameof(TopicElement.IsSelected), converter: new BoolToColor(Colors.LightPrimary, Colors.DarkPrimary))
-                                    .Bind(Button.TextColorProperty, nameof(TopicElement.IsSelected), converter: new BoolToColor(Colors.Accent, Colors.TextIcons))
-                                    .Bind(Button.TextProperty, nameof(TopicElement.Order)),
+                                new Frame 
+                                { 
+                                    Padding = 5, CornerRadius = 6, BackgroundColor = Colors.DarkPrimary, 
+                                    Content = new Label { FontSize = 12 } .Center()
+                                        .Bind(Label.TextColorProperty, nameof(TopicElement.IsSelected), converter: new BoolToColor(Colors.Accent, Colors.TextIcons))
+                                        .Bind(Label.TextProperty, nameof(TopicElement.Order)),
+                                } .Height(30)
+                                    .Bind(Frame.BackgroundColorProperty, nameof(TopicElement.IsSelected), converter: new BoolToColor(Colors.LightPrimary, Colors.DarkPrimary)),
 
                                 new Label { LineBreakMode = LineBreakMode.TailTruncation } .BodyText() .Center()
                                     .Bind(nameof(TopicElement.Text)),

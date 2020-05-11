@@ -66,19 +66,31 @@ namespace PROAtas.ViewModel
         }
         private ImageSource _downloadedImage;
 
+        public bool IsLocked
+        {
+            get => IsImageDialogOpen || IsUrlDialogOpen;
+        }
+
         public bool IsImageDialogOpen
         {
             get => _isImageDialogOpen;
-            set { _isImageDialogOpen = value; NotifyPropertyChanged(); }
+            set { _isImageDialogOpen = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(IsLocked)); }
         }
         private bool _isImageDialogOpen;
 
         public bool IsUrlDialogOpen
         {
             get => _isUrlDialogOpen;
-            set { _isUrlDialogOpen = value; NotifyPropertyChanged(); }
+            set { _isUrlDialogOpen = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(IsLocked)); }
         }
         private bool _isUrlDialogOpen;
+
+        public bool IsSavingEnabled
+        {
+            get => _isSavingEnabled;
+            set { _isSavingEnabled = value; NotifyPropertyChanged(); }
+        }
+        private bool _isSavingEnabled;
 
         public string User
         {
@@ -476,6 +488,8 @@ namespace PROAtas.ViewModel
 
         public override void Initialize()
         {
+            IsSavingEnabled = false;
+
             Task.Run(() =>
             {
                 var user = App.Current.Properties[Constants.UserName].ToString();
@@ -518,13 +532,15 @@ namespace PROAtas.ViewModel
 
                     ImageCollection = new ObservableCollection<MinuteImageElement>(imageCollection);
                     SelectedImage = imageCollection.FirstOrDefault(l => l.Model.Id == selectedImage)?.Source;
+
+                    IsSavingEnabled = true;
                 });
             });
         }
 
         public override void Leave()
         {
-
+            
         }
 
         #endregion

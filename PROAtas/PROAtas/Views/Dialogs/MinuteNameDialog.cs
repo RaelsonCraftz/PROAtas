@@ -31,7 +31,7 @@ namespace PROAtas.Views.Dialogs
                                 minuteNameEntry.Placeholder = "Nome da Ata";
                                 minuteNameEntry.Bind(CustomEntry.SaveCommandProperty, nameof(MinuteViewModel.RenameMinute));
                                 minuteNameEntry.Bind(CustomEntry.TextProperty, nameof(MinuteViewModel.MinuteName));
-                                minuteNameEntry.Bind(CustomEntry.IsSavingProperty, nameof(MinuteViewModel.IsSavingMinuteName));
+                                minuteNameEntry.Bind(CustomEntry.IsSavingProperty, nameof(MinuteViewModel.IsSavingMinuteName), BindingMode.OneWayToSource);
                             }),
                     }
                 }
