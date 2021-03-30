@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<dialogs:BaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    x:Class="PROAtas.Views.Dialogs.InformationDialog"
+                    x:DataType="viewmodel:InformationViewModel"
+                    x:TypeArguments="viewmodel:InformationViewModel,model:Information"
+                    x:Name="base"
+                  
+                    xmlns:ui="clr-namespace:PROAtas.Assets.UI"
+                    xmlns:core="clr-namespace:PROAtas.Core"
+                    xmlns:views="clr-namespace:PROAtas.Views"
+                    xmlns:model="clr-namespace:PROAtas.Core"
+                    xmlns:popups="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+                    xmlns:dialogs="clr-namespace:Craftz.Dialogs;assembly=Xamarin.Craftz"
+                    xmlns:controls="clr-namespace:PROAtas.Controls"
+                    xmlns:elements="clr-namespace:PROAtas.ViewModels.Elements"
+                    xmlns:viewmodel="clr-namespace:PROAtas.ViewModels"
+                    xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
+                    xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
+                    xmlns:converters="clr-namespace:PROAtas.Converters"
+                    SystemPaddingSides="Bottom">
+
+    <ContentPage.BindingContext>
+        <viewmodel:InformationViewModel />
+    </ContentPage.BindingContext>
+
+    <popups:PopupPage.Animation>
+        <animations:MoveAnimation EasingIn="CubicOut"
+                                  EasingOut="CubicIn"
+                                  PositionIn="Bottom"
+                                  PositionOut="Bottom"
+                                  DurationIn="400"
+                                  DurationOut="200" />
+    </popups:PopupPage.Animation>
+    
+    <ContentPage.Content>
+        <StackLayout Spacing="0" Padding="0" Margin="0">
+            <Button HorizontalOptions="Center" VerticalOptions="Center" Margin="0,60,0,60"
+                    BackgroundColor="Transparent"
+                    Command="{Binding CloseInformation}">
+                <Button.ImageSource>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Clear}"
+                                     Color="{StaticResource TextIcons}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource BigFontIconSize}" />
+                </Button.ImageSource>
+            </Button>
+
+            <Frame BackgroundColor="{StaticResource TextIcons}" VerticalOptions="FillAndExpand">
+                <StackLayout>
+                    <Image>
+                        <Image.Source>
+                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Text}"
+                                             Color="{StaticResource Primary}"
+                                             FontFamily="{StaticResource FontIconFamily}"
+                                             Size="{StaticResource FontIconSize}" />
+                        </Image.Source>
+                    </Image>
+                    
+                    <Editor HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
+                            Placeholder="Digite a informação..."
+                            Text="{Binding Information.Text}" />
+
+                    <StackLayout Orientation="Horizontal" Margin="0,0,0,10" Spacing="15">
+                        <Button Style="{StaticResource roundSmallButton}" HorizontalOptions="EndAndExpand" VerticalOptions="Center"
+                                BackgroundColor="{StaticResource TextIcons}"
+                                BorderColor="{StaticResource Accent}"
+                                BorderWidth="1"
+                                Command="{Binding DiscardChanges}">
+                            <Button.ImageSource>
+                                <FontImageSource Glyph="{x:Static ui:MaterialIcon.Undo}"
+                                                 Color="{StaticResource Accent}"
+                                                 FontFamily="{StaticResource FontIconFamily}"
+                                                 Size="{StaticResource SmallFontIconSize}" />
+                            </Button.ImageSource>
+                        </Button>
+
+                        <Button Style="{StaticResource roundButton}" HorizontalOptions="End" Margin="0,0,10,0"
+                                Command="{Binding SaveInformation}"
+                                CommandParameter="{Binding OnResult, Source={x:Reference base}}">
+                            <Button.ImageSource>
+                                <FontImageSource Glyph="{x:Static ui:MaterialIcon.Save}"
+                                                 Color="{StaticResource TextIcons}"
+                                                 FontFamily="{StaticResource FontIconFamily}"
+                                                 Size="{StaticResource FontIconSize}" />
+                            </Button.ImageSource>
+                        </Button>
+                    </StackLayout>
+
+                    <BoxView  HeightRequest="60" Margin="-5,0,-5,-5" BackgroundColor="{StaticResource Accent}" />
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+    </ContentPage.Content>
+</dialogs:BaseDialog>
