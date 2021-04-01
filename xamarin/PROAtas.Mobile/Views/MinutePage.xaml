@@ -7,12 +7,11 @@
                 x:Name="base"
                 
                 xmlns:ui="clr-namespace:PROAtas.Assets.UI"
-                xmlns:core="clr-namespace:PROAtas.Core"
                 xmlns:views="clr-namespace:Craftz.Pages;assembly=Xamarin.Craftz"
                 xmlns:model="clr-namespace:PROAtas.Core"
                 xmlns:controls="clr-namespace:PROAtas.Controls"
-                xmlns:elements="clr-namespace:PROAtas.ViewModels.Elements"
-                xmlns:viewmodel="clr-namespace:PROAtas.ViewModels"
+                xmlns:elements="clr-namespace:PROAtas.ViewModel.Elements"
+                xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
                 xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
                 xmlns:converters="clr-namespace:PROAtas.Converters">
 
@@ -23,7 +22,6 @@
     <ContentPage.Resources>
         <!--Styles-->
         <Style x:Key="topicListCollection" TargetType="CollectionView">
-            <Setter Property="HorizontalOptions" Value="StartAndExpand" />
             <Setter Property="HeightRequest" Value="80" />
             <Setter Property="SelectionMode" Value="None" />
             <Setter Property="ItemsLayout">
@@ -65,7 +63,7 @@
     </Shell.TitleView>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem>
+        <ToolbarItem Command="{Binding OpenMoment}">
             <ToolbarItem.IconImageSource>
                 <FontImageSource Glyph="{x:Static ui:MaterialIcon.Date}"
                                  Color="{StaticResource TextIcons}"
@@ -74,7 +72,7 @@
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
 
-        <ToolbarItem Command="{Binding SelectPeople}">
+        <ToolbarItem Command="{Binding OpenPeople}">
             <ToolbarItem.IconImageSource>
                 <FontImageSource Glyph="{x:Static ui:MaterialIcon.Groups}"
                                  Color="{StaticResource TextIcons}"
@@ -85,153 +83,86 @@
     </ContentPage.ToolbarItems>
     
     <ContentPage.Content>
-        <StackLayout>
-            <AbsoluteLayout>
+        <AbsoluteLayout>
+            
+            <!--Topics Structure-->
+            <CarouselView x:Name="carousel"
+                          x:DataType="elements:TopicElement"
+                          AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All"
+                          Loop="False"
+                          CurrentItem="{Binding BindingContext.SelectedTopic, Mode=TwoWay, Source={x:Reference base}}"
+                          CurrentItemChangedCommand="{Binding BindingContext.ChangeTopic, Source={x:Reference base}}"
+                          CurrentItemChangedCommandParameter="{Binding CurrentItem, Source={x:Reference carousel}}"
+                          ItemsSource="{Binding BindingContext.Minute.Topics, Source={x:Reference base}}">
+                <CarouselView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal"
+                                       SnapPointsType="MandatorySingle" />
+                </CarouselView.ItemsLayout>
+                <CarouselView.ItemTemplate>
+                    <DataTemplate>
+                        <!--Topic Content-->
+                        <StackLayout Padding="5">
 
-                <!--Topics Structure-->
-                <CarouselView x:Name="carousel" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="SizeProportional"
-                              x:DataType="elements:TopicElement"
-                              CurrentItem="{Binding BindingContext.SelectedTopic, Mode=TwoWay, Source={x:Reference base}}"
-                              CurrentItemChangedCommand="{Binding BindingContext.ChangeTopic, Source={x:Reference base}}"
-                              CurrentItemChangedCommandParameter="{Binding CurrentItem, Source={x:Reference carousel}}"
-                              ItemsSource="{Binding BindingContext.Minute.Topics, Source={x:Reference base}}">
-                    <CarouselView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Horizontal"
-                                           SnapPointsType="MandatorySingle" />
-                    </CarouselView.ItemsLayout>
-                    <CarouselView.ItemTemplate>
-                        <DataTemplate>
-                            <!--Topic Content-->
-                            <StackLayout Padding="5">
+                            <!--Topic Title-->
+                            <Frame BackgroundColor="{StaticResource LightAccent}">
+                                <StackLayout Orientation="Horizontal">
+                                    <controls:LoadEntry x:Name="topicTitleEntry" HeightRequest="48" HorizontalOptions="FillAndExpand"
+                                                        Text="{Binding Text}" />
 
-                                <!--Topic Title-->
-                                <Frame BackgroundColor="{StaticResource LightAccent}">
-                                    <StackLayout Orientation="Horizontal">
-                                        <controls:LoadEntry x:Name="topicTitleEntry" HeightRequest="48" HorizontalOptions="FillAndExpand"
-                                                            Text="{Binding Text}" />
+                                    <Button Style="{StaticResource roundButton}"
+                                            BackgroundColor="{StaticResource Danger}"
+                                            Command="{Binding BindingContext.DeleteTopic, Source={x:Reference base}}"
+                                            CommandParameter="{Binding .}">
+                                        <Button.ImageSource>
+                                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Delete}"
+                                                             Color="{StaticResource TextIcons}"
+                                                             FontFamily="{StaticResource FontIconFamily}"
+                                                             Size="{StaticResource FontIconSize}" />
+                                        </Button.ImageSource>
+                                    </Button>
+                                </StackLayout>
+                            </Frame>
+                            
+                            <!--Information-->
+                            <CollectionView ItemsSource="{Binding Information}">
+                                <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout Orientation="Vertical"
+                                                       ItemSpacing="{StaticResource BaseSpacing}" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <!--Information Frame-->
+                                        <ContentView>
+                                            <Frame BackgroundColor="{StaticResource Primary}">
+                                                <StackLayout Orientation="Horizontal">
+                                                    <controls:TextButton HorizontalOptions="FillAndExpand"
+                                                                         BackgroundColor="{StaticResource LightPrimary}"
+                                                                         Text="{Binding Text, Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}"
+                                                                         Command="{Binding BindingContext.SelectInformation, Source={x:Reference base}}"
+                                                                         CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}" />
 
-                                        <Button Style="{StaticResource roundButton}"
-                                                BackgroundColor="{StaticResource Danger}"
-                                                Command="{Binding BindingContext.DeleteTopic, Source={x:Reference base}}"
-                                                CommandParameter="{Binding .}">
-                                            <Button.ImageSource>
-                                                <FontImageSource Glyph="{x:Static ui:MaterialIcon.Delete}"
-                                                                 Color="{StaticResource TextIcons}"
-                                                                 FontFamily="{StaticResource FontIconFamily}"
-                                                                 Size="{StaticResource FontIconSize}" />
-                                            </Button.ImageSource>
-                                        </Button>
-                                    </StackLayout>
-                                </Frame>
-                                
-                                <!--Information-->
-                                <CollectionView ItemsSource="{Binding Information}">
-                                    <CollectionView.ItemsLayout>
-                                        <LinearItemsLayout Orientation="Vertical"
-                                                           ItemSpacing="{StaticResource BaseSpacing}" />
-                                    </CollectionView.ItemsLayout>
-                                    <CollectionView.ItemTemplate>
-                                        <DataTemplate>
-                                            <!--Information Frame-->
-                                            <ContentView>
-                                                <Frame BackgroundColor="{StaticResource Primary}">
-                                                    <StackLayout Orientation="Horizontal">
-                                                        <controls:TextButton HorizontalOptions="FillAndExpand"
-                                                                             BackgroundColor="{StaticResource LightPrimary}"
-                                                                             Text="{Binding Text, Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}"
-                                                                             Command="{Binding BindingContext.SelectInformation, Source={x:Reference base}}"
-                                                                             CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}" />
-
-                                                        <Button Style="{StaticResource roundButton}" VerticalOptions="Center"
-                                                                BackgroundColor="{StaticResource Danger}"
-                                                                Command="{Binding BindingContext.DeleteInformation, Source={x:Reference base}}"
-                                                                CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}">
-                                                            <Button.ImageSource>
-                                                                <FontImageSource Glyph="{x:Static ui:MaterialIcon.Delete}"
-                                                                                 Color="{StaticResource TextIcons}"
-                                                                                 FontFamily="{StaticResource FontIconFamily}"
-                                                                                 Size="{StaticResource FontIconSize}" />
-                                                            </Button.ImageSource>
-                                                        </Button>
-                                                    </StackLayout>
-                                                </Frame>
-                                            </ContentView>
-                                        </DataTemplate>
-                                    </CollectionView.ItemTemplate>
-                                    <CollectionView.Footer>
-                                        <StackLayout>
-                                            <!--Add information-->
-                                            <Button Style="{StaticResource roundButton}" HorizontalOptions="Center" Margin="0,25,0,0"
-                                                    Command="{Binding BindingContext.CreateInformation, Source={x:Reference base}}"
-                                                    CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:TopicElement}}}">
-                                                <Button.ImageSource>
-                                                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Add}"
-                                                                     Color="{StaticResource TextIcons}"
-                                                                     FontFamily="{StaticResource FontIconFamily}"
-                                                                     Size="{StaticResource FontIconSize}" />
-                                                </Button.ImageSource>
-                                            </Button>
-
-                                            <!--Empty space-->
-                                            <BoxView HeightRequest="160" />
-                                        </StackLayout>
-                                    </CollectionView.Footer>
-                                </CollectionView>
-                            </StackLayout>
-                        </DataTemplate>
-                    </CarouselView.ItemTemplate>
-                </CarouselView>
-
-                <!--Buttons overlay-->
-                <StackLayout AbsoluteLayout.LayoutBounds="1,1,1,1" AbsoluteLayout.LayoutFlags="All"
-                             InputTransparent="True"
-                             CascadeInputTransparent="False"
-                             Padding="5">
-
-                    <!--Topic List-->
-                    <StackLayout Orientation="Horizontal" Spacing="30" VerticalOptions="EndAndExpand">
-                        <CollectionView x:Name="topicCollection" Style="{StaticResource topicListCollection}"
-                                        x:DataType="elements:TopicElement"
-                                        ItemsSource="{Binding BindingContext.Minute.Topics, Source={x:Reference base}}">
-                            <CollectionView.ItemsLayout>
-                                <LinearItemsLayout Orientation="Horizontal"
-                                                   ItemSpacing="{StaticResource BaseSpacing}" />
-                            </CollectionView.ItemsLayout>
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <!--Topic Frame-->
-                                    <ContentView Padding="2">
-                                        <Frame WidthRequest="90" 
-                                               BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedTopicFrameConverter}}">
-                                            <StackLayout>
-                                                <Button HorizontalOptions="Fill" VerticalOptions="FillAndExpand"
-                                                        BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedTopicBackgroundConverter}}" 
-                                                        TextColor="{Binding IsSelected, Converter={StaticResource SelectedTopicTextConverter}}" 
-                                                        FontSize="22"
-                                                        Text="{Binding Order}"
-                                                        Command="{Binding BindingContext.SelectTopic, Source={x:Reference base}}"
-                                                        CommandParameter="{Binding .}"/>
-
-                                                <Label HorizontalOptions="Center" 
-                                                       LineBreakMode="HeadTruncation"
-                                                       FontSize="12"
-                                                       TextColor="{Binding IsSelected, Converter={StaticResource SelectedTopicTitleConverter}}"
-                                                       Text="{Binding Text}" />
-                                            </StackLayout>
-                                        </Frame>
-                                    </ContentView>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                            <CollectionView.Footer>
-                                <!--Add button at the end of the topic list-->
-                                <ContentView Padding="2" Opacity="0.5">
-                                    <Frame WidthRequest="90"
-                                           BackgroundColor="{StaticResource Accent}">
-                                        <Button HorizontalOptions="Fill" VerticalOptions="FillAndExpand"
-                                                BackgroundColor="{StaticResource Primary}" 
-                                                FontSize="32"
-                                                Text="{Binding Order}"
-                                                Clicked="CreateTopic_Clicked">
+                                                    <Button Style="{StaticResource roundButton}" VerticalOptions="Center"
+                                                            BackgroundColor="{StaticResource Danger}"
+                                                            Command="{Binding BindingContext.DeleteInformation, Source={x:Reference base}}"
+                                                            CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}">
+                                                        <Button.ImageSource>
+                                                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Delete}"
+                                                                             Color="{StaticResource TextIcons}"
+                                                                             FontFamily="{StaticResource FontIconFamily}"
+                                                                             Size="{StaticResource FontIconSize}" />
+                                                        </Button.ImageSource>
+                                                    </Button>
+                                                </StackLayout>
+                                            </Frame>
+                                        </ContentView>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                                <CollectionView.Footer>
+                                    <StackLayout>
+                                        <!--Add information-->
+                                        <Button Style="{StaticResource roundButton}" HorizontalOptions="Center" Margin="0,25,0,0"
+                                                Command="{Binding BindingContext.CreateInformation, Source={x:Reference base}}"
+                                                CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:TopicElement}}}">
                                             <Button.ImageSource>
                                                 <FontImageSource Glyph="{x:Static ui:MaterialIcon.Add}"
                                                                  Color="{StaticResource TextIcons}"
@@ -239,15 +170,94 @@
                                                                  Size="{StaticResource FontIconSize}" />
                                             </Button.ImageSource>
                                         </Button>
+
+                                        <!--Empty space-->
+                                        <BoxView HeightRequest="160" />
+                                    </StackLayout>
+                                </CollectionView.Footer>
+                            </CollectionView>
+                        </StackLayout>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
+
+            <!--Topics Container-->
+            <StackLayout AbsoluteLayout.LayoutBounds="0.5,1,1,AutoSize" AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional"
+                         InputTransparent="True"
+                         CascadeInputTransparent="False">
+                <StackLayout.Background>
+                    <LinearGradientBrush StartPoint="0,0"
+                                         EndPoint="0,1">
+                        <GradientStop Color="Transparent"
+                                      Offset="0" />
+                        <GradientStop Color="White"
+                                      Offset="0.3" />
+                    </LinearGradientBrush>
+                </StackLayout.Background>
+
+                <BoxView HeightRequest="50" 
+                         InputTransparent="True" />
+
+                <!--Topic List-->
+                <ContentView Padding="5,0,5,0">
+                    <CollectionView x:Name="topicCollection" Style="{StaticResource topicListCollection}"
+                                    x:DataType="elements:TopicElement"
+                                    SelectionMode="None"
+                                    ItemsSource="{Binding BindingContext.Minute.Topics, Source={x:Reference base}}">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal"
+                                               ItemSpacing="{StaticResource BaseSpacing}" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <!--Topic Frame-->
+                                <ContentView Padding="0">
+                                    <Frame WidthRequest="90" 
+                                           BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedTopicFrameConverter}}">
+                                        <StackLayout>
+                                            <Button HorizontalOptions="Fill" VerticalOptions="FillAndExpand"
+                                                    BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedTopicBackgroundConverter}}" 
+                                                    TextColor="{Binding IsSelected, Converter={StaticResource SelectedTopicTextConverter}}" 
+                                                    FontSize="22"
+                                                    Text="{Binding Order}"
+                                                    Command="{Binding BindingContext.SelectTopic, Source={x:Reference base}}"
+                                                    CommandParameter="{Binding .}"/>
+
+                                            <Label HorizontalOptions="Center" 
+                                                   LineBreakMode="HeadTruncation"
+                                                   FontSize="12"
+                                                   TextColor="{Binding IsSelected, Converter={StaticResource SelectedTopicTitleConverter}}"
+                                                   Text="{Binding Text}" />
+                                        </StackLayout>
                                     </Frame>
                                 </ContentView>
-                            </CollectionView.Footer>
-                        </CollectionView>
-                    </StackLayout>
-                </StackLayout>
-            </AbsoluteLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.Footer>
+                            <!--Add button at the end of the topic list-->
+                            <ContentView Padding="25,0,0,0">
+                                <Frame WidthRequest="90" Opacity="0.5"
+                                       BackgroundColor="{StaticResource Accent}">
+                                    <Button HorizontalOptions="Fill" VerticalOptions="FillAndExpand"
+                                            BackgroundColor="{StaticResource Primary}" 
+                                            FontSize="{StaticResource FontIconSize}"
+                                            Text="{Binding Order}"
+                                            Clicked="CreateTopic_Clicked">
+                                        <Button.ImageSource>
+                                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Add}"
+                                                             Color="{StaticResource TextIcons}"
+                                                             FontFamily="{StaticResource FontIconFamily}"
+                                                             Size="{StaticResource FontIconSize}" />
+                                        </Button.ImageSource>
+                                    </Button>
+                                </Frame>
+                            </ContentView>
+                        </CollectionView.Footer>
+                    </CollectionView>
+                </ContentView>
 
-            <BoxView HeightRequest="60" BackgroundColor="{StaticResource Accent}" />
-        </StackLayout>
+                <BoxView HeightRequest="60" BackgroundColor="{StaticResource Accent}" />
+            </StackLayout>
+        </AbsoluteLayout>
     </ContentPage.Content>
 </views:BasePage>

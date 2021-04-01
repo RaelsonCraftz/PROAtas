@@ -2,7 +2,7 @@
 using PROAtas.Helpers.Model;
 using PROAtas.Core;
 using PROAtas.Services;
-using PROAtas.ViewModels.Elements;
+using PROAtas.ViewModel.Elements;
 using PROAtas.Views.Dialogs;
 using Rg.Plugins.Popup.Services;
 using System.Collections.Generic;
@@ -10,8 +10,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Craftz.ViewModel;
+using PROAtas.Mobile.Views.Dialogs;
+using PROAtas.Core.Model;
 
-namespace PROAtas.ViewModels
+namespace PROAtas.Mobile.ViewModel
 {
     public class MinuteViewModel : BaseViewModel<Minute>
     {
@@ -78,10 +80,10 @@ namespace PROAtas.ViewModels
         private Command<TopicElement> _selectTopic;
         private void SelectTopicExecute(TopicElement selectedTopic)
         {
-            ChangeSelectionCommands(false);
-
             logService.LogAction(() =>
             {
+                ChangeSelectionCommands(false);
+            
                 SelectedTopic = selectedTopic;
 
                 // Unhighlight all topics
@@ -90,14 +92,14 @@ namespace PROAtas.ViewModels
 
                 // Highlight current topic
                 selectedTopic.IsSelected = true;
+
+                ChangeSelectionCommands(true);
             }, 
             log => 
             { 
                 if (log != null)
                     UserDialogs.Instance.Alert(log);
             });
-
-            ChangeSelectionCommands(true);
         }
 
         private bool isTopicIndexEnabled = true;
@@ -108,24 +110,24 @@ namespace PROAtas.ViewModels
         private Command<TopicElement> _changeTopic;
         private void ChangeTopicExecute(TopicElement selectedTopic)
         {
-            ChangeSelectionCommands(false);
-
             logService.LogAction(() =>
             {
+                ChangeSelectionCommands(false);
+
                 // Unhighlight all topics
                 foreach (var topic in Minute.Topics)
                     topic.IsSelected = false;
 
                 // Highlight topic of current index
                 selectedTopic.IsSelected = true;
+                
+                ChangeSelectionCommands(true);
             },
             log => 
             { 
                 if (log != null)
                     UserDialogs.Instance.Alert(log);
             });
-
-            ChangeSelectionCommands(true);
         }
 
         public Command CreateTopic
@@ -137,7 +139,9 @@ namespace PROAtas.ViewModels
         {
             logService.LogAction(() =>
             {
-                var order = Minute.Topics.Last().Order + 1;
+                ReorderTopics();
+
+                var order = Minute.Topics.Count + 1;
                 var topic = new Topic
                 {
                     IdMinute = Minute.Model.Id,
@@ -162,26 +166,31 @@ namespace PROAtas.ViewModels
             get { if (_deleteTopic == null) _deleteTopic = new Command<TopicElement>(DeleteTopicExecute, p => HasAtLeastOneTopic); return _deleteTopic; }
         }
         private Command<TopicElement> _deleteTopic;
-        private async void DeleteTopicExecute(TopicElement topic)
+        private void DeleteTopicExecute(TopicElement topic)
         {
-            if (!HasAtLeastOneTopic)
+            logService.LogActionAsync(async () =>
             {
-                DeleteTopic.ChangeCanExecute();
-                await UserDialogs.Instance.AlertAsync("Você não pode deletar o único tópico presente nesta ata", "Aviso", "Ok");
-                return;
-            }
+                if (!HasAtLeastOneTopic)
+                {
+                    DeleteTopic.ChangeCanExecute();
+                    await UserDialogs.Instance.AlertAsync("Você não pode deletar o único tópico presente nesta ata", "Aviso", "Ok");
+                    return;
+                }
 
-            if (await UserDialogs.Instance.ConfirmAsync("Esta operação removerá o tópico e todas as suas informações definitivamente. Deseja prosseguir?", "Confirmação", "Sim", "Não"))
-            {
-                logService.LogAction(() =>
+                if (await UserDialogs.Instance.ConfirmAsync("Esta operação removerá o tópico e todas as suas informações definitivamente. Deseja prosseguir?", "Confirmação", "Sim", "Não"))
                 {
                     // Looks for a valid index of a topic to be selected afterwards
                     TopicElement nextTopic;
                     var index = Minute.Topics.IndexOf(topic);
                     if (index != 0)
+                    {
                         nextTopic = Minute.Topics[index - 1];
+
+                        // Selects next valid topic
+                        SelectTopic.Execute(nextTopic);
+                    }
                     else
-                        nextTopic = Minute.Topics[index + 1];
+                        nextTopic = Minute.Topics[index];
                     
                     // Delete topic
                     dataService.TopicRepository.Remove(topic.Model);
@@ -191,18 +200,22 @@ namespace PROAtas.ViewModels
                         dataService.InformationRepository.Remove(info);
 
                     Minute.Topics.Remove(topic);
+                    ReorderTopics();
 
-                    // Automatically selects next valid topic
-                    SelectTopic.Execute(nextTopic);
-                    
+                    // Selects next valid topic
+                    if (index == 0)
+                        SelectTopic.Execute(nextTopic);
+
                     DeleteTopic.ChangeCanExecute();
-                }, 
-                log => 
-                { 
-                    if (log != null)
-                        UserDialogs.Instance.Alert(log);
-                });
-            }
+                }
+            },
+            log => 
+            { 
+                if (log != null)
+                    UserDialogs.Instance.Alert(log);
+
+                return Task.CompletedTask;
+            });
         }
 
         public Command<TopicElement> CreateInformation
@@ -212,23 +225,26 @@ namespace PROAtas.ViewModels
         private Command<TopicElement> _createInformation;
         private void CreateInformationExecute(TopicElement selectedTopic)
         {
-            logService.LogAction(() =>
-            {
-                var order = (selectedTopic.Information.LastOrDefault()?.Order ?? 0) + 1;
-                var information = new Information
+            logService.LogAction(
+                // Action
+                () =>
                 {
-                    IdTopic = selectedTopic.Model.Id,
-                    Order = order,
-                };
+                    var order = (selectedTopic.Information.LastOrDefault()?.Order ?? 0) + 1;
+                    var information = new Information
+                    {
+                        IdTopic = selectedTopic.Model.Id,
+                        Order = order,
+                    };
 
-                dataService.InformationRepository.Add(information);
-                selectedTopic.Information.Add(new InformationElement(information));
-            }, 
-            log =>
-            {
-                if (log != null)
-                    UserDialogs.Instance.Alert(log);
-            });
+                    dataService.InformationRepository.Add(information);
+                    selectedTopic.Information.Add(new InformationElement(information));
+                }, 
+                // Error callback
+                log =>
+                {
+                    if (log != null)
+                        UserDialogs.Instance.Alert(log);
+                });
         }
 
         public Command<InformationElement> SelectInformation
@@ -236,9 +252,9 @@ namespace PROAtas.ViewModels
             get { if (_selectInformation == null) _selectInformation = new Command<InformationElement>(SelectInformationExecute); return _selectInformation; }
         }
         private Command<InformationElement> _selectInformation;
-        private async void SelectInformationExecute(InformationElement information)
+        private void SelectInformationExecute(InformationElement information)
         {
-            await logService.LogActionAsync(
+            logService.LogActionAsync(
                 // Action
                 async () => 
                 {
@@ -259,42 +275,17 @@ namespace PROAtas.ViewModels
             get { if (_deleteInformation == null) _deleteInformation = new Command<InformationElement>(DeleteInformationExecute); return _deleteInformation; }
         }
         private Command<InformationElement> _deleteInformation;
-        private async void DeleteInformationExecute(InformationElement information)
+        private void DeleteInformationExecute(InformationElement information)
         {
-            if (await UserDialogs.Instance.ConfirmAsync("Esta operação removerá a informação definitivamente. Deseja prosseguir?", "Confirmação", "Sim", "Não"))
+            logService.LogActionAsync(async () =>
             {
-                logService.LogAction(() =>
+                if (await UserDialogs.Instance.ConfirmAsync("Esta operação removerá a informação definitivamente. Deseja prosseguir?", "Confirmação", "Sim", "Não"))
                 {
                     dataService.InformationRepository.Remove(information.Model);
 
                     var topic = Minute.Topics.FirstOrDefault(l => l.Model.Id == information.Model.IdTopic);
                     topic.Information.Remove(information);
-                }, 
-                log =>
-                {
-                    if (log != null)
-                        UserDialogs.Instance.Alert(log);
-                });
-            }
-        }
-
-        public Command SelectPeople
-        {
-            get { if (_selectPeople == null) _selectPeople = new Command(SelectPeopleExecute); return _selectPeople; }
-        }
-        private Command _selectPeople;
-        private async void SelectPeopleExecute()
-        {
-            await logService.LogActionAsync(async () =>
-            {
-                var peopleList = dataService.PersonRepository.Find(l => l.IdMinute == Minute.Model.Id);
-                var people = new People
-                {
-                    IdMinute = Minute.Model.Id,
-                    PeopleList = peopleList,
-                };
-
-                await PopupNavigation.Instance.PushAsync(new PeopleDialog(people));
+                }
             }, 
             log =>
             {
@@ -303,6 +294,66 @@ namespace PROAtas.ViewModels
 
                 return Task.CompletedTask;
             });
+        }
+
+        public Command OpenPeople
+        {
+            get { if (_openPeople == null) _openPeople = new Command(OpenPeopleExecute); return _openPeople; }
+        }
+        private Command _openPeople;
+        private void OpenPeopleExecute()
+        {
+            logService.LogActionAsync(
+                // Action
+                async () =>
+                {
+                    var peopleList = dataService.PersonRepository.Find(l => l.IdMinute == Minute.Model.Id);
+                    var people = new People
+                    {
+                        IdMinute = Minute.Model.Id,
+                        PeopleList = peopleList,
+                    };
+
+                    await PopupNavigation.Instance.PushAsync(new PeopleDialog(people));
+                }, 
+                // Error callback
+                log =>
+                {
+                    if (log != null)
+                        UserDialogs.Instance.Alert(log);
+
+                    return Task.CompletedTask;
+                });
+        }
+
+        public Command OpenMoment
+        {
+            get { if (_openMoment == null) _openMoment = new Command(OpenMomentExecute); return _openMoment; }
+        }
+        private Command _openMoment;
+        private void OpenMomentExecute()
+        {
+            logService.LogActionAsync(
+                // Action
+                async () =>
+                {
+                    var moment = new Moment
+                    {
+                        Date = Minute.Date,
+                        Start = Minute.Start,
+                        End = Minute.End,
+                    };
+
+                    await PopupNavigation.Instance.PushAsync(new MomentDialog(moment));
+                },
+                // Error callback
+                log =>
+                {
+                    if (log != null)
+                        UserDialogs.Instance.Alert(log);
+
+                    return Task.CompletedTask;
+                });
         }
 
         #endregion
@@ -318,17 +369,34 @@ namespace PROAtas.ViewModels
 
         private void UpdateInformation(Information information)
         {
-            var topic = Minute.Topics.FirstOrDefault(l => l.Model.Id == information.IdTopic);
-            var info = topic.Information.FirstOrDefault(l => l.Model.Id == information.Id);
+            logService.LogAction(
+                // Action
+                () =>
+                {
+                    var topic = Minute.Topics.FirstOrDefault(l => l.Model.Id == information.IdTopic);
+                    var info = topic.Information.FirstOrDefault(l => l.Model.Id == information.Id);
 
-            info.Text = information.Text;
+                    info.Text = information.Text;
+                },
+                // Error callback
+                log =>
+                {
+                    if (log != null)
+                        UserDialogs.Instance.Alert(log);
+                });
+        }
+
+        private void ReorderTopics()
+        {
+            for (int i = 0; i < Minute.Topics.Count; i++)
+                Minute.Topics[i].Order = i + 1;
         }
 
         #endregion
 
         #region Initializers
 
-        public override void Initialize(Minute model = null)
+        public override void Initialize(Minute model)
         {
             base.Initialize(model);
 
@@ -341,7 +409,7 @@ namespace PROAtas.ViewModels
 
             // Instantiate topics
             var topicElements = new List<TopicElement>();
-            topics.ForEach(l => topicElements.Add(new TopicElement(l)));
+            topics.ForEach(l => topicElements.Add(new TopicElement(l) { Order = topicElements.Count + 1 }));
             
             // Download information for each topic
             foreach (var topicElement in topicElements)

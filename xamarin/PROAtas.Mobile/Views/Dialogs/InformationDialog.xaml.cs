@@ -1,6 +1,6 @@
 ﻿using Craftz.Dialogs;
 using PROAtas.Core;
-using PROAtas.ViewModels;
+using PROAtas.Mobile.ViewModel;
 using System;
 using Xamarin.Forms.Xaml;
 

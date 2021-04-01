@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<dialogs:BaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    x:Class="PROAtas.Mobile.Views.Dialogs.MomentDialog"
+                    x:Name="base"
+                    x:TypeArguments="viewmodel:MomentViewModel,model:Moment"
+                    x:DataType="viewmodel:MomentViewModel"
+             
+                    xmlns:ui="clr-namespace:PROAtas.Assets.UI"
+                    xmlns:scg="clr-namespace:System.Collections.Generic;assembly=netstandard"
+                    xmlns:views="clr-namespace:PROAtas.Views"
+                    xmlns:model="clr-namespace:PROAtas.Core.Model;assembly=PROAtas.Core"
+                    xmlns:popups="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+                    xmlns:dialogs="clr-namespace:Craftz.Dialogs;assembly=Xamarin.Craftz"
+                    xmlns:controls="clr-namespace:PROAtas.Controls"
+                    xmlns:elements="clr-namespace:PROAtas.ViewModel.Elements"
+                    xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
+                    xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
+                    xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
+                    xmlns:converters="clr-namespace:PROAtas.Converters"
+                    xmlns:modelhelper="clr-namespace:PROAtas.Helpers.Model"
+                    SystemPaddingSides="Bottom">
+
+    <ContentPage.BindingContext>
+        <viewmodel:MomentViewModel />
+    </ContentPage.BindingContext>
+
+    <popups:PopupPage.Animation>
+        <animations:MoveAnimation EasingIn="CubicOut"
+                                  EasingOut="CubicIn"
+                                  PositionIn="Bottom"
+                                  PositionOut="Bottom"
+                                  DurationIn="400"
+                                  DurationOut="200" />
+    </popups:PopupPage.Animation>
+    
+    <ContentPage.Content>
+        <StackLayout>
+            <Button HorizontalOptions="Center" VerticalOptions="Center" Margin="0,60,0,60"
+                    BackgroundColor="Transparent"
+                    Command="{Binding Close}">
+                <Button.ImageSource>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Clear}"
+                                     Color="{StaticResource TextIcons}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource FontIconSize}" />
+                </Button.ImageSource>
+            </Button>
+
+            <Frame BackgroundColor="{StaticResource TextIcons}" VerticalOptions="FillAndExpand">
+                <StackLayout>
+                    <Image>
+                        <Image.Source>
+                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Date}"
+                                             Color="{StaticResource Primary}"
+                                             FontFamily="{StaticResource FontIconFamily}"
+                                             Size="{StaticResource BigFontIconSize}" />
+                        </Image.Source>
+                    </Image>
+
+                    <Label Text="Data da reunião" />
+                    <DatePicker Date="{Binding Moment.Date}" Visual="Default" />
+
+                    <Label Text="Início da reunião" />
+                    <TimePicker Time="{Binding Moment.Start}" Visual="Default" />
+
+                    <Label Text="Fim da reunião" />
+                    <TimePicker Time="{Binding Moment.End}" Visual="Default" />
+
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+    </ContentPage.Content>
+</dialogs:BaseDialog>

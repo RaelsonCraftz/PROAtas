@@ -1,4 +1,5 @@
 ﻿using PROAtas.Core.Base;
+using SQLite;
 
 namespace PROAtas.Core
 {
@@ -16,6 +17,7 @@ namespace PROAtas.Core
             IdMinute = model.IdMinute;
         }
 
+        [Ignore]
         public int Order { get; set; }
         public string Text { get; set; }
 

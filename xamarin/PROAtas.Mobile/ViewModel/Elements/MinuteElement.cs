@@ -4,7 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 
-namespace PROAtas.ViewModels.Elements
+namespace PROAtas.ViewModel.Elements
 {
     public class MinuteElement : BaseElement<Minute>
     {

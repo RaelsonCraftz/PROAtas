@@ -10,8 +10,8 @@
                 xmlns:core="clr-namespace:PROAtas.Core"
                 xmlns:views="clr-namespace:Craftz.Pages;assembly=Xamarin.Craftz"
                 xmlns:controls="clr-namespace:PROAtas.Controls"
-                xmlns:elements="clr-namespace:PROAtas.ViewModels.Elements"
-                xmlns:viewmodel="clr-namespace:PROAtas.ViewModels"
+                xmlns:elements="clr-namespace:PROAtas.ViewModel.Elements"
+                xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
                 xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
                 xmlns:converters="clr-namespace:PROAtas.Converters"
                 
@@ -50,75 +50,88 @@
             <AbsoluteLayout VerticalOptions="FillAndExpand">
 
                 <!--Page Content-->
-                <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="SizeProportional">
-
-                    <controls:LoadSearchBar Margin="5" 
+                <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All"
+                             Spacing="0">
+                    <!--Search Bar-->
+                    <controls:LoadSearchBar Margin="5,5,5,0"
                                             Placeholder="Pesquisar..." />
 
-                    <RefreshView>
-                        <CollectionView x:Name="minuteCollection" Style="{StaticResource singleListCollection}"
-                                        x:DataType="elements:MinuteElement"
-                                        ItemsSource="{Binding BindingContext.Minutes, Source={x:Reference minuteCollection}}">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
+                    <CollectionView x:Name="minuteCollection" Style="{StaticResource singleListCollection}"
+                                    x:DataType="elements:MinuteElement"
+                                    ItemsSource="{Binding BindingContext.Minutes, Source={x:Reference minuteCollection}}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
 
-                                    <!--Minute Content-->
-                                    <ContentView Padding="5">
+                                <!--Minute Content-->
+                                <ContentView Padding="5">
 
-                                        <!--Border-->
-                                        <Frame Style="{StaticResource minuteFrame}"
-                                               BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedMinuteColorConverter}}">
-                                            <Frame.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding BindingContext.SelectMinute, Source={x:Reference base}}"
-                                                                      CommandParameter="{Binding .}" />
-                                            </Frame.GestureRecognizers>
+                                    <!--Border-->
+                                    <Frame Style="{StaticResource minuteFrame}"
+                                           BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedMinuteColorConverter}}">
+                                        <Frame.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding BindingContext.SelectMinute, Source={x:Reference base}}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Frame.GestureRecognizers>
 
-                                            <StackLayout Spacing="{StaticResource BaseSpacing}">
+                                        <StackLayout Spacing="{StaticResource BaseSpacing}">
 
-                                                <!--People on the meeting-->
-                                                <StackLayout Orientation="Horizontal">
-                                                    <Label Style="{StaticResource starBorderFontIcon}" HorizontalOptions="StartAndExpand" />
+                                            <!--People on the meeting-->
+                                            <StackLayout Orientation="Horizontal">
+                                                <Label Style="{StaticResource starBorderFontIcon}" HorizontalOptions="StartAndExpand" />
 
-                                                    <Label Style="{StaticResource bodyLabel}"
-                                                           Text="{Binding PeopleQuantity}" />
+                                                <Label Style="{StaticResource bodyLabel}"
+                                                       Text="{Binding PeopleQuantity}" />
 
-                                                    <Label Style="{StaticResource groupsFontIcon}" />
-                                                </StackLayout>
-
-                                                <!--Name of the meeting-->
-                                                <StackLayout Orientation="Horizontal">
-                                                    <Label Style="{StaticResource assignmentFontIcon}" />
-
-                                                    <Label Style="{StaticResource headerLabel}" 
-                                                           LineBreakMode="HeadTruncation"
-                                                           Text="{Binding Name, Mode=OneTime}" />
-                                                </StackLayout>
-
-                                                <!--Date of the meeting-->
-                                                <StackLayout Orientation="Horizontal">
-                                                    <Label Style="{StaticResource todayFontIcon}" />
-
-                                                    <Label Style="{StaticResource bodyLabel}" 
-                                                           FontSize="14"
-                                                           LineBreakMode="HeadTruncation" 
-                                                           Text="{Binding Date, Mode=OneTime, StringFormat={StaticResource DateFormat}}"/>
-                                                </StackLayout>
-
+                                                <Label Style="{StaticResource groupsFontIcon}" />
                                             </StackLayout>
 
-                                        </Frame>
+                                            <!--Name of the meeting-->
+                                            <StackLayout Orientation="Horizontal">
+                                                <Label Style="{StaticResource assignmentFontIcon}" />
 
-                                    </ContentView>
+                                                <Label Style="{StaticResource headerLabel}" 
+                                                       LineBreakMode="HeadTruncation"
+                                                       Text="{Binding Name, Mode=OneTime}" />
+                                            </StackLayout>
 
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                            <CollectionView.Footer>
-                                <BoxView HeightRequest="160" />
-                            </CollectionView.Footer>
-                        </CollectionView>
-                    </RefreshView>
+                                            <!--Date of the meeting-->
+                                            <StackLayout Orientation="Horizontal">
+                                                <Label Style="{StaticResource todayFontIcon}" />
+
+                                                <Label Style="{StaticResource bodyLabel}" 
+                                                       FontSize="14"
+                                                       LineBreakMode="HeadTruncation" 
+                                                       Text="{Binding Date, Mode=OneTime, StringFormat={StaticResource DateFormat}}"/>
+                                            </StackLayout>
+
+                                        </StackLayout>
+
+                                    </Frame>
+
+                                </ContentView>
+
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.Footer>
+                            <BoxView HeightRequest="160" />
+                        </CollectionView.Footer>
+                    </CollectionView>
                 </StackLayout>
 
+                <!--Bottom Gradient-->
+                <BoxView AbsoluteLayout.LayoutBounds="0,1,1,40" AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional"
+                         InputTransparent="True">
+                    <BoxView.Background>
+                        <LinearGradientBrush StartPoint="0,0"
+                                             EndPoint="0,1">
+                            <GradientStop Color="Transparent"
+                                          Offset="0" />
+                            <GradientStop Color="White"
+                                          Offset="0.2" />
+                        </LinearGradientBrush>
+                    </BoxView.Background>
+                </BoxView>
+                
                 <!--Left button list-->
                 <StackLayout Opacity="0" TranslationX="-100" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All"
                              InputTransparent="True"

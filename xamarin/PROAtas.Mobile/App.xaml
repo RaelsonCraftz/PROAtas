@@ -4,7 +4,7 @@
              x:Class="PROAtas.App"
              
              xmlns:ui="clr-namespace:PROAtas.Assets.UI"
-             xmlns:viewmodel="clr-namespace:PROAtas.ViewModels"
+             xmlns:viewmodel="clr-namespace:PROAtas.ViewModel"
              xmlns:converters="clr-namespace:PROAtas.Converters">
     
     <Application.Resources>

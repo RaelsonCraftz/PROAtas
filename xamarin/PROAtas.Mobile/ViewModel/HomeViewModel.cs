@@ -3,7 +3,7 @@ using Craftz.ViewModel;
 using Newtonsoft.Json;
 using PROAtas.Core;
 using PROAtas.Services;
-using PROAtas.ViewModels.Elements;
+using PROAtas.ViewModel.Elements;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace PROAtas.ViewModels
+namespace PROAtas.Mobile.ViewModel
 {
     public class HomeViewModel : BaseViewModel
     {

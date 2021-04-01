@@ -1,6 +1,6 @@
 ﻿using Craftz.Pages;
-using PROAtas.ViewModels;
-using PROAtas.ViewModels.Elements;
+using PROAtas.Mobile.ViewModel;
+using PROAtas.ViewModel.Elements;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 

@@ -2,13 +2,13 @@
 using Craftz.ViewModel;
 using PROAtas.Core;
 using PROAtas.Services;
-using PROAtas.ViewModels.Elements;
+using PROAtas.ViewModel.Elements;
 using Rg.Plugins.Popup.Services;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace PROAtas.ViewModels
+namespace PROAtas.Mobile.ViewModel
 {
     public class InformationViewModel : BaseViewModel<Information>
     {

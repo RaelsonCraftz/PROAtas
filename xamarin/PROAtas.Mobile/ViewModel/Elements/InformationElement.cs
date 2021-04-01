@@ -1,7 +1,7 @@
 ﻿using Craftz.ViewModel;
 using PROAtas.Core;
 
-namespace PROAtas.ViewModels.Elements
+namespace PROAtas.ViewModel.Elements
 {
     public class InformationElement : BaseElement<Information>
     {

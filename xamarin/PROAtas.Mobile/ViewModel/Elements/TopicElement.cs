@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace PROAtas.ViewModels.Elements
+namespace PROAtas.ViewModel.Elements
 {
     public class TopicElement : BaseElement<Topic>
     {

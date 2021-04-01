@@ -2,7 +2,7 @@
 using PROAtas.Helpers.Model;
 using PROAtas.Core;
 using PROAtas.Services;
-using PROAtas.ViewModels.Elements;
+using PROAtas.ViewModel.Elements;
 using Rg.Plugins.Popup.Services;
 using System;
 using System.Collections.Generic;
@@ -10,8 +10,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Xamarin.Forms;
 using Craftz.ViewModel;
+using System.Threading.Tasks;
 
-namespace PROAtas.ViewModels
+namespace PROAtas.Mobile.ViewModel
 {
     public class PeopleViewModel : BaseViewModel<People>
     {
@@ -58,6 +59,30 @@ namespace PROAtas.ViewModels
             {
                 if (log != null)
                     UserDialogs.Instance.Alert(log);
+            });
+        }
+
+        public Command<PersonElement> DeletePerson
+        {
+            get { if (_deletePerson == null) _deletePerson = new Command<PersonElement>(DeletePersonExecute); return _deletePerson; }
+        }
+        private Command<PersonElement> _deletePerson;
+        private void DeletePersonExecute(PersonElement person)
+        {
+            logService.LogActionAsync(async () =>
+            {
+                if (await UserDialogs.Instance.ConfirmAsync("Esta operação removerá a informação definitivamente. Deseja prosseguir?", "Confirmação", "Sim", "Não"))
+                {
+                    dataService.PersonRepository.Remove(person.Model);
+                    People.Remove(person);
+                }
+            },
+            log =>
+            {
+                if (log != null)
+                    UserDialogs.Instance.Alert(log);
+
+                return Task.CompletedTask;
             });
         }
 

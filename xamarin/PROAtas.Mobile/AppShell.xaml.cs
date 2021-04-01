@@ -1,4 +1,4 @@
-﻿using PROAtas.ViewModels;
+﻿using PROAtas.ViewModel;
 using PROAtas.Views;
 using System;
 using System.Collections.Generic;
