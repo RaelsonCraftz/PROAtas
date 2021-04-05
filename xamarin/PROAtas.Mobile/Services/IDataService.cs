@@ -1,10 +1,8 @@
-﻿using PROAtas.Core;
+﻿using PROAtas.Core.Model.Entities;
 using PROAtas.Core.Repository;
 using SQLite;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Xamarin.Forms;
 
 namespace PROAtas.Services

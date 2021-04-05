@@ -1,8 +1,8 @@
-﻿using PROAtas.Helpers.Model;
-using System;
+﻿using System;
 using Xamarin.Forms.Xaml;
 using Craftz.Dialogs;
 using PROAtas.Mobile.ViewModel;
+using PROAtas.Core.Model;
 
 namespace PROAtas.Views.Dialogs
 {

@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using PROAtas.Core.Model.Entities;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Text;

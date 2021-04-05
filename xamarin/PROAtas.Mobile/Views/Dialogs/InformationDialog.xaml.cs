@@ -1,5 +1,5 @@
 ﻿using Craftz.Dialogs;
-using PROAtas.Core;
+using PROAtas.Core.Model.Entities;
 using PROAtas.Mobile.ViewModel;
 using System;
 using Xamarin.Forms.Xaml;

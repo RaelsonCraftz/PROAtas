@@ -2,6 +2,7 @@
 using Craftz.ViewModel;
 using Newtonsoft.Json;
 using PROAtas.Core;
+using PROAtas.Core.Model.Entities;
 using PROAtas.Services;
 using PROAtas.ViewModel.Elements;
 using System;

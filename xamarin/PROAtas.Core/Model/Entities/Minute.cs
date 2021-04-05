@@ -1,7 +1,7 @@
 ﻿using PROAtas.Core.Base;
 using SQLite;
 
-namespace PROAtas.Core
+namespace PROAtas.Core.Model.Entities
 {
     public class Minute : Entity<string>
     {

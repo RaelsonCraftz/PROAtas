@@ -3,12 +3,12 @@
                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                 x:Class="PROAtas.Views.MinutePage"
                 x:DataType="viewmodel:MinuteViewModel"
-                x:TypeArguments="viewmodel:MinuteViewModel,model:Minute"
+                x:TypeArguments="viewmodel:MinuteViewModel,entity:Minute"
                 x:Name="base"
                 
                 xmlns:ui="clr-namespace:PROAtas.Assets.UI"
                 xmlns:views="clr-namespace:Craftz.Pages;assembly=Xamarin.Craftz"
-                xmlns:model="clr-namespace:PROAtas.Core"
+                xmlns:entity="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
                 xmlns:controls="clr-namespace:PROAtas.Controls"
                 xmlns:elements="clr-namespace:PROAtas.ViewModel.Elements"
                 xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
@@ -55,7 +55,7 @@
                                     Text="{Binding Minute.Name, Mode=TwoWay}"
                                     LoadCommand="{Binding SaveMinuteTitle}" />
 
-                <ActivityIndicator AbsoluteLayout.LayoutBounds="1,0,16,16" AbsoluteLayout.LayoutFlags="PositionProportional" InputTransparent="True"
+                <ActivityIndicator AbsoluteLayout.LayoutBounds="0.95,5,12,12" AbsoluteLayout.LayoutFlags="XProportional" InputTransparent="True"
                                    IsRunning="{Binding IsSearching, Source={x:Reference minuteTitleEntry}}"
                                    Color="{StaticResource Accent}" />
             </AbsoluteLayout>

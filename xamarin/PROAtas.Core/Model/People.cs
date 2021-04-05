@@ -1,7 +1,7 @@
-﻿using PROAtas.Core;
+﻿using PROAtas.Core.Model.Entities;
 using System.Collections.Generic;
 
-namespace PROAtas.Helpers.Model
+namespace PROAtas.Core.Model
 {
     public class People
     {

@@ -1,5 +1,6 @@
 ﻿using Craftz.ViewModel;
 using PROAtas.Core;
+using PROAtas.Core.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;

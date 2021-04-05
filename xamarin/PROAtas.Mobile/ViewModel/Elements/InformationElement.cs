@@ -1,5 +1,5 @@
 ﻿using Craftz.ViewModel;
-using PROAtas.Core;
+using PROAtas.Core.Model.Entities;
 
 namespace PROAtas.ViewModel.Elements
 {

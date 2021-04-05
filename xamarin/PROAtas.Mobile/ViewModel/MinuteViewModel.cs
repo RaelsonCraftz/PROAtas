@@ -1,6 +1,4 @@
 ﻿using Acr.UserDialogs;
-using PROAtas.Helpers.Model;
-using PROAtas.Core;
 using PROAtas.Services;
 using PROAtas.ViewModel.Elements;
 using PROAtas.Views.Dialogs;
@@ -12,6 +10,7 @@ using Xamarin.Forms;
 using Craftz.ViewModel;
 using PROAtas.Mobile.Views.Dialogs;
 using PROAtas.Core.Model;
+using PROAtas.Core.Model.Entities;
 
 namespace PROAtas.Mobile.ViewModel
 {

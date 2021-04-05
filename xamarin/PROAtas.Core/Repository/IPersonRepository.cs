@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using PROAtas.Core.Model.Entities;
+using SQLite;
 
 namespace PROAtas.Core.Repository
 {
