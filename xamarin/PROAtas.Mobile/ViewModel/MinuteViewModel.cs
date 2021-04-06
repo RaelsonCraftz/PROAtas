@@ -1,5 +1,4 @@
 ﻿using Acr.UserDialogs;
-using PROAtas.Services;
 using PROAtas.ViewModel.Elements;
 using PROAtas.Views.Dialogs;
 using Rg.Plugins.Popup.Services;
@@ -11,6 +10,7 @@ using Craftz.ViewModel;
 using PROAtas.Mobile.Views.Dialogs;
 using PROAtas.Core.Model;
 using PROAtas.Core.Model.Entities;
+using PROAtas.Mobile.Services.Shared;
 
 namespace PROAtas.Mobile.ViewModel
 {

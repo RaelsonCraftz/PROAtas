@@ -39,7 +39,7 @@ namespace PROAtas.ViewModel
 
         }
 
-        private bool IsRewarded;
+        private bool isRewarded;
 
         #region Bindable Properties
 
@@ -194,12 +194,12 @@ namespace PROAtas.ViewModel
                         // Callback for success
                         () =>
                         {
-                            IsRewarded = true;
+                            isRewarded = true;
                         },
                         // Callback for ad close
                         () =>
                         {
-                            if (IsRewarded)
+                            if (isRewarded)
                             {
                                 byte[] localbyte;
                                 if (Application.Current.Properties[Constants.SelectedMinuteImage]?.ToString() != "0")
@@ -235,7 +235,7 @@ namespace PROAtas.ViewModel
                             }
 
                             SelectedMinute = null;
-                            IsRewarded = false;
+                            isRewarded = false;
                             UserDialogs.Instance.HideLoading();
                         },
                         // Callback for failure
@@ -244,7 +244,7 @@ namespace PROAtas.ViewModel
                             toastService.ShortAlert("Conexão falhou. Verifique a internet!");
 
                             SelectedMinute = null;
-                            IsRewarded = false;
+                            isRewarded = false;
                             UserDialogs.Instance.HideLoading();
                         }, Constants.AdVideo);
 

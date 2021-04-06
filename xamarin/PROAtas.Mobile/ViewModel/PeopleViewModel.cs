@@ -1,17 +1,13 @@
 ﻿using Acr.UserDialogs;
-using PROAtas.Core;
-using PROAtas.Services;
+using Craftz.ViewModel;
+using PROAtas.Core.Model;
+using PROAtas.Core.Model.Entities;
+using PROAtas.Mobile.Services.Shared;
 using PROAtas.ViewModel.Elements;
-using Rg.Plugins.Popup.Services;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Xamarin.Forms;
-using Craftz.ViewModel;
 using System.Threading.Tasks;
-using PROAtas.Core.Model.Entities;
-using PROAtas.Core.Model;
+using Xamarin.Forms;
 
 namespace PROAtas.Mobile.ViewModel
 {
@@ -77,7 +73,7 @@ namespace PROAtas.Mobile.ViewModel
 
                 dataService.PersonRepository.Add(person);
                 People.Add(new PersonElement(person));
-            }, 
+            },
             // Error callback
             log =>
             {

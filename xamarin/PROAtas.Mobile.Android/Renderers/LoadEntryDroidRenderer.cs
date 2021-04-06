@@ -8,12 +8,12 @@ using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
-[assembly: ExportRenderer(typeof(LoadEntry), typeof(LoadEntryRenderer))]
+[assembly: ExportRenderer(typeof(LoadEntry), typeof(LoadEntryDroidRenderer))]
 namespace PROAtas.Droid.Renderers
 {
-    public class LoadEntryRenderer : EntryRenderer
+    public class LoadEntryDroidRenderer : EntryRenderer
     {
-        public LoadEntryRenderer(Context context) : base(context) { }
+        public LoadEntryDroidRenderer(Context context) : base(context) { }
 
         protected override void OnElementChanged(ElementChangedEventArgs<Entry> e)
         {

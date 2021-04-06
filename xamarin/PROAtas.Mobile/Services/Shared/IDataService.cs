@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using Xamarin.Forms;
 
-namespace PROAtas.Services
+namespace PROAtas.Mobile.Services.Shared
 {
     public interface IDataService
     {

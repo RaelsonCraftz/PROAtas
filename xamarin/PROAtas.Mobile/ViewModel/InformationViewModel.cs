@@ -1,7 +1,7 @@
 ﻿using Acr.UserDialogs;
 using Craftz.ViewModel;
 using PROAtas.Core.Model.Entities;
-using PROAtas.Services;
+using PROAtas.Mobile.Services.Shared;
 using PROAtas.ViewModel.Elements;
 using Rg.Plugins.Popup.Services;
 using System;

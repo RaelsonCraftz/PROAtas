@@ -78,14 +78,23 @@
     <PackageReference Include="Xamarin.Forms.Visual.Material">
       <Version>5.0.0.2012</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.GooglePlayServices.Ads.Lite">
+      <Version>119.7.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainActivity.cs" />
-    <Compile Include="Renderers\LoadEntryRenderer.cs" />
-    <Compile Include="Renderers\LoadSearchBarRenderer.cs" />
+    <Compile Include="Renderers\AdMobViewDroidRenderer.cs" />
+    <Compile Include="Services\AdServiceDroid.cs" />
+    <Compile Include="Services\ImageServiceDroid.cs" />
+    <Compile Include="Services\PrintServiceDroid.cs" />
+    <Compile Include="Views\MainActivity.cs" />
+    <Compile Include="Renderers\LoadEntryDroidRenderer.cs" />
+    <Compile Include="Renderers\LoadSearchBarDroidRenderer.cs" />
     <Compile Include="Renderers\TextButtonDroidRenderer.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\SplashActivity.cs" />
+    <Compile Include="Views\VideoActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -169,6 +178,15 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\entry_cursor.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\splash_screen.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\icLogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\provider_paths.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ProjectExtensions>

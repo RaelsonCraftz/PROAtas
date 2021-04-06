@@ -210,10 +210,12 @@
 
                     <Button Style="{StaticResource roundButton}" HorizontalOptions="End" VerticalOptions="EndAndExpand" 
                             BackgroundColor="{StaticResource Premium}"
-                            ImageSource="icPDF" />
+                            ImageSource="icPDF"
+                            Command="{Binding PrintPDF}" />
 
                     <Button Style="{StaticResource roundButton}" HorizontalOptions="End"
-                            ImageSource="icWord" />
+                            ImageSource="icWord"
+                            Command="{Binding PrintWord}" />
 
                     <Button Style="{StaticResource roundButton}" HorizontalOptions="End"
                             Command="{Binding BindingContext.EditMinute, Source={x:Reference base}}">

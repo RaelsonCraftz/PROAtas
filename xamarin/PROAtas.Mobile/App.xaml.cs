@@ -2,7 +2,7 @@
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using PROAtas.Core;
-using PROAtas.Services;
+using PROAtas.Mobile.Services.Shared;
 using PROAtas.Views;
 using Xamarin.Craftz.Services;
 using Xamarin.Forms;
@@ -13,14 +13,20 @@ namespace PROAtas
     {
         public App()
         {
+            // Register Syncfusion community license
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NDI0OTU4QDMxMzkyZTMxMmUzMGdVc3hFemFHS051VkdHWkwxRHQyOXFMeGllNGR1Q216dkxDRDhSM1BXQzA9");
+
             InitializeComponent();
 
             // Shared Services
-            DependencyService.Register<MockMinuteStorage>();
+            DependencyService.Register<PermissionService>();
             DependencyService.Register<DataService>();
             DependencyService.Register<LogService>();
 
-            // Platform specific Services
+            //No longer used
+            //DependencyService.Register<MockMinuteStorage>();
+
+            // Shell navigation Routes
             Routing.RegisterRoute("minute", typeof(MinutePage));
 
             // App Center

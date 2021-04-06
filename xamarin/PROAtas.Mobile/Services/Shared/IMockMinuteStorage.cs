@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PROAtas.Services
+namespace PROAtas.Mobile.Services.Shared
 {
     public interface IMockMinuteStorage<T>
     {

@@ -5,12 +5,12 @@ using PROAtas.Mobile.Controls;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
-[assembly: ExportRenderer(typeof(LoadSearchBar), typeof(LoadSearchBarRenderer))]
+[assembly: ExportRenderer(typeof(LoadSearchBar), typeof(LoadSearchBarDroidRenderer))]
 namespace PROAtas.Droid.Renderers
 {
-    public class LoadSearchBarRenderer : SearchBarRenderer
+    public class LoadSearchBarDroidRenderer : SearchBarRenderer
     {
-        public LoadSearchBarRenderer(Context context) : base(context) { }
+        public LoadSearchBarDroidRenderer(Context context) : base(context) { }
 
         protected override void OnElementChanged(ElementChangedEventArgs<SearchBar> e)
         {
