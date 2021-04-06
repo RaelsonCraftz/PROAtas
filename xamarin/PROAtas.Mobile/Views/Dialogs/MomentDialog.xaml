@@ -37,7 +37,7 @@
         <StackLayout>
             <Button HorizontalOptions="Center" VerticalOptions="Center" Margin="0,60,0,60"
                     BackgroundColor="Transparent"
-                    Command="{Binding Close}">
+                    Command="{Binding CloseDialog}">
                 <Button.ImageSource>
                     <FontImageSource Glyph="{x:Static ui:MaterialIcon.Clear}"
                                      Color="{StaticResource TextIcons}"

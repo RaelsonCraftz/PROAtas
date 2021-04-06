@@ -426,7 +426,7 @@ namespace PROAtas.Mobile.ViewModel
 
         #region Initializers
 
-        public override void Initialize(Core.Model.Entities.Minute model)
+        public override void Initialize(Minute model)
         {
             base.Initialize(model);
 
@@ -469,10 +469,13 @@ namespace PROAtas.Mobile.ViewModel
 
         public override bool CanLeave()
         {
-            if (IsBusy)
-                UserDialogs.Instance.Toast("Por favor, espere a operação encerrar");
+            if (IsMinuteBusy)
+            {
+                UserDialogs.Instance.Toast("Algumas operações estão ocorrendo, aguarde um momento");
+                return false;
+            }
 
-            return !IsBusy;
+            return true;
         }
 
         #endregion

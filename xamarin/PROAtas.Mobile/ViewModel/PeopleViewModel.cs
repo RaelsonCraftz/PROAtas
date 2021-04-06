@@ -110,16 +110,6 @@ namespace PROAtas.Mobile.ViewModel
             });
         }
 
-        public Command ClosePeople
-        {
-            get { if (_closePeople == null) _closePeople = new Command(ClosePeopleExecute); return _closePeople; }
-        }
-        private Command _closePeople;
-        private void ClosePeopleExecute()
-        {
-            PopupNavigation.Instance.PopAsync();
-        }
-
         #endregion
 
         #region Helpers
@@ -143,7 +133,10 @@ namespace PROAtas.Mobile.ViewModel
 
         public override bool CanLeave()
         {
-            return base.CanLeave();
+            if (IsPeopleBusy)
+                return false;
+            else
+                return base.CanLeave();
         }
 
         #endregion

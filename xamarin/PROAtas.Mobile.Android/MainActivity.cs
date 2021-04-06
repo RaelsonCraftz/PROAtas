@@ -44,7 +44,7 @@ namespace PROAtas.Droid
             }
             else
             {
-                base.OnBackPressed();
+                // Do something if there are not any pages in the `PopupStack`
             }
         }
     }

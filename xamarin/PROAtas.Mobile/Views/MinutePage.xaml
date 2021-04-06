@@ -19,6 +19,10 @@
         <viewmodel:MinuteViewModel />
     </ContentPage.BindingContext>
 
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding ClosePage}" />
+    </Shell.BackButtonBehavior>
+    
     <ContentPage.Resources>
         <!--Styles-->
         <Style x:Key="topicListCollection" TargetType="CollectionView">

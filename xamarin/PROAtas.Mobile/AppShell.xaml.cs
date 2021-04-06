@@ -20,5 +20,15 @@ namespace PROAtas
         {
             await Shell.Current.GoToAsync("//LoginPage");
         }
+
+        protected override bool OnBackButtonPressed()
+        {
+            var page = (Shell.Current?.CurrentItem?.CurrentItem as IShellSectionController)?.PresentedPage;
+
+            if (page.SendBackButtonPressed())
+                return true;
+            else
+                return base.OnBackButtonPressed();
+        }
     }
 }

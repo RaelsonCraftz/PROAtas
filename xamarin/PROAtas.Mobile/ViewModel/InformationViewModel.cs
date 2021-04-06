@@ -76,16 +76,6 @@ namespace PROAtas.Mobile.ViewModel
             }
         }
 
-        public Command CloseInformation
-        {
-            get { if (_closeInformation == null) _closeInformation = new Command(CloseInformationExecute); return _closeInformation; }
-        }
-        private Command _closeInformation;
-        private void CloseInformationExecute()
-        {
-            PopupNavigation.Instance.PopAsync();
-        }
-
         #endregion
 
         #region Helpers

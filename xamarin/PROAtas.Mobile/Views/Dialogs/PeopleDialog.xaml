@@ -38,7 +38,7 @@
             <Button Grid.ColumnSpan="2" 
                     HorizontalOptions="Center" VerticalOptions="Center"
                     BackgroundColor="Transparent"
-                    Command="{Binding ClosePeople}">
+                    Command="{Binding CloseDialog}">
                 <Button.ImageSource>
                     <FontImageSource Glyph="{x:Static ui:MaterialIcon.Clear}"
                                      Color="{StaticResource TextIcons}"

@@ -1,5 +1,4 @@
 ﻿using Craftz.ViewModel;
-using PROAtas.Core.Model;
 using PROAtas.Core.Model.Entities;
 using PROAtas.Services;
 using PROAtas.ViewModel.Elements;
