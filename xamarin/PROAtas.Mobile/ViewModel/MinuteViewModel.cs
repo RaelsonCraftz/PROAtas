@@ -67,7 +67,7 @@ namespace PROAtas.Mobile.ViewModel
         {
             logService.LogAction(() =>
             {
-                var minute = new Minute(Minute.Model)
+                var minute = new Core.Model.Entities.Minute(Minute.Model)
                 {
                     Name = minuteName
                 };
@@ -367,14 +367,14 @@ namespace PROAtas.Mobile.ViewModel
                 // Action
                 async () =>
                 {
-                    var moment = new Moment
-                    {
-                        Date = Minute.Date,
-                        Start = Minute.Start,
-                        End = Minute.End,
-                    };
+                    var moment = new Minute(Minute.Model);
 
-                    await PopupNavigation.Instance.PushAsync(new MomentDialog(moment));
+                    await PopupNavigation.Instance.PushAsync(new MomentDialog(moment, response =>
+                    {
+                        Minute.Model.Date = response.Date;
+                        Minute.Model.Start = response.Start;
+                        Minute.Model.End = response.End;
+                    }));
                 },
                 // Error callback
                 log =>
@@ -426,7 +426,7 @@ namespace PROAtas.Mobile.ViewModel
 
         #region Initializers
 
-        public override void Initialize(Minute model)
+        public override void Initialize(Core.Model.Entities.Minute model)
         {
             base.Initialize(model);
 

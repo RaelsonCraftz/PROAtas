@@ -1,6 +1,6 @@
 ﻿using Xamarin.Forms;
 
-namespace PROAtas.Controls
+namespace PROAtas.Mobile.Controls
 {
     public class TextButton : Button
     {

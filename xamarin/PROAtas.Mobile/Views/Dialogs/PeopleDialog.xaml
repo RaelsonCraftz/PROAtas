@@ -12,7 +12,7 @@
                     xmlns:model="clr-namespace:PROAtas.Core.Model;assembly=PROAtas.Core"
                     xmlns:popups="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
                     xmlns:dialogs="clr-namespace:Craftz.Dialogs;assembly=Xamarin.Craftz"
-                    xmlns:controls="clr-namespace:PROAtas.Controls"
+                    xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
                     xmlns:elements="clr-namespace:PROAtas.ViewModel.Elements"
                     xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
                     xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"

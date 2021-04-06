@@ -1,7 +1,7 @@
 ﻿using Android.Content;
 using Android.Widget;
-using PROAtas.Controls;
 using PROAtas.Droid.Renderers;
+using PROAtas.Mobile.Controls;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 

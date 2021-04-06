@@ -9,7 +9,7 @@
                 xmlns:ui="clr-namespace:PROAtas.Assets.UI"
                 xmlns:views="clr-namespace:Craftz.Pages;assembly=Xamarin.Craftz"
                 xmlns:entity="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
-                xmlns:controls="clr-namespace:PROAtas.Controls"
+                xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
                 xmlns:elements="clr-namespace:PROAtas.ViewModel.Elements"
                 xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
                 xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"

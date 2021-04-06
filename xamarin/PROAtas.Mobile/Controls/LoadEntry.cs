@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-namespace PROAtas.Controls
+namespace PROAtas.Mobile.Controls
 {
     public class LoadEntry : Entry
     {

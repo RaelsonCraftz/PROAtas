@@ -6,7 +6,7 @@ using System.Windows.Input;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-namespace PROAtas.Controls
+namespace PROAtas.Mobile.Controls
 {
     public class LoadSearchBar : SearchBar
     {
