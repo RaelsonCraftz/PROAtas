@@ -28,11 +28,34 @@ namespace PROAtas.Mobile.ViewModel
 
         public string IdMinute;
 
+        public bool IsPeopleBusy => People.Any(l => l.IsNameSaving);
+
         public ObservableCollection<PersonElement> People { get; } = new ObservableCollection<PersonElement>();
 
         #endregion
 
         #region Commands
+
+        public Command<PersonElement> SavePersonName
+        {
+            get { if (_savePersonName == null) _savePersonName = new Command<PersonElement>(SavePersonNameExecute); return _savePersonName; }
+        }
+        private Command<PersonElement> _savePersonName;
+        private void SavePersonNameExecute(PersonElement personElement)
+        {
+            if (personElement != null)
+                logService.LogAction(() =>
+                {
+                    var person = new Person(personElement.Model);
+
+                    dataService.PersonRepository.Update(person);
+                },
+                log =>
+                {
+                    if (log != null)
+                        UserDialogs.Instance.Alert(log);
+                });
+        }
 
         public Command CreatePerson
         {

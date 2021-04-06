@@ -24,18 +24,18 @@ namespace PROAtas.Controls
                 {
                     cancellationTokenSource?.Cancel();
                 }
-                catch (ObjectDisposedException) { Debug.WriteLine($"[{AppInfo.Name}] CancellationTokenSource threw a ObjectDisposedException!"); }
+                catch (ObjectDisposedException) { Debug.WriteLine($"[{AppInfo.Name}] an error occurred while canceling the CancellationTokenSource of an LoadEditor. This is expected to occur occasionally"); }
 
                 // Creates a new instance for the cancellation token
                 cancellationTokenSource = new CancellationTokenSource();
 
                 // Executes a background operation
-                IsSearching = true;
+                IsBusy = true;
                 Task.Run(async () =>
                 {
                     // Takes the token reference that will be cancelled after the next character inserted
                     var source = cancellationTokenSource;
-                    // Await a certain time before trying another search
+                    // Await a certain time before executing the search
                     await Task.Delay(LoadDelay);
 
                     // If the token wasn't cancelled (when another character is inserted), do the search
@@ -50,7 +50,7 @@ namespace PROAtas.Controls
                             else
                                 LoadCommand?.Execute(LoadCommandParameter);
 
-                            IsSearching = false;
+                            IsBusy = false;
                         });
                     }
                     else
@@ -65,20 +65,20 @@ namespace PROAtas.Controls
             get { return (Command)GetValue(LoadCommandProperty); }
             set { SetValue(LoadCommandProperty, value); }
         }
-        public static readonly BindableProperty LoadCommandProperty = BindableProperty.Create(nameof(LoadCommand), typeof(Command), typeof(LoadSearchBar), default(Command));
+        public static readonly BindableProperty LoadCommandProperty = BindableProperty.Create(nameof(LoadCommand), typeof(Command), typeof(LoadEntry), default(Command));
 
         public object LoadCommandParameter
         {
             get { return (object)GetValue(LoadCommandParameterProperty); }
             set { SetValue(LoadCommandParameterProperty, value); }
         }
-        public static readonly BindableProperty LoadCommandParameterProperty = BindableProperty.Create(nameof(LoadCommandParameter), typeof(object), typeof(LoadSearchBar), default(object));
+        public static readonly BindableProperty LoadCommandParameterProperty = BindableProperty.Create(nameof(LoadCommandParameter), typeof(object), typeof(LoadEntry), default(object));
 
-        public bool IsSearching
+        public bool IsBusy
         {
-            get { return (bool)GetValue(IsSearchingProperty); }
-            set { SetValue(IsSearchingProperty, value); }
+            get { return (bool)GetValue(IsBusyProperty); }
+            set { SetValue(IsBusyProperty, value); }
         }
-        public static readonly BindableProperty IsSearchingProperty = BindableProperty.Create(nameof(IsSearching), typeof(bool), typeof(LoadSearchBar), default(bool));
+        public static readonly BindableProperty IsBusyProperty = BindableProperty.Create(nameof(IsBusy), typeof(bool), typeof(LoadEntry), default(bool));
     }
 }

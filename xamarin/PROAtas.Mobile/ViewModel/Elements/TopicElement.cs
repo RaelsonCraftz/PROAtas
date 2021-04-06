@@ -35,6 +35,13 @@ namespace PROAtas.ViewModel.Elements
         }
         private bool _isSelected;
 
+        public bool IsTopicTitleSaving
+        {
+            get => _isTopicTitleSaving;
+            set { _isTopicTitleSaving = value; OnPropertyChanged(); }
+        }
+        private bool _isTopicTitleSaving;
+
         public ObservableCollection<InformationElement> Information { get; } = new ObservableCollection<InformationElement>();
 
         #endregion

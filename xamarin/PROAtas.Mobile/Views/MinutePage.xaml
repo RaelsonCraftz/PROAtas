@@ -51,13 +51,15 @@
         <ContentView Padding="5">
             <!--File name for the minute-->
             <AbsoluteLayout>
-                <controls:LoadEntry x:Name="minuteTitleEntry" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="SizeProportional"
+                <controls:LoadEntry x:Name="minuteTitleEntry" 
+                                    AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="SizeProportional"
                                     Text="{Binding Minute.Name, Mode=TwoWay}"
+                                    IsBusy="{Binding IsMinuteTitleSaving, Mode=OneWayToSource}"
                                     LoadCommand="{Binding SaveMinuteTitle}" />
 
-                <ActivityIndicator AbsoluteLayout.LayoutBounds="0.95,5,12,12" AbsoluteLayout.LayoutFlags="XProportional" InputTransparent="True"
-                                   IsRunning="{Binding IsSearching, Source={x:Reference minuteTitleEntry}}"
-                                   Color="{StaticResource Accent}" />
+                <ActivityIndicator AbsoluteLayout.LayoutBounds="0.95,5,12,12" AbsoluteLayout.LayoutFlags="XProportional" 
+                                   InputTransparent="True"
+                                   IsRunning="{Binding IsMinuteTitleSaving}" />
             </AbsoluteLayout>
         </ContentView>
     </Shell.TitleView>
@@ -106,8 +108,18 @@
                             <!--Topic Title-->
                             <Frame BackgroundColor="{StaticResource LightAccent}">
                                 <StackLayout Orientation="Horizontal">
-                                    <controls:LoadEntry x:Name="topicTitleEntry" HeightRequest="48" HorizontalOptions="FillAndExpand"
-                                                        Text="{Binding Text}" />
+                                    <AbsoluteLayout HorizontalOptions="FillAndExpand">
+                                        <controls:LoadEntry x:Name="topicTitleEntry" 
+                                                            AbsoluteLayout.LayoutBounds="0,0,1,48" AbsoluteLayout.LayoutFlags="WidthProportional"
+                                                            IsBusy="{Binding IsTopicTitleSaving, Mode=OneWayToSource}"
+                                                            Text="{Binding Text}"
+                                                            LoadCommand="{Binding BindingContext.SaveTopicTitle, Source={x:Reference base}}"
+                                                            LoadCommandParameter="{Binding .}"/>
+
+                                        <ActivityIndicator AbsoluteLayout.LayoutBounds="0.95,5,12,12" AbsoluteLayout.LayoutFlags="XProportional" 
+                                                           InputTransparent="True"
+                                                           IsRunning="{Binding IsTopicTitleSaving}" />
+                                    </AbsoluteLayout>
 
                                     <Button Style="{StaticResource roundButton}"
                                             BackgroundColor="{StaticResource Danger}"
@@ -132,29 +144,30 @@
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
                                         <!--Information Frame-->
-                                        <ContentView>
-                                            <Frame BackgroundColor="{StaticResource Primary}">
-                                                <StackLayout Orientation="Horizontal">
-                                                    <controls:TextButton HorizontalOptions="FillAndExpand"
-                                                                         BackgroundColor="{StaticResource LightPrimary}"
-                                                                         Text="{Binding Text, Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}"
-                                                                         Command="{Binding BindingContext.SelectInformation, Source={x:Reference base}}"
-                                                                         CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}" />
+                                        <Frame BackgroundColor="{StaticResource Primary}">
+                                            <Grid ColumnDefinitions="*,48">
+                                                <!--TODO: add LineBreakMode to Button. For some reason it's missing from XF API at 5.0.0.2012 -->
+                                                <!--Check here: https://github.com/xamarin/Xamarin.Forms/pull/11147--> 
+                                                <controls:TextButton BackgroundColor="{StaticResource LightPrimary}"
+                                                                     Text="{Binding Text, Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}"
+                                                                     Command="{Binding BindingContext.SelectInformation, Source={x:Reference base}}"
+                                                                     CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}" />
 
-                                                    <Button Style="{StaticResource roundButton}" VerticalOptions="Center"
-                                                            BackgroundColor="{StaticResource Danger}"
-                                                            Command="{Binding BindingContext.DeleteInformation, Source={x:Reference base}}"
-                                                            CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}">
-                                                        <Button.ImageSource>
-                                                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Delete}"
-                                                                             Color="{StaticResource TextIcons}"
-                                                                             FontFamily="{StaticResource FontIconFamily}"
-                                                                             Size="{StaticResource FontIconSize}" />
-                                                        </Button.ImageSource>
-                                                    </Button>
-                                                </StackLayout>
-                                            </Frame>
-                                        </ContentView>
+                                                <Button Grid.Column="1" 
+                                                        Style="{StaticResource roundButton}" 
+                                                        HorizontalOptions="End" VerticalOptions="Center"
+                                                        BackgroundColor="{StaticResource Danger}"
+                                                        Command="{Binding BindingContext.DeleteInformation, Source={x:Reference base}}"
+                                                        CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}">
+                                                    <Button.ImageSource>
+                                                        <FontImageSource Glyph="{x:Static ui:MaterialIcon.Delete}"
+                                                                         Color="{StaticResource TextIcons}"
+                                                                         FontFamily="{StaticResource FontIconFamily}"
+                                                                         Size="{StaticResource FontIconSize}" />
+                                                    </Button.ImageSource>
+                                                </Button>
+                                            </Grid>
+                                        </Frame>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                                 <CollectionView.Footer>
@@ -236,21 +249,18 @@
                         <CollectionView.Footer>
                             <!--Add button at the end of the topic list-->
                             <ContentView Padding="25,0,0,0">
-                                <Frame WidthRequest="90" Opacity="0.5"
-                                       BackgroundColor="{StaticResource Accent}">
-                                    <Button HorizontalOptions="Fill" VerticalOptions="FillAndExpand"
-                                            BackgroundColor="{StaticResource Primary}" 
-                                            FontSize="{StaticResource FontIconSize}"
-                                            Text="{Binding Order}"
-                                            Clicked="CreateTopic_Clicked">
-                                        <Button.ImageSource>
-                                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Add}"
-                                                             Color="{StaticResource TextIcons}"
-                                                             FontFamily="{StaticResource FontIconFamily}"
-                                                             Size="{StaticResource FontIconSize}" />
-                                        </Button.ImageSource>
-                                    </Button>
-                                </Frame>
+                                <Button Opacity="0.5"
+                                        BackgroundColor="{StaticResource Primary}" 
+                                        FontSize="{StaticResource FontIconSize}"
+                                        Text="{Binding Order}"
+                                        Clicked="CreateTopic_Clicked">
+                                    <Button.ImageSource>
+                                        <FontImageSource Glyph="{x:Static ui:MaterialIcon.Add}"
+                                                         Color="{StaticResource TextIcons}"
+                                                         FontFamily="{StaticResource FontIconFamily}"
+                                                         Size="{StaticResource FontIconSize}" />
+                                    </Button.ImageSource>
+                                </Button>
                             </ContentView>
                         </CollectionView.Footer>
                     </CollectionView>

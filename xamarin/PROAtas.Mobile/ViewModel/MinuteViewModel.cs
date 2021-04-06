@@ -23,7 +23,20 @@ namespace PROAtas.Mobile.ViewModel
 
         }
 
+        public object lockMinuteBusy = new object();
+
         #region Bindable Properties
+
+        //TODO: Implement a lock with 'lockMinuteBusy'
+        public bool IsMinuteBusy => IsMinuteTitleSaving || Minute.Topics.Any(l => l.IsTopicTitleSaving);
+
+        //TODO: Implement a lock with 'lockMinuteBusy'
+        public bool IsMinuteTitleSaving
+        {
+            get => _isMinuteTitleSaving;
+            set { _isMinuteTitleSaving = value; OnPropertyChanged(); }
+        }
+        private bool _isMinuteTitleSaving;
 
         public bool HasAtLeastOneTopic => Minute?.Topics?.Count > 1;
 
@@ -52,31 +65,49 @@ namespace PROAtas.Mobile.ViewModel
         private Command<string> _saveMinuteTitle;
         private void SaveMinuteTitleExecute(string minuteName)
         {
-            _ = SetBusyAsync(() =>
+            logService.LogAction(() =>
             {
-                logService.LogAction(() =>
+                var minute = new Minute(Minute.Model)
                 {
-                    var minute = new Minute(Minute.Model);
-                    minute.Name = minuteName;
+                    Name = minuteName
+                };
 
-                    dataService.MinuteRepository.Update(minute);
-                },
-                log => 
-                { 
-                    if (log != null)
-                        UserDialogs.Instance.Alert(log);
-                });
-
-                return Task.CompletedTask;
+                dataService.MinuteRepository.Update(minute);
+            },
+            log => 
+            { 
+                if (log != null)
+                    UserDialogs.Instance.Alert(log);
             });
         }
 
-        private bool isTopicSelectionEnabled = true;
+        public Command<TopicElement> SaveTopicTitle
+        {
+            get { if (_saveTopicTitle == null) _saveTopicTitle = new Command<TopicElement>(SaveTopicTitleExecute); return _saveTopicTitle; }
+        }
+        private Command<TopicElement> _saveTopicTitle;
+        private void SaveTopicTitleExecute(TopicElement topicElement)
+        {
+            if (topicElement != null)
+                logService.LogAction(() =>
+                {
+                    var topic = new Topic(topicElement.Model);
+
+                    dataService.TopicRepository.Update(topic);
+                },
+                log =>
+                {
+                    if (log != null)
+                        UserDialogs.Instance.Alert(log);
+                });
+        }
+
         public Command<TopicElement> SelectTopic
         {
             get { if (_selectTopic == null) _selectTopic = new Command<TopicElement>(SelectTopicExecute); return _selectTopic; }
         }
         private Command<TopicElement> _selectTopic;
+        private bool isTopicSelectionEnabled = true;
         private void SelectTopicExecute(TopicElement selectedTopic)
         {
             logService.LogAction(() =>
@@ -101,12 +132,12 @@ namespace PROAtas.Mobile.ViewModel
             });
         }
 
-        private bool isTopicIndexEnabled = true;
         public Command<TopicElement> ChangeTopic
         {
             get { if (_changeTopic == null) _changeTopic = new Command<TopicElement>(ChangeTopicExecute, c => isTopicIndexEnabled); return _changeTopic; }
         }
         private Command<TopicElement> _changeTopic;
+        private bool isTopicIndexEnabled = true;
         private void ChangeTopicExecute(TopicElement selectedTopic)
         {
             logService.LogAction(() =>

@@ -67,6 +67,9 @@
                 <Setter Property="RefreshColor" Value="{StaticResource Accent}" />
                 <Setter Property="BackgroundColor" Value="{StaticResource TextIcons}" />
             </Style>
+            <Style TargetType="ActivityIndicator">
+                <Setter Property="Color" Value="{StaticResource Accent}" />
+            </Style>
             <Style TargetType="ContentView">
                 <Setter Property="VisualStateManager.VisualStateGroups">
                     <VisualStateGroupList>

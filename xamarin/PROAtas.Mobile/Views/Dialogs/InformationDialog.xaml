@@ -34,8 +34,9 @@
     </popups:PopupPage.Animation>
     
     <ContentPage.Content>
-        <StackLayout Spacing="0" Padding="0" Margin="0">
-            <Button HorizontalOptions="Center" VerticalOptions="Center" Margin="0,60,0,60"
+        <Grid RowDefinitions="120,32,*,48,60" ColumnDefinitions="*,*">
+            <Button Grid.ColumnSpan="2" 
+                    HorizontalOptions="Center" VerticalOptions="Center"
                     BackgroundColor="Transparent"
                     Command="{Binding CloseInformation}">
                 <Button.ImageSource>
@@ -46,50 +47,56 @@
                 </Button.ImageSource>
             </Button>
 
-            <Frame BackgroundColor="{StaticResource TextIcons}" VerticalOptions="FillAndExpand">
-                <StackLayout>
-                    <Image>
-                        <Image.Source>
-                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Text}"
-                                             Color="{StaticResource Primary}"
-                                             FontFamily="{StaticResource FontIconFamily}"
-                                             Size="{StaticResource FontIconSize}" />
-                        </Image.Source>
-                    </Image>
-                    
-                    <Editor HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
-                            Placeholder="Digite a informação..."
-                            Text="{Binding Information.Text}" />
+            <!--Frame for popup background-->
+            <Frame Grid.Row="1" Grid.RowSpan="4" Grid.ColumnSpan="2" 
+                   BackgroundColor="{StaticResource TextIcons}" />
 
-                    <StackLayout Orientation="Horizontal" Margin="0,0,0,10" Spacing="15">
-                        <Button Style="{StaticResource roundSmallButton}" HorizontalOptions="EndAndExpand" VerticalOptions="Center"
-                                BackgroundColor="{StaticResource TextIcons}"
-                                BorderColor="{StaticResource Accent}"
-                                BorderWidth="1"
-                                Command="{Binding DiscardChanges}">
-                            <Button.ImageSource>
-                                <FontImageSource Glyph="{x:Static ui:MaterialIcon.Undo}"
-                                                 Color="{StaticResource Accent}"
-                                                 FontFamily="{StaticResource FontIconFamily}"
-                                                 Size="{StaticResource SmallFontIconSize}" />
-                            </Button.ImageSource>
-                        </Button>
+            <Image Grid.Row="1" Grid.ColumnSpan="2">
+                <Image.Source>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Text}"
+                                     Color="{StaticResource Primary}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource FontIconSize}" />
+                </Image.Source>
+            </Image>
 
-                        <Button Style="{StaticResource roundButton}" HorizontalOptions="End" Margin="0,0,10,0"
-                                Command="{Binding SaveInformation}"
-                                CommandParameter="{Binding OnResult, Source={x:Reference base}}">
-                            <Button.ImageSource>
-                                <FontImageSource Glyph="{x:Static ui:MaterialIcon.Save}"
-                                                 Color="{StaticResource TextIcons}"
-                                                 FontFamily="{StaticResource FontIconFamily}"
-                                                 Size="{StaticResource FontIconSize}" />
-                            </Button.ImageSource>
-                        </Button>
-                    </StackLayout>
+            <Editor Grid.Row="2" Grid.ColumnSpan="2"
+                    Placeholder="Digite a informação..."
+                    Text="{Binding Information.Text}" />
 
-                    <BoxView  HeightRequest="60" Margin="-5,0,-5,-5" BackgroundColor="{StaticResource Accent}" />
-                </StackLayout>
-            </Frame>
-        </StackLayout>
+            <Button Grid.Row="3"
+                    Margin="5,0,0,0"
+                    Style="{StaticResource roundSmallButton}" 
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    BackgroundColor="{StaticResource TextIcons}"
+                    BorderColor="{StaticResource Accent}"
+                    BorderWidth="1"
+                    Command="{Binding DiscardChanges}">
+                <Button.ImageSource>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Undo}"
+                                         Color="{StaticResource Accent}"
+                                         FontFamily="{StaticResource FontIconFamily}"
+                                         Size="{StaticResource SmallFontIconSize}" />
+                </Button.ImageSource>
+            </Button>
+
+            <Button Grid.Row="3" Grid.Column="1" 
+                    Margin="0,0,5,0"
+                    Style="{StaticResource roundButton}" 
+                    HorizontalOptions="End"
+                    Command="{Binding SaveInformation}"
+                    CommandParameter="{Binding OnResult, Source={x:Reference base}}">
+                <Button.ImageSource>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Save}"
+                                         Color="{StaticResource TextIcons}"
+                                         FontFamily="{StaticResource FontIconFamily}"
+                                         Size="{StaticResource FontIconSize}" />
+                </Button.ImageSource>
+            </Button>
+
+            <BoxView Grid.Row="4" Grid.ColumnSpan="2" 
+                     BackgroundColor="{StaticResource Accent}" />
+        </Grid>
     </ContentPage.Content>
 </dialogs:BaseDialog>

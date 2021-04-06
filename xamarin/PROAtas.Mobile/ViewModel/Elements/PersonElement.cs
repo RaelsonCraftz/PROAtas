@@ -27,6 +27,13 @@ namespace PROAtas.ViewModel.Elements
             set { Model.Order = value; OnPropertyChanged(); }
         }
 
+        public bool IsNameSaving
+        {
+            get => _isNameSaving;
+            set { _isNameSaving = value; OnPropertyChanged(); }
+        }
+        private bool _isNameSaving;
+
         #endregion
     }
 }

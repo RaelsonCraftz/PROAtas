@@ -24,11 +24,11 @@ namespace PROAtas.Droid.Renderers
         {
             base.OnElementChanged(e);
 
-            if (Control != null)
-            {
-                Control.Gravity = GravityFlags.Start;
-                Control.SetAllCaps(false);
-            }
+            if (Control == null)
+                return;
+
+            Control.Gravity = GravityFlags.Start;
+            Control.SetAllCaps(false);
         }
     }
 }

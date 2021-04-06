@@ -34,8 +34,9 @@
     </popups:PopupPage.Animation>
     
     <ContentPage.Content>
-        <StackLayout Spacing="0" Padding="0" Margin="0">
-            <Button HorizontalOptions="Center" VerticalOptions="Center" Margin="0,60,0,60"
+        <Grid RowDefinitions="120,32,*,60" ColumnDefinitions="*,*">
+            <Button Grid.ColumnSpan="2" 
+                    HorizontalOptions="Center" VerticalOptions="Center"
                     BackgroundColor="Transparent"
                     Command="{Binding ClosePeople}">
                 <Button.ImageSource>
@@ -46,77 +47,91 @@
                 </Button.ImageSource>
             </Button>
 
-            <Frame BackgroundColor="{StaticResource TextIcons}" VerticalOptions="FillAndExpand">
-                <StackLayout>
-                    <Image>
-                        <Image.Source>
-                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Groups}"
-                                             Color="{StaticResource Primary}"
-                                             FontFamily="{StaticResource FontIconFamily}"
-                                             Size="{StaticResource BigFontIconSize}" />
-                        </Image.Source>
-                    </Image>
-                    
-                    <CollectionView x:DataType="elements:PersonElement"
-                                    ItemsSource="{Binding BindingContext.People, Source={x:Reference base}}">
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Vertical"
-                                               ItemSpacing="{StaticResource BaseSpacing}" />
-                        </CollectionView.ItemsLayout>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Frame BackgroundColor="{StaticResource Primary}">
-                                    <StackLayout Orientation="Horizontal">
-                                        <Image>
-                                            <Image.Source>
-                                                <FontImageSource Glyph="{x:Static ui:MaterialIcon.Person}"
+            <!--Frame for popup background-->
+            <Frame Grid.Row="1" Grid.RowSpan="3" Grid.ColumnSpan="2" 
+                   BackgroundColor="{StaticResource TextIcons}" />
+
+            <Image Grid.Row="1" Grid.ColumnSpan="2">
+                <Image.Source>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Groups}"
+                                     Color="{StaticResource Primary}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource BigFontIconSize}" />
+                </Image.Source>
+            </Image>
+
+            <CollectionView x:DataType="elements:PersonElement"
+                            Margin="5"
+                            Grid.Row="2" Grid.ColumnSpan="2"
+                            ItemsSource="{Binding BindingContext.People, Source={x:Reference base}}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical"
+                                       ItemSpacing="{StaticResource BaseSpacing}" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="{StaticResource Primary}">
+                            <Grid ColumnDefinitions="32,*,48">
+                                <Image>
+                                    <Image.Source>
+                                        <FontImageSource Glyph="{x:Static ui:MaterialIcon.Person}"
                                                                  Color="{StaticResource TextIcons}"
                                                                  FontFamily="{StaticResource FontIconFamily}"
                                                                  Size="{StaticResource FontIconSize}" />
-                                            </Image.Source>
-                                        </Image>
+                                    </Image.Source>
+                                </Image>
 
-                                        <controls:LoadEntry HorizontalOptions="FillAndExpand"
-                                                            Text="{Binding Name}"/>
+                                <AbsoluteLayout Grid.Column="1">
+                                    <controls:LoadEntry AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="SizeProportional" 
+                                                        Text="{Binding Name}" 
+                                                        IsBusy="{Binding IsNameSaving, Mode=OneWayToSource}"
+                                                        LoadCommand="{Binding BindingContext.SavePersonName, Source={x:Reference base}}"
+                                                        LoadCommandParameter="{Binding .}"/>
 
-                                        <Button Style="{StaticResource roundButton}" VerticalOptions="Center"
-                                                BackgroundColor="{StaticResource Danger}"
-                                                Command="{Binding BindingContext.DeletePerson, Source={x:Reference base}}"
-                                                CommandParameter="{Binding .}">
-                                            <Button.ImageSource>
-                                                <FontImageSource Glyph="{x:Static ui:MaterialIcon.Delete}"
-                                                                 Color="{StaticResource TextIcons}"
-                                                                 FontFamily="{StaticResource FontIconFamily}"
-                                                                 Size="{StaticResource FontIconSize}" />
-                                            </Button.ImageSource>
-                                        </Button>
-                                    </StackLayout>
-                                </Frame>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                        <CollectionView.Footer>
-                            <StackLayout>
-                                <!--Add information-->
-                                <Button Style="{StaticResource roundButton}" HorizontalOptions="Center" Margin="0,25,0,0"
-                                        Command="{Binding BindingContext.CreatePerson, Source={x:Reference base}}"
-                                        CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:PersonElement}}}">
+                                    <ActivityIndicator AbsoluteLayout.LayoutBounds="0.95,5,12,12" AbsoluteLayout.LayoutFlags="XProportional" 
+                                                       InputTransparent="True"
+                                                       IsRunning="{Binding IsNameSaving}" />
+                                </AbsoluteLayout>
+
+                                <Button Grid.Column="2" 
+                                        Style="{StaticResource roundButton}" 
+                                        BackgroundColor="{StaticResource Danger}"
+                                        Command="{Binding BindingContext.DeletePerson, Source={x:Reference base}}"
+                                        CommandParameter="{Binding .}">
                                     <Button.ImageSource>
-                                        <FontImageSource Glyph="{x:Static ui:MaterialIcon.Add}"
+                                        <FontImageSource Glyph="{x:Static ui:MaterialIcon.Delete}"
+                                                                 Color="{StaticResource TextIcons}"
+                                                                 FontFamily="{StaticResource FontIconFamily}"
+                                                                 Size="{StaticResource FontIconSize}" />
+                                    </Button.ImageSource>
+                                </Button>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.Footer>
+                    <StackLayout>
+                        <!--Add information-->
+                        <Button Style="{StaticResource roundButton}" 
+                                HorizontalOptions="Center" Margin="0,25,0,0"
+                                Command="{Binding BindingContext.CreatePerson, Source={x:Reference base}}"
+                                CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:PersonElement}}}">
+                            <Button.ImageSource>
+                                <FontImageSource Glyph="{x:Static ui:MaterialIcon.Add}"
                                                          Color="{StaticResource TextIcons}"
                                                          FontFamily="{StaticResource FontIconFamily}"
                                                          Size="{StaticResource FontIconSize}" />
-                                    </Button.ImageSource>
-                                </Button>
+                            </Button.ImageSource>
+                        </Button>
 
-                                <!--Empty space-->
-                                <BoxView HeightRequest="160" />
-                            </StackLayout>
-                        </CollectionView.Footer>
-                    </CollectionView>
+                        <!--Empty space-->
+                        <BoxView HeightRequest="160" />
+                    </StackLayout>
+                </CollectionView.Footer>
+            </CollectionView>
 
-                    <BoxView  HeightRequest="60" Margin="-5,0,-5,-5" BackgroundColor="{StaticResource Accent}" />
-                </StackLayout>
-            </Frame>
-        </StackLayout>
+            <BoxView Grid.Row="3" Grid.ColumnSpan="2" 
+                     BackgroundColor="{StaticResource Accent}" />
+        </Grid>
     </ContentPage.Content>
 </dialogs:BaseDialog>

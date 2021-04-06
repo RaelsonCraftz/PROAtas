@@ -25,7 +25,7 @@ namespace PROAtas.Controls
                 {
                     cancellationTokenSource?.Cancel();
                 }
-                catch (ObjectDisposedException) { Debug.WriteLine($"[{AppInfo.Name}] CancellationTokenSource threw a ObjectDisposedException!"); }
+                catch (ObjectDisposedException) { Debug.WriteLine($"[{AppInfo.Name}] an error occurred while canceling the CancellationTokenSource of an LoadEditor. This is expected to occur occasionally"); }
 
                 // Creates a new instance for the cancellation token
                 cancellationTokenSource = new CancellationTokenSource();
@@ -35,7 +35,7 @@ namespace PROAtas.Controls
                 {
                     // Takes the token reference that will be cancelled after the next character inserted
                     var source = cancellationTokenSource;
-                    // Await a certain time before trying another search
+                    // Await a certain time before executing the search
                     await Task.Delay(LoadDelay);
 
                     // If the token wasn't cancelled (when another character is inserted), do the search
