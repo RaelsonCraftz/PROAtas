@@ -15,9 +15,9 @@ namespace PROAtas.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if ((bool)value)
-                return TrueColor ?? (Color)Application.Current.Resources["Primary"];
+                return TrueColor ?? (Color)Application.Current.Resources["Accent"];
             else
-                return FalseColor ?? (Color)Application.Current.Resources["Accent"];
+                return FalseColor ?? (Color)Application.Current.Resources["DarkAccent"];
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

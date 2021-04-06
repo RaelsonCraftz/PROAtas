@@ -31,14 +31,15 @@
             <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
 
             <!--Colors-->
-            <Color x:Key="DarkPrimary">#00796B</Color>
-            <Color x:Key="LightPrimary">#B2DFDB</Color>
-            <Color x:Key="Primary">#009688</Color>
+            <Color x:Key="DarkPrimary">#13191c</Color>
+            <Color x:Key="Primary">#28343A</Color>
+            <Color x:Key="LightPrimary">#40535d</Color>
+            <Color x:Key="DarkAccent">#00796B</Color>
+            <Color x:Key="Accent">#009688</Color>
+            <Color x:Key="LightAccent">#B2DFDB</Color>
             <Color x:Key="TextIcons">#FFFFFF</Color>
-            <Color x:Key="LightAccent">#40535d</Color>
-            <Color x:Key="Accent">#28343A</Color>
-            <Color x:Key="PrimaryText">#212121</Color>
             <Color x:Key="SecondaryText">#757575</Color>
+            <Color x:Key="PrimaryText">#212121</Color>
             <Color x:Key="Divider">#BDBDBD</Color>
 
             <Color x:Key="Premium">#77C477</Color>

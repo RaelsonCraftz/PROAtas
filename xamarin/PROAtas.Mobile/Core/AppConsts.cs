@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PROAtas.Core
 {
-    public class AppConsts
+    public static class AppConsts
     {
         // AdMob codes
 #if DEBUG
@@ -14,6 +14,9 @@ namespace PROAtas.Core
         public const string AdOrganizacao = "ca-app-pub-3940256099942544/6300978111";
         public const string AdMargem = "ca-app-pub-3940256099942544/6300978111";
         public const string AdImagem = "ca-app-pub-3940256099942544/6300978111";
+        public const string AdInformacao = "ca-app-pub-3940256099942544/6300978111";
+        public const string AdPessoas = "ca-app-pub-3940256099942544/6300978111";
+        public const string AdMomento = "ca-app-pub-3940256099942544/6300978111";
 #else
         public const string AdHome = "ca-app-pub-1711953563979738/2709482100";
         public const string AdMinute = "ca-app-pub-1711953563979738/3033886902";
@@ -21,6 +24,9 @@ namespace PROAtas.Core
         public const string AdOrganizacao = "ca-app-pub-1711953563979738/6412535655";
         public const string AdMargem = "ca-app-pub-1711953563979738/3594800623";
         public const string AdImagem = "ca-app-pub-1711953563979738/9421842373";
+        public const string AdInformacao = "ca-app-pub-1711953563979738/2248939334";
+        public const string AdPessoas = "ca-app-pub-1711953563979738/1865795951";
+        public const string AdMomento = "ca-app-pub-1711953563979738/8385960516";
 #endif
 
         // Preference keys

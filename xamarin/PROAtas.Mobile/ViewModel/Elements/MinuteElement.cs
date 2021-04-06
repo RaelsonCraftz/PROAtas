@@ -4,6 +4,7 @@ using PROAtas.Core.Model.Entities;
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using Xamarin.CommunityToolkit.ObjectModel;
 
 namespace PROAtas.ViewModel.Elements
 {
@@ -58,9 +59,9 @@ namespace PROAtas.ViewModel.Elements
         }
         bool _isSelected;
 
-        public ObservableCollection<TopicElement> Topics { get; } = new ObservableCollection<TopicElement>();
+        public ObservableRangeCollection<TopicElement> Topics { get; } = new ObservableRangeCollection<TopicElement>();
 
-        public ObservableCollection<PersonElement> People { get; } = new ObservableCollection<PersonElement>();
+        public ObservableRangeCollection<PersonElement> People { get; } = new ObservableRangeCollection<PersonElement>();
 
         #endregion
     }

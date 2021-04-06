@@ -176,7 +176,7 @@ namespace PROAtas.Mobile.ViewModel
                 {
                     IdMinute = Minute.Model.Id,
                     Order = order,
-                    Text = $"Tópico {order}",
+                    Text = "Tópico",
                 };
 
                 dataService.TopicRepository.Add(topic);
@@ -445,8 +445,7 @@ namespace PROAtas.Mobile.ViewModel
             foreach (var topicElement in topicElements)
             {
                 var information = dataService.InformationRepository.GetAll().Where(l => l.IdTopic == topicElement.Model.Id);
-                foreach (var info in information)
-                    topicElement.Information.Add(new InformationElement(info));
+                topicElement.Information.AddRange(information.Select(l => new InformationElement(l)));
             }
 
             // Instantiate people
@@ -455,14 +454,12 @@ namespace PROAtas.Mobile.ViewModel
 
             // Push all instances to the bindable properties
             Minute = new MinuteElement(model);
-            foreach (var topic in topicElements)
-                Minute.Topics.Add(topic);
+            Minute.Topics.AddRange(topicElements);
 
             if (Minute.Topics.Count != 0)
                 Minute.Topics.First().IsSelected = true;
 
-            foreach (var person in peopleElements)
-                Minute.People.Add(person);
+            Minute.People.AddRange(peopleElements);
 
             SelectTopic.ChangeCanExecute();
         }

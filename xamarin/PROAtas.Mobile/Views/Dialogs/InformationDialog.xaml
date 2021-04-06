@@ -95,8 +95,8 @@
                 </Button.ImageSource>
             </Button>
 
-            <BoxView Grid.Row="4" Grid.ColumnSpan="2" 
-                     BackgroundColor="{StaticResource Accent}" />
+            <controls:AdMobView Grid.Row="4" Grid.ColumnSpan="2"
+                                AdUnitId="{x:Static core:AppConsts.AdInformacao}" />
         </Grid>
     </ContentPage.Content>
 </dialogs:BaseDialog>

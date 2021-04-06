@@ -44,6 +44,9 @@ namespace PROAtas.Mobile.ViewModel
                 dataService.InformationRepository.Update(Information.Model);
                 onResult(Information.Model);
 
+                // This prevents the app to ask again if the user wants to leave
+                Information.Original = null;
+
                 await PopupNavigation.Instance.PopAsync();
             },
             log =>
@@ -100,13 +103,16 @@ namespace PROAtas.Mobile.ViewModel
 
         public override bool CanLeave()
         {
+            if (Information.Original == null)
+                return base.CanLeave();
+
             if (Information.Model.Text != Information.Original.Text)
             {
                 _ = VerifyUserLeaveIntent();
                 return false;
             }
-            else
-                return base.CanLeave();
+                
+            return base.CanLeave();
         }
 
         public async Task VerifyUserLeaveIntent()

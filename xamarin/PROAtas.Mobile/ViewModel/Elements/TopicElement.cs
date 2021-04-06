@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using Xamarin.CommunityToolkit.ObjectModel;
 
 namespace PROAtas.ViewModel.Elements
 {
@@ -42,7 +43,7 @@ namespace PROAtas.ViewModel.Elements
         }
         private bool _isTopicTitleSaving;
 
-        public ObservableCollection<InformationElement> Information { get; } = new ObservableCollection<InformationElement>();
+        public ObservableRangeCollection<InformationElement> Information { get; } = new ObservableRangeCollection<InformationElement>();
 
         #endregion
     }

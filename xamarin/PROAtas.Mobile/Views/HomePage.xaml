@@ -7,6 +7,7 @@
                 x:Name="base"
                 
                 xmlns:ui="clr-namespace:PROAtas.Assets.UI"
+                xmlns:core="clr-namespace:PROAtas.Core"
                 xmlns:views="clr-namespace:Craftz.Pages;assembly=Xamarin.Craftz"
                 xmlns:entity="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
                 xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
@@ -40,223 +41,231 @@
         
         <!--Converters-->
         <converters:BooleanToColorConverter x:Key="SelectedMinuteColorConverter"
-                                            TrueColor="{StaticResource Primary}"
+                                            TrueColor="{StaticResource Accent}"
                                             FalseColor="{StaticResource Divider}" />
 
     </ContentPage.Resources>
     
     <ContentPage.Content>
-        <StackLayout>
-            <AbsoluteLayout VerticalOptions="FillAndExpand">
+        <Grid RowDefinitions="Auto, *, 60">
+            <!--Search Bar-->
+            <controls:LoadSearchBar Margin="5,5,5,0"
+                                    Placeholder="Pesquisar..." />
 
-                <!--Page Content-->
-                <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All"
-                             Spacing="0">
-                    <!--Search Bar-->
-                    <controls:LoadSearchBar Margin="5,5,5,0"
-                                            Placeholder="Pesquisar..." />
+            <!--Minute Collection-->
+            <CollectionView Grid.Row="1" 
+                            x:Name="minuteCollection" 
+                            x:DataType="elements:MinuteElement"
+                            Style="{StaticResource singleListCollection}"
+                            ItemsSource="{Binding BindingContext.Minutes, Source={x:Reference minuteCollection}}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
 
-                    <CollectionView x:Name="minuteCollection" Style="{StaticResource singleListCollection}"
-                                    x:DataType="elements:MinuteElement"
-                                    ItemsSource="{Binding BindingContext.Minutes, Source={x:Reference minuteCollection}}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
+                        <!--Minute Content-->
+                        <ContentView Padding="5">
 
-                                <!--Minute Content-->
-                                <ContentView Padding="5">
-
-                                    <!--Border-->
-                                    <Frame Style="{StaticResource minuteFrame}"
-                                           BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedMinuteColorConverter}}">
-                                        <Frame.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding BindingContext.SelectMinute, Source={x:Reference base}}"
+                            <!--Border-->
+                            <Frame Style="{StaticResource minuteFrame}"
+                                   BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedMinuteColorConverter}}">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding BindingContext.SelectMinute, Source={x:Reference base}}"
                                                                   CommandParameter="{Binding .}" />
-                                        </Frame.GestureRecognizers>
+                                </Frame.GestureRecognizers>
 
-                                        <StackLayout Spacing="{StaticResource BaseSpacing}">
+                                <StackLayout Spacing="{StaticResource BaseSpacing}">
 
-                                            <!--People on the meeting-->
-                                            <StackLayout Orientation="Horizontal">
-                                                <Label Style="{StaticResource starBorderFontIcon}" HorizontalOptions="StartAndExpand" />
+                                    <!--People on the meeting-->
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Style="{StaticResource starBorderFontIcon}" HorizontalOptions="StartAndExpand" />
 
-                                                <Label Style="{StaticResource bodyLabel}"
+                                        <Label Style="{StaticResource bodyLabel}"
                                                        Text="{Binding PeopleQuantity}" />
 
-                                                <Label Style="{StaticResource groupsFontIcon}" />
-                                            </StackLayout>
+                                        <Label Style="{StaticResource groupsFontIcon}" />
+                                    </StackLayout>
 
-                                            <!--Name of the meeting-->
-                                            <StackLayout Orientation="Horizontal">
-                                                <Label Style="{StaticResource assignmentFontIcon}" />
+                                    <!--Name of the meeting-->
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Style="{StaticResource assignmentFontIcon}" />
 
-                                                <Label Style="{StaticResource headerLabel}" 
+                                        <Label Style="{StaticResource headerLabel}" 
                                                        LineBreakMode="HeadTruncation"
                                                        Text="{Binding Name, Mode=OneTime}" />
-                                            </StackLayout>
+                                    </StackLayout>
 
-                                            <!--Date of the meeting-->
-                                            <StackLayout Orientation="Horizontal">
-                                                <Label Style="{StaticResource todayFontIcon}" />
+                                    <!--Date of the meeting-->
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Style="{StaticResource todayFontIcon}" />
 
-                                                <Label Style="{StaticResource bodyLabel}" 
+                                        <Label Style="{StaticResource bodyLabel}" 
                                                        FontSize="14"
                                                        LineBreakMode="HeadTruncation" 
                                                        Text="{Binding Date, Mode=OneTime, StringFormat={StaticResource DateFormat}}"/>
-                                            </StackLayout>
+                                    </StackLayout>
 
-                                        </StackLayout>
+                                </StackLayout>
 
-                                    </Frame>
+                            </Frame>
 
-                                </ContentView>
+                        </ContentView>
 
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                        <CollectionView.Footer>
-                            <BoxView HeightRequest="160" />
-                        </CollectionView.Footer>
-                    </CollectionView>
-                </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.Footer>
+                    <BoxView HeightRequest="160" />
+                </CollectionView.Footer>
+            </CollectionView>
 
-                <!--Bottom Gradient-->
-                <BoxView AbsoluteLayout.LayoutBounds="0,1,1,40" AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional"
-                         InputTransparent="True">
-                    <BoxView.Background>
-                        <LinearGradientBrush StartPoint="0,0"
+            <!--Bottom Gradient-->
+            <BoxView Grid.Row="1"
+                     VerticalOptions="End"
+                     InputTransparent="True">
+                <BoxView.Background>
+                    <LinearGradientBrush StartPoint="0,0"
                                              EndPoint="0,1">
-                            <GradientStop Color="Transparent"
+                        <GradientStop Color="Transparent"
                                           Offset="0" />
-                            <GradientStop Color="White"
+                        <GradientStop Color="White"
                                           Offset="0.2" />
-                        </LinearGradientBrush>
-                    </BoxView.Background>
-                </BoxView>
-                
-                <!--Left button list-->
-                <StackLayout Opacity="0" TranslationX="-100" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All"
-                             InputTransparent="True"
-                             CascadeInputTransparent="False"
-                             Padding="5">
-                    <StackLayout.Behaviors>
-                        <behaviors:FadingBehavior IsActive="{Binding HasMinuteSelected}">
-                            <x:Arguments>
-                                <x:Double>1</x:Double>
-                            </x:Arguments>
-                        </behaviors:FadingBehavior>
-                        <behaviors:MovingBehavior IsActive="{Binding HasMinuteSelected}">
-                            <x:Arguments>
-                                <x:Double>-100</x:Double>
-                                <x:Double>0</x:Double>
-                            </x:Arguments>
-                        </behaviors:MovingBehavior>
-                    </StackLayout.Behaviors>
+                    </LinearGradientBrush>
+                </BoxView.Background>
+            </BoxView>
 
-                    <Button Style="{StaticResource roundButton}" HorizontalOptions="Start" VerticalOptions="EndAndExpand"
-                            BackgroundColor="{StaticResource Danger}">
-                        <Button.ImageSource>
-                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Delete}"
+            <!--Left button list-->
+            <StackLayout Grid.Row="1"
+                         Opacity="0" TranslationX="-100" 
+                         HorizontalOptions="Start" VerticalOptions="End"
+                         InputTransparent="True"
+                         CascadeInputTransparent="False"
+                         Padding="5">
+                <StackLayout.Behaviors>
+                    <behaviors:FadingBehavior IsActive="{Binding HasMinuteSelected}">
+                        <x:Arguments>
+                            <x:Double>1</x:Double>
+                        </x:Arguments>
+                    </behaviors:FadingBehavior>
+                    <behaviors:MovingBehavior IsActive="{Binding HasMinuteSelected}">
+                        <x:Arguments>
+                            <x:Double>-100</x:Double>
+                            <x:Double>0</x:Double>
+                        </x:Arguments>
+                    </behaviors:MovingBehavior>
+                </StackLayout.Behaviors>
+
+                <Button Style="{StaticResource roundButton}"
+                        BackgroundColor="{StaticResource Danger}">
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{x:Static ui:MaterialIcon.Delete}"
                                              Color="{StaticResource TextIcons}"
                                              FontFamily="{StaticResource FontIconFamily}"
                                              Size="{StaticResource FontIconSize}" />
-                        </Button.ImageSource>
-                    </Button>
-                </StackLayout>
+                    </Button.ImageSource>
+                </Button>
+            </StackLayout>
 
-                <!--Clear selection button-->
-                <Button Opacity="0" TranslationY="100" AbsoluteLayout.LayoutBounds="0.5,1,50,50" AbsoluteLayout.LayoutFlags="PositionProportional"
-                        Style="{StaticResource roundButton}"
-                        BackgroundColor="Transparent"
-                        Command="{Binding ClearSelection}">
-                    <Button.Behaviors>
-                        <behaviors:FadingBehavior IsActive="{Binding HasMinuteSelected}">
-                            <x:Arguments>
-                                <x:Double>1</x:Double>
-                            </x:Arguments>
-                        </behaviors:FadingBehavior>
-                        <behaviors:MovingBehavior IsActive="{Binding HasMinuteSelected}">
-                            <x:Arguments>
-                                <x:Double>0</x:Double>
-                                <x:Double>100</x:Double>
-                            </x:Arguments>
-                        </behaviors:MovingBehavior>
-                    </Button.Behaviors>
+            <!--Clear selection button-->
+            <Button Grid.Row="1" 
+                    Opacity="0" TranslationY="100"
+                    HorizontalOptions="Center" VerticalOptions="End"
+                    Style="{StaticResource roundButton}"
+                    BackgroundColor="Transparent"
+                    Command="{Binding ClearSelection}">
+                <Button.Behaviors>
+                    <behaviors:FadingBehavior IsActive="{Binding HasMinuteSelected}">
+                        <x:Arguments>
+                            <x:Double>1</x:Double>
+                        </x:Arguments>
+                    </behaviors:FadingBehavior>
+                    <behaviors:MovingBehavior IsActive="{Binding HasMinuteSelected}">
+                        <x:Arguments>
+                            <x:Double>0</x:Double>
+                            <x:Double>100</x:Double>
+                        </x:Arguments>
+                    </behaviors:MovingBehavior>
+                </Button.Behaviors>
 
-                    <Button.ImageSource>
-                        <FontImageSource Glyph="{x:Static ui:MaterialIcon.Clear}"
+                <Button.ImageSource>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Clear}"
                                          Color="{StaticResource Danger}"
                                          FontFamily="{StaticResource FontIconFamily}"
                                          Size="32" />
-                    </Button.ImageSource>
-                </Button>
-                
-                <!--Right button list-->
-                <StackLayout Opacity="0" TranslationX="100" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All"
-                             InputTransparent="True"
-                             CascadeInputTransparent="False"
-                             Padding="5">
-                    <StackLayout.Behaviors>
-                        <behaviors:FadingBehavior IsActive="{Binding HasMinuteSelected}">
-                            <x:Arguments>
-                                <x:Double>1</x:Double>
-                            </x:Arguments>
-                        </behaviors:FadingBehavior>
-                        <behaviors:MovingBehavior IsActive="{Binding HasMinuteSelected}">
-                            <x:Arguments>
-                                <x:Double>100</x:Double>
-                                <x:Double>0</x:Double>
-                            </x:Arguments>
-                        </behaviors:MovingBehavior>
-                    </StackLayout.Behaviors>
+                </Button.ImageSource>
+            </Button>
 
-                    <Button Style="{StaticResource roundButton}" HorizontalOptions="End" VerticalOptions="EndAndExpand" 
+            <!--Right button list-->
+            <StackLayout Grid.Row="1"
+                         Opacity="0" TranslationX="100" 
+                         HorizontalOptions="End" VerticalOptions="End"
+                         InputTransparent="True"
+                         CascadeInputTransparent="False"
+                         Padding="5">
+                <StackLayout.Behaviors>
+                    <behaviors:FadingBehavior IsActive="{Binding HasMinuteSelected}">
+                        <x:Arguments>
+                            <x:Double>1</x:Double>
+                        </x:Arguments>
+                    </behaviors:FadingBehavior>
+                    <behaviors:MovingBehavior IsActive="{Binding HasMinuteSelected}">
+                        <x:Arguments>
+                            <x:Double>100</x:Double>
+                            <x:Double>0</x:Double>
+                        </x:Arguments>
+                    </behaviors:MovingBehavior>
+                </StackLayout.Behaviors>
+
+                <Button Style="{StaticResource roundButton}" HorizontalOptions="End" VerticalOptions="EndAndExpand" 
                             BackgroundColor="{StaticResource Premium}"
                             ImageSource="icPDF"
                             Command="{Binding PrintPDF}" />
 
-                    <Button Style="{StaticResource roundButton}" HorizontalOptions="End"
+                <Button Style="{StaticResource roundButton}" HorizontalOptions="End"
                             ImageSource="icWord"
                             Command="{Binding PrintWord}" />
 
-                    <Button Style="{StaticResource roundButton}" HorizontalOptions="End"
+                <Button Style="{StaticResource roundButton}" HorizontalOptions="End"
                             Command="{Binding BindingContext.EditMinute, Source={x:Reference base}}">
-                        <Button.ImageSource>
-                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Edit}"
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{x:Static ui:MaterialIcon.Edit}"
                                              Color="{StaticResource TextIcons}"
                                              FontFamily="{StaticResource FontIconFamily}"
                                              Size="{StaticResource FontIconSize}" />
-                        </Button.ImageSource>
-                    </Button>
-                </StackLayout>
-
-                <!--Add button-->
-                <Button Opacity="0" TranslationY="100" AbsoluteLayout.LayoutBounds="0.5,1,48,48" AbsoluteLayout.LayoutFlags="PositionProportional"
-                        Style="{StaticResource roundButton}"
-                        Command="{Binding CreateMinute}">
-                    <Button.Behaviors>
-                        <behaviors:FadingBehavior IsActive="{Binding IsSelectionEmpty}">
-                            <x:Arguments>
-                                <x:Double>1</x:Double>
-                            </x:Arguments>
-                        </behaviors:FadingBehavior>
-                        <behaviors:MovingBehavior IsActive="{Binding IsSelectionEmpty}">
-                            <x:Arguments>
-                                <x:Double>0</x:Double>
-                                <x:Double>100</x:Double>
-                            </x:Arguments>
-                        </behaviors:MovingBehavior>
-                    </Button.Behaviors>
-
-                    <Button.ImageSource>
-                        <FontImageSource Glyph="{x:Static ui:MaterialIcon.Add}"
-                                         Color="{StaticResource TextIcons}"
-                                         FontFamily="{StaticResource FontIconFamily}"
-                                         Size="{StaticResource FontIconSize}" />
                     </Button.ImageSource>
                 </Button>
+            </StackLayout>
 
-            </AbsoluteLayout>
+            <!--Add button-->
+            <Button Grid.Row="1" 
+                    Opacity="0" TranslationY="100" 
+                    HorizontalOptions="Center" VerticalOptions="End"
+                    Style="{StaticResource roundButton}"
+                    Command="{Binding CreateMinute}">
+                <Button.Behaviors>
+                    <behaviors:FadingBehavior IsActive="{Binding IsSelectionEmpty}">
+                        <x:Arguments>
+                            <x:Double>1</x:Double>
+                        </x:Arguments>
+                    </behaviors:FadingBehavior>
+                    <behaviors:MovingBehavior IsActive="{Binding IsSelectionEmpty}">
+                        <x:Arguments>
+                            <x:Double>0</x:Double>
+                            <x:Double>100</x:Double>
+                        </x:Arguments>
+                    </behaviors:MovingBehavior>
+                </Button.Behaviors>
 
-            <BoxView HeightRequest="60" BackgroundColor="{StaticResource Accent}" />
-        </StackLayout>
+                <Button.ImageSource>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Add}"
+                                     Color="{StaticResource TextIcons}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource FontIconSize}" />
+                </Button.ImageSource>
+            </Button>
+
+            <BoxView Grid.Row="2" 
+                     BackgroundColor="{StaticResource Primary}" />
+
+            <controls:AdMobView Grid.Row="2"
+                                AdUnitId="{x:Static core:AppConsts.AdHome}" />
+        </Grid>
     </ContentPage.Content>
 </views:BasePage>

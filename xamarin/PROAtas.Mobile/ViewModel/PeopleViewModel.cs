@@ -7,6 +7,7 @@ using PROAtas.ViewModel.Elements;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
 namespace PROAtas.Mobile.ViewModel
@@ -26,7 +27,7 @@ namespace PROAtas.Mobile.ViewModel
 
         public bool IsPeopleBusy => People.Any(l => l.IsNameSaving);
 
-        public ObservableCollection<PersonElement> People { get; } = new ObservableCollection<PersonElement>();
+        public ObservableRangeCollection<PersonElement> People { get; } = new ObservableRangeCollection<PersonElement>();
 
         #endregion
 
@@ -123,8 +124,8 @@ namespace PROAtas.Mobile.ViewModel
             dataService = DependencyService.Get<IDataService>();
 
             IdMinute = model.IdMinute;
-            foreach (var person in model.PeopleList)
-                People.Add(new PersonElement(new Person(person)));
+
+            People.ReplaceRange(model.PeopleList.Select(l => new PersonElement(new Person(l))));
         }
 
         public override bool CanLeave()

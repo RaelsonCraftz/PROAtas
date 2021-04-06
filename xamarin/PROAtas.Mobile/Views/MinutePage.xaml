@@ -7,6 +7,7 @@
                 x:Name="base"
                 
                 xmlns:ui="clr-namespace:PROAtas.Assets.UI"
+                xmlns:core="clr-namespace:PROAtas.Core"
                 xmlns:views="clr-namespace:Craftz.Pages;assembly=Xamarin.Craftz"
                 xmlns:entity="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
                 xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
@@ -38,14 +39,14 @@
 
         <!--Converters-->
         <converters:BooleanToColorConverter x:Key="SelectedTopicFrameConverter"
+                                            TrueColor="{StaticResource Accent}"
+                                            FalseColor="{StaticResource Primary}" />
+        <converters:BooleanToColorConverter x:Key="SelectedTopicButtonConverter"
                                             TrueColor="{StaticResource LightAccent}"
-                                            FalseColor="{StaticResource Accent}" />
-        <converters:BooleanToColorConverter x:Key="SelectedTopicBackgroundConverter"
-                                            TrueColor="{StaticResource Primary}"
-                                            FalseColor="{StaticResource DarkPrimary}" />
+                                            FalseColor="{StaticResource LightPrimary}" />
         <converters:BooleanToColorConverter x:Key="SelectedTopicTitleConverter"
                                             TrueColor="{StaticResource TextIcons}"
-                                            FalseColor="{StaticResource LightAccent}" />
+                                            FalseColor="{StaticResource Accent}" />
         <converters:BooleanToColorConverter x:Key="SelectedTopicTextConverter"
                                             TrueColor="{StaticResource TextIcons}"
                                             FalseColor="{StaticResource Accent}" />
@@ -110,7 +111,7 @@
                         <StackLayout Padding="5">
 
                             <!--Topic Title-->
-                            <Frame BackgroundColor="{StaticResource LightAccent}">
+                            <Frame BackgroundColor="{StaticResource LightPrimary}">
                                 <StackLayout Orientation="Horizontal">
                                     <AbsoluteLayout HorizontalOptions="FillAndExpand">
                                         <controls:LoadEntry x:Name="topicTitleEntry" 
@@ -152,7 +153,7 @@
                                             <Grid ColumnDefinitions="*,48">
                                                 <!--TODO: add LineBreakMode to Button. For some reason it's missing from XF API at 5.0.0.2012 -->
                                                 <!--Check here: https://github.com/xamarin/Xamarin.Forms/pull/11147--> 
-                                                <controls:TextButton BackgroundColor="{StaticResource LightPrimary}"
+                                                <controls:TextButton BackgroundColor="{StaticResource Accent}"
                                                                      Text="{Binding Text, Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}"
                                                                      Command="{Binding BindingContext.SelectInformation, Source={x:Reference base}}"
                                                                      CommandParameter="{Binding ., Source={RelativeSource AncestorType={x:Type elements:InformationElement}}}" />
@@ -233,7 +234,7 @@
                                            BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedTopicFrameConverter}}">
                                         <StackLayout>
                                             <Button HorizontalOptions="Fill" VerticalOptions="FillAndExpand"
-                                                    BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedTopicBackgroundConverter}}" 
+                                                    BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedTopicButtonConverter}}" 
                                                     TextColor="{Binding IsSelected, Converter={StaticResource SelectedTopicTextConverter}}" 
                                                     FontSize="22"
                                                     Text="{Binding Order}"
@@ -254,7 +255,7 @@
                             <!--Add button at the end of the topic list-->
                             <ContentView Padding="25,0,0,0">
                                 <Button Opacity="0.5"
-                                        BackgroundColor="{StaticResource Primary}" 
+                                        BackgroundColor="{StaticResource Accent}" 
                                         FontSize="{StaticResource FontIconSize}"
                                         Text="{Binding Order}"
                                         Clicked="CreateTopic_Clicked">
@@ -270,7 +271,8 @@
                     </CollectionView>
                 </ContentView>
 
-                <BoxView HeightRequest="60" BackgroundColor="{StaticResource Accent}" />
+                <controls:AdMobView HeightRequest="60" 
+                                    AdUnitId="{x:Static core:AppConsts.AdMinute}" />
             </StackLayout>
         </AbsoluteLayout>
     </ContentPage.Content>

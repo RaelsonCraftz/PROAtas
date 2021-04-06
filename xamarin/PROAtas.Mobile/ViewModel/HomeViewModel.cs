@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Forms;
 
 namespace PROAtas.Mobile.ViewModel
@@ -41,7 +42,7 @@ namespace PROAtas.Mobile.ViewModel
 
         #region Bindable Properties
 
-        public ObservableCollection<MinuteElement> Minutes { get; } = new ObservableCollection<MinuteElement>();
+        public ObservableRangeCollection<MinuteElement> Minutes { get; } = new ObservableRangeCollection<MinuteElement>();
 
         public bool IsSelectionEmpty => !HasMinuteSelected;
         public bool HasMinuteSelected => SelectedMinute != null;
@@ -349,9 +350,7 @@ namespace PROAtas.Mobile.ViewModel
             InvokeMainThread(() =>
             {
                 SelectedMinute = null;
-                Minutes.Clear();
-                foreach (var minute in minuteCollection.OrderByDescending(l => l.Date))
-                    Minutes.Add(minute);
+                Minutes.ReplaceRange(minuteCollection.OrderByDescending(l => l.Date));
             });
         }
 
