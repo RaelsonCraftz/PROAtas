@@ -66,7 +66,7 @@ namespace PROAtas.Mobile.ViewModel
             {
                 logService.LogAction(() =>
                 {
-                    Information.Text = Information.Original.Text;
+                    DiscardInformation();
                 },
                 log =>
                 {
@@ -80,7 +80,10 @@ namespace PROAtas.Mobile.ViewModel
 
         #region Helpers
 
-
+        private void DiscardInformation()
+        {
+            Information.Text = Information.Original.Text;
+        }
 
         #endregion
 
@@ -93,6 +96,34 @@ namespace PROAtas.Mobile.ViewModel
             dataService = DependencyService.Get<IDataService>();
 
             Information = new InformationElement(new Information(model));
+        }
+
+        public override bool CanLeave()
+        {
+            if (Information.Model.Text != Information.Original.Text)
+            {
+                _ = VerifyUserLeaveIntent();
+                return false;
+            }
+            else
+                return base.CanLeave();
+        }
+
+        public async Task VerifyUserLeaveIntent()
+        {
+            if (await UserDialogs.Instance.ConfirmAsync("Existem alterações não salvas, deseja mesmo sair?", "Aviso", "Sim", "Não"))
+            {
+                logService.LogAction(() =>
+                {
+                    DiscardInformation();
+                    CloseDialog.Execute(null);
+                },
+                log =>
+                {
+                    if (log != null)
+                        UserDialogs.Instance.Alert(log);
+                });
+            }
         }
 
         #endregion

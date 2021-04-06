@@ -24,18 +24,7 @@ namespace PROAtas.Services
 
         public DataService()
         {
-            switch (Device.RuntimePlatform)
-            {
-                case Device.Android:
-                    databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), databaseName);
-                    break;
-                case Device.iOS:
-                    SQLitePCL.Batteries_V2.Init();
-                    databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "..", "Library", databaseName);
-                    break;
-                default:
-                    break;
-            }
+            SetDbPath();
 
             Database = new SQLiteConnection(databasePath);
             Database.CreateTable<Minute>();
@@ -49,6 +38,22 @@ namespace PROAtas.Services
             TopicRepository = new TopicRepository(Database);
             InformationRepository = new InformationRepository(Database);
             PersonRepository = new PersonRepository(Database);
+        }
+
+        public void SetDbPath()
+        {
+            switch (Device.RuntimePlatform)
+            {
+                case Device.Android:
+                    databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), databaseName);
+                    break;
+                case Device.iOS:
+                    SQLitePCL.Batteries_V2.Init();
+                    databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "..", "Library", databaseName);
+                    break;
+                default:
+                    break;
+            }
         }
 
         public IMinuteRepository MinuteRepository { get; set; }
