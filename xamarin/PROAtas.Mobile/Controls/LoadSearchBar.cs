@@ -58,12 +58,12 @@ namespace PROAtas.Mobile.Controls
             }
         }
 
-        public Command LoadCommand
+        public ICommand LoadCommand
         {
             get { return (Command)GetValue(LoadCommandProperty); }
             set { SetValue(LoadCommandProperty, value); }
         }
-        public static readonly BindableProperty LoadCommandProperty = BindableProperty.Create(nameof(SearchCommand), typeof(Command), typeof(LoadSearchBar), default(Command));
+        public static readonly BindableProperty LoadCommandProperty = BindableProperty.Create(nameof(SearchCommand), typeof(ICommand), typeof(LoadSearchBar), default(ICommand));
 
         public object LoadCommandParameter
         {

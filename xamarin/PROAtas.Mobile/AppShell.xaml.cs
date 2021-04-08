@@ -1,7 +1,7 @@
-﻿using PROAtas.ViewModel;
-using PROAtas.Views;
+﻿using PROAtas.Mobile.Views;
 using System;
 using System.Collections.Generic;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace PROAtas
@@ -15,6 +15,8 @@ namespace PROAtas
             //Routing.RegisterRoute(nameof(ItemDetailPage), typeof(ItemDetailPage));
             //Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
         }
+
+        public string Version => VersionTracking.CurrentVersion;
 
         private async void OnMenuItemClicked(object sender, EventArgs e)
         {

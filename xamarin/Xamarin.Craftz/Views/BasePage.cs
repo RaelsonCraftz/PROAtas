@@ -4,11 +4,16 @@ using Newtonsoft.Json;
 using System;
 using Xamarin.Forms;
 
-namespace Craftz.Pages
+namespace Craftz.Views
 {
     public class BasePage : ContentPage
     {
         protected virtual void OnStart()
+        {
+
+        }
+
+        protected virtual void OnLeave()
         {
 
         }
@@ -28,7 +33,10 @@ namespace Craftz.Pages
         protected override void OnDisappearing()
         {
             if (CanLeave())
+            {
+                OnLeave();
                 base.OnDisappearing();
+            }
         }
     }
 
@@ -44,6 +52,11 @@ namespace Craftz.Pages
 
         }
 
+        protected virtual void OnLeave()
+        {
+
+        }
+
         protected virtual bool CanLeave()
         {
             return true;
@@ -51,7 +64,7 @@ namespace Craftz.Pages
 
         public TViewModel ViewModel
         {
-            get { return (TViewModel)BindingContext; }
+            get { return BindingContext as TViewModel; }
             set { BindingContext = value; }
         }
 
@@ -66,7 +79,19 @@ namespace Craftz.Pages
         protected override void OnDisappearing()
         {
             if (CanLeave() && (ViewModel?.CanLeave() ?? true))
+            {
+                OnLeave();
+                ViewModel?.Leave();
                 base.OnDisappearing();
+            }
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if (CanLeave() && (ViewModel?.CanLeave() ?? true))
+                return base.OnBackButtonPressed();
+            else
+                return true;
         }
     }
 
@@ -85,6 +110,11 @@ namespace Craftz.Pages
 
         }
 
+        protected virtual void OnLeave()
+        {
+
+        }
+
         protected virtual bool CanLeave()
         {
             return true;
@@ -92,7 +122,7 @@ namespace Craftz.Pages
 
         public TViewModel ViewModel
         {
-            get { return (TViewModel)BindingContext; }
+            get { return BindingContext as TViewModel; }
             set { BindingContext = value; }
         }
 
@@ -114,7 +144,19 @@ namespace Craftz.Pages
         protected override void OnDisappearing()
         {
             if (CanLeave() && (ViewModel?.CanLeave() ?? true))
+            {
+                OnLeave();
+                ViewModel?.Leave();
                 base.OnDisappearing();
+            }
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if (CanLeave() && (ViewModel?.CanLeave() ?? true))
+                return base.OnBackButtonPressed();
+            else
+                return true;
         }
 
         #region Navigation Properties

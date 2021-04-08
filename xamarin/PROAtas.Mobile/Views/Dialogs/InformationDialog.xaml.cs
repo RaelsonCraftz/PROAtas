@@ -1,10 +1,10 @@
-﻿using Craftz.Dialogs;
+﻿using Craftz.Views;
 using PROAtas.Core.Model.Entities;
 using PROAtas.Mobile.ViewModel;
 using System;
 using Xamarin.Forms.Xaml;
 
-namespace PROAtas.Views.Dialogs
+namespace PROAtas.Mobile.Views.Dialogs
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class InformationDialog : BaseDialog<InformationViewModel, Information>

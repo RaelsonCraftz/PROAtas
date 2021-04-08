@@ -12,12 +12,8 @@ namespace PROAtas.Core.Model.Entities
             Id = model.Id;
 
             Name = model.Name;
-            ImageBytes = model.ImageBytes;
         }
 
         public string Name { get; set; }
-
-        [Ignore]
-        public byte[] ImageBytes { get; set; }
     }
 }

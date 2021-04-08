@@ -6,8 +6,8 @@ namespace Craftz.ViewModel
 {
     public class BaseElement<T> : INotifyPropertyChanged where T : new()
     {
-        public T Original { get; }
-        public T Model { get; }
+        public T Original { get; set; }
+        public T Model { get; set; }
 
         public BaseElement()
         {
@@ -19,7 +19,6 @@ namespace Craftz.ViewModel
             this.Original = (T)Activator.CreateInstance(typeof(T), model);
             this.Model = model;
         }
-
 
         #region INotifyPropertyChanged
 

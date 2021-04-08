@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<views:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+<craftz:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                x:Class="PROAtas.Views.MinutePage"
+                x:Class="PROAtas.Mobile.Views.MinutePage"
                 x:DataType="viewmodel:MinuteViewModel"
                 x:TypeArguments="viewmodel:MinuteViewModel,entity:Minute"
                 x:Name="base"
                 
                 xmlns:ui="clr-namespace:PROAtas.Assets.UI"
                 xmlns:core="clr-namespace:PROAtas.Core"
-                xmlns:views="clr-namespace:Craftz.Pages;assembly=Xamarin.Craftz"
+                xmlns:craftz="clr-namespace:Craftz.Views;assembly=Xamarin.Craftz"
                 xmlns:entity="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
                 xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
-                xmlns:elements="clr-namespace:PROAtas.ViewModel.Elements"
+                xmlns:elements="clr-namespace:PROAtas.Mobile.ViewModel.Elements"
                 xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
                 xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
                 xmlns:converters="clr-namespace:PROAtas.Converters">
@@ -232,21 +232,21 @@
                                 <ContentView Padding="0">
                                     <Frame WidthRequest="90" 
                                            BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedTopicFrameConverter}}">
-                                        <StackLayout>
-                                            <Button HorizontalOptions="Fill" VerticalOptions="FillAndExpand"
-                                                    BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedTopicButtonConverter}}" 
+                                        <Grid RowDefinitions="48,32">
+                                            <Button BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedTopicButtonConverter}}" 
                                                     TextColor="{Binding IsSelected, Converter={StaticResource SelectedTopicTextConverter}}" 
                                                     FontSize="22"
                                                     Text="{Binding Order}"
                                                     Command="{Binding BindingContext.SelectTopic, Source={x:Reference base}}"
                                                     CommandParameter="{Binding .}"/>
 
-                                            <Label HorizontalOptions="Center" 
+                                            <Label Grid.Row="1" 
+                                                   HorizontalOptions="Center" 
                                                    LineBreakMode="HeadTruncation"
                                                    FontSize="12"
                                                    TextColor="{Binding IsSelected, Converter={StaticResource SelectedTopicTitleConverter}}"
                                                    Text="{Binding Text}" />
-                                        </StackLayout>
+                                        </Grid>
                                     </Frame>
                                 </ContentView>
                             </DataTemplate>
@@ -276,4 +276,4 @@
             </StackLayout>
         </AbsoluteLayout>
     </ContentPage.Content>
-</views:BasePage>
+</craftz:BasePage>

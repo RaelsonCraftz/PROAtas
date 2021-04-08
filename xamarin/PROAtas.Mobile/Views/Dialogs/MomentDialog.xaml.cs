@@ -1,4 +1,4 @@
-﻿using Craftz.Dialogs;
+﻿using Craftz.Views;
 using PROAtas.Core.Model;
 using PROAtas.Core.Model.Entities;
 using PROAtas.Mobile.ViewModel;

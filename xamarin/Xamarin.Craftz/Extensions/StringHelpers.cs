@@ -3,11 +3,11 @@ using System.Text;
 
 namespace Craftz.Core
 {
-    public class Functions
+    public static class StringHelpers
     {
         // There seems to be a limit for EscapeDataString for strings longer than 32766 characters
         // https://docs.microsoft.com/en-us/dotnet/api/system.uri.escapedatastring
-        public static string EscapeString(string toEscape)
+        public static string EscapeString(this string toEscape)
         {
             int maxLengthAllowed = 32765;
             StringBuilder sb = new StringBuilder();
@@ -23,7 +23,7 @@ namespace Craftz.Core
 
         // For unescaping strings there's no record of character limit. Just to be safe, I'm following the same limit
         // https://docs.microsoft.com/en-us/dotnet/api/system.uri.unescapedatastring
-        public static string UnescapeString(string dataString)
+        public static string UnescapeString(this string dataString)
         {
             int limit = 32765;
             int charsProcessed = 0;
@@ -56,5 +56,23 @@ namespace Craftz.Core
         }
         // A good discussion about this topic can be found at:
         // https://stackoverflow.com/questions/6695208/uri-escapedatastring-invalid-uri-the-uri-string-is-too-long
+
+        // This is meant to prevent situation where special characters are inserted on fields meant to be file names
+        public static string RemoveSpecialCharacters(this string str)
+        {
+            return str
+                .Replace("&", " ")
+                .Replace(@"""", "-")
+                .Replace("?", "")
+                .Replace("<", "-")
+                .Replace(">", "-")
+                .Replace("#", "")
+                .Replace("{", "(")
+                .Replace("}", ")")
+                .Replace("%", " ")
+                .Replace("~", "-")
+                .Replace("/", "-")
+                .Replace(@"\", "-");
+        }
     }
 }

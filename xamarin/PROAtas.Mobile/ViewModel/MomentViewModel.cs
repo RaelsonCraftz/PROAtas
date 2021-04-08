@@ -1,7 +1,7 @@
 ﻿using Craftz.ViewModel;
 using PROAtas.Core.Model.Entities;
 using PROAtas.Mobile.Services.Shared;
-using PROAtas.ViewModel.Elements;
+using PROAtas.Mobile.ViewModel.Elements;
 using System;
 using Xamarin.Forms;
 

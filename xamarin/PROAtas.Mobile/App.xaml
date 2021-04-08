@@ -90,7 +90,7 @@
                     </VisualStateGroupList>
                 </Setter>
             </Style>
-            
+
             <!--Specific Styles-->
             <Style x:Key="bodyLabel" TargetType="Label">
                 <Setter Property="VerticalOptions" Value="Center" />

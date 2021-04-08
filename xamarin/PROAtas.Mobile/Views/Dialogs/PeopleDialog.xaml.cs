@@ -1,10 +1,10 @@
 ﻿using System;
 using Xamarin.Forms.Xaml;
-using Craftz.Dialogs;
+using Craftz.Views;
 using PROAtas.Mobile.ViewModel;
 using PROAtas.Core.Model;
 
-namespace PROAtas.Views.Dialogs
+namespace PROAtas.Mobile.Views.Dialogs
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class PeopleDialog : BaseDialog<PeopleViewModel, People>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace PROAtas.Mobile.Controls
@@ -18,12 +19,12 @@ namespace PROAtas.Mobile.Controls
             PropertyChanged -= LoadTimePicker_TimeChanged;
         }
 
-        public Command LoadCommand
+        public ICommand LoadCommand
         {
             get { return (Command)GetValue(LoadCommandProperty); }
             set { SetValue(LoadCommandProperty, value); }
         }
-        public static readonly BindableProperty LoadCommandProperty = BindableProperty.Create(nameof(LoadCommand), typeof(Command), typeof(LoadTimePicker), default(Command));
+        public static readonly BindableProperty LoadCommandProperty = BindableProperty.Create(nameof(LoadCommand), typeof(ICommand), typeof(LoadTimePicker), default(ICommand));
 
         private void LoadTimePicker_TimeChanged(object sender, PropertyChangedEventArgs e)
         {

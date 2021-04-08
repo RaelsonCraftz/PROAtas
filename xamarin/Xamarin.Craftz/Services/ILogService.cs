@@ -36,7 +36,7 @@ namespace Xamarin.Craftz.Services
                 });
 #endif
 
-                HandleErrorInternal(errorMessage, ex.Message, onError);
+                HandleErrorInternal(errorMessage, ex.Message, onError, ex.StackTrace);
             }
         }
 
@@ -55,7 +55,7 @@ namespace Xamarin.Craftz.Services
                 });
 #endif
 
-                await HandleErrorInternalAsync(errorMessage, ex.Message, onError);
+                await HandleErrorInternalAsync(errorMessage, ex.Message, onError, ex.StackTrace);
             }
         }
 
@@ -77,11 +77,11 @@ namespace Xamarin.Craftz.Services
                 if (exWeb.Response != null)
                 {
                     using (var stream = new StreamReader(exWeb.Response.GetResponseStream()))
-                        await HandleErrorInternalAsync(errorMessage, $"[{AppInfo.Name}] houve um erro de requisição: {JsonConvert.DeserializeObject(stream.ReadToEnd())}", onError);
+                        await HandleErrorInternalAsync(errorMessage, $"[{AppInfo.Name}] houve um erro de requisição: {JsonConvert.DeserializeObject(stream.ReadToEnd())}", onError, exWeb.StackTrace);
                     return;
                 }
 
-                await HandleErrorInternalAsync(errorMessage, exWeb.Message, onError);
+                await HandleErrorInternalAsync(errorMessage, exWeb.Message, onError, exWeb.StackTrace);
             }
             catch (Exception ex)
             {
@@ -91,7 +91,7 @@ namespace Xamarin.Craftz.Services
                     { ex.GetType().Name, caller }
                 });
 #endif
-                await HandleErrorInternalAsync(errorMessage, ex.Message, onError);
+                await HandleErrorInternalAsync(errorMessage, ex.Message, onError, ex.StackTrace);
             }
         }
 
@@ -106,15 +106,17 @@ namespace Xamarin.Craftz.Services
             Console.WriteLine($"[{AppInfo.Name}] {consoleMessage} {stopWatch.ElapsedMilliseconds} ms");
         }
 
-        private void HandleErrorInternal(string errorMessage, string exceptionMessage, Action<string> errorCallback)
+        private void HandleErrorInternal(string errorMessage, string exceptionMessage, Action<string> errorCallback, string stackTrace)
         {
             Console.WriteLine($"[{AppInfo.Name}] houve um erro: {exceptionMessage}");
+            Console.WriteLine($"[{AppInfo.Name}] stack trace do erro: {stackTrace}");
             errorCallback?.Invoke(errorMessage ?? "Houve algum erro, contate o desenvolvedor");
         }
 
-        private async Task HandleErrorInternalAsync(string errorMessage, string exceptionMessage, Func<string, Task> errorCallback)
+        private async Task HandleErrorInternalAsync(string errorMessage, string exceptionMessage, Func<string, Task> errorCallback, string stackTrace)
         {
-            Console.WriteLine($"Houve algum erro genérico: {exceptionMessage}");
+            Console.WriteLine($"[{AppInfo.Name}] houve algum erro genérico: {exceptionMessage}");
+            Console.WriteLine($"[{AppInfo.Name}] stack trace do erro: {stackTrace}");
             await errorCallback?.Invoke(errorMessage ?? "Houve algum erro, contate o desenvolvedor");
         }
     }

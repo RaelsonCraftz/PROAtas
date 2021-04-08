@@ -17,6 +17,7 @@ namespace PROAtas.Core
         public const string AdInformacao = "ca-app-pub-3940256099942544/6300978111";
         public const string AdPessoas = "ca-app-pub-3940256099942544/6300978111";
         public const string AdMomento = "ca-app-pub-3940256099942544/6300978111";
+        public const string AdFonteTamanho = "ca-app-pub-3940256099942544/6300978111";
 #else
         public const string AdHome = "ca-app-pub-1711953563979738/2709482100";
         public const string AdMinute = "ca-app-pub-1711953563979738/3033886902";
@@ -27,6 +28,7 @@ namespace PROAtas.Core
         public const string AdInformacao = "ca-app-pub-1711953563979738/2248939334";
         public const string AdPessoas = "ca-app-pub-1711953563979738/1865795951";
         public const string AdMomento = "ca-app-pub-1711953563979738/8385960516";
+        public const string AdFonteTamanho = "ca-app-pub-1711953563979738/5718847848";
 #endif
 
         // Preference keys

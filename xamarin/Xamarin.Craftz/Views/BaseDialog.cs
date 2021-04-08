@@ -1,11 +1,12 @@
 ﻿using Craftz.ViewModel;
 using Rg.Plugins.Popup.Pages;
+using Rg.Plugins.Popup.Services;
 using System;
 using System.Windows.Input;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-namespace Craftz.Dialogs
+namespace Craftz.Views
 {
     public class BaseDialog : PopupPage
     {
@@ -26,6 +27,11 @@ namespace Craftz.Dialogs
 
         }
 
+        protected virtual void OnLeave()
+        {
+
+        }
+
         protected virtual bool CanLeave()
         {
             return true;
@@ -41,7 +47,10 @@ namespace Craftz.Dialogs
         protected override void OnDisappearing()
         {
             if (CanLeave())
+            {
+                OnLeave();
                 base.OnDisappearing();
+            }
         }
 
         protected override bool OnBackButtonPressed()
@@ -49,7 +58,7 @@ namespace Craftz.Dialogs
             if (CanLeave())
                 return base.OnBackButtonPressed();
             else
-                return false;
+                return true;
         }
     }
 
@@ -59,7 +68,7 @@ namespace Craftz.Dialogs
 
         public BaseDialog()
         {
-
+            
         }
 
         public BaseDialog(Action onResult)
@@ -68,6 +77,11 @@ namespace Craftz.Dialogs
         }
 
         protected virtual void OnStart()
+        {
+
+        }
+
+        protected virtual void OnLeave()
         {
 
         }
@@ -94,7 +108,11 @@ namespace Craftz.Dialogs
         protected override void OnDisappearing()
         {
             if (CanLeave() && (ViewModel?.CanLeave() ?? true))
+            {
+                OnLeave();
+                ViewModel?.Leave();
                 base.OnDisappearing();
+            }
         }
 
         protected override bool OnBackButtonPressed()
@@ -102,7 +120,7 @@ namespace Craftz.Dialogs
             if (CanLeave() && (ViewModel?.CanLeave() ?? true))
                 return base.OnBackButtonPressed();
             else
-                return false;
+                return true;
         }
     }
 
@@ -128,6 +146,11 @@ namespace Craftz.Dialogs
         }
 
         protected virtual void OnStart()
+        {
+
+        }
+
+        protected virtual void OnLeave()
         {
 
         }
@@ -161,7 +184,11 @@ namespace Craftz.Dialogs
         protected override void OnDisappearing()
         {
             if (CanLeave() && (ViewModel?.CanLeave() ?? true))
+            {
+                OnLeave();
+                ViewModel?.Leave();
                 base.OnDisappearing();
+            }
         }
 
         protected override bool OnBackButtonPressed()
@@ -169,7 +196,7 @@ namespace Craftz.Dialogs
             if (CanLeave() && (ViewModel?.CanLeave() ?? true))
                 return base.OnBackButtonPressed();
             else
-                return false;
+                return true;
         }
     }
 }

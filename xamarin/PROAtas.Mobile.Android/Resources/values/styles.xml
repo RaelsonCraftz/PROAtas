@@ -14,6 +14,9 @@
     <!-- colorAccent is used as the default value for colorControlActivated
          which is used to tint widgets -->
     <item name="colorAccent">@color/colorCursors</item>
+
+    <!-- cursor color for entries -->
+    <item name="android:textCursorDrawable">@drawable/entry_cursor</item>
   </style>
 
   <style name="MyTheme.Splash" parent ="Theme.AppCompat.Light.NoActionBar">

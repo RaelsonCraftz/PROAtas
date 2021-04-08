@@ -3,7 +3,7 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using PROAtas.Core;
 using PROAtas.Mobile.Services.Shared;
-using PROAtas.Views;
+using PROAtas.Mobile.Views;
 using Xamarin.Craftz.Services;
 using Xamarin.Forms;
 

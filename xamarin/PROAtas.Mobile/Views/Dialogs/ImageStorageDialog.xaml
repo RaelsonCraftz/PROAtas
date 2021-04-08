@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<craftz:BaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   x:Class="PROAtas.Mobile.Views.Dialogs.ImageStorageDialog"
+                   x:DataType="viewmodel:ImageStorageViewModel"
+                   x:TypeArguments="viewmodel:ImageStorageViewModel,elements:MinuteImageElement"
+                   x:Name="base"
+                  
+                   xmlns:ui="clr-namespace:PROAtas.Assets.UI"
+                   xmlns:core="clr-namespace:PROAtas.Core"
+                   xmlns:views="clr-namespace:PROAtas.Mobile.Views"
+                   xmlns:entity="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
+                   xmlns:popups="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+                   xmlns:craftz="clr-namespace:Craftz.Views;assembly=Xamarin.Craftz"
+                   xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
+                   xmlns:elements="clr-namespace:PROAtas.Mobile.ViewModel.Elements"
+                   xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
+                   xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
+                   xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
+                   xmlns:converters="clr-namespace:PROAtas.Converters"
+                   SystemPaddingSides="Bottom">
+
+    <ContentPage.BindingContext>
+        <viewmodel:ImageStorageViewModel />
+    </ContentPage.BindingContext>
+
+    <popups:PopupPage.Animation>
+        <animations:MoveAnimation EasingIn="CubicOut"
+                                  EasingOut="CubicIn"
+                                  PositionIn="Bottom"
+                                  PositionOut="Bottom"
+                                  DurationIn="400"
+                                  DurationOut="200" />
+    </popups:PopupPage.Animation>
+    
+    <ContentPage.Content>
+        <Grid RowDefinitions="120,32,*,60">
+
+            <Button HorizontalOptions="Center" VerticalOptions="Center"
+                    BackgroundColor="Transparent"
+                    Command="{Binding CloseDialog}">
+                <Button.ImageSource>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Clear}"
+                                     Color="{StaticResource TextIcons}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource BigFontIconSize}" />
+                </Button.ImageSource>
+            </Button>
+
+            <!--Frame for popup background-->
+            <Frame Grid.Row="1" Grid.RowSpan="3"
+                   BackgroundColor="{StaticResource TextIcons}" />
+
+            <Image Grid.Row="1">
+                <Image.Source>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Storage}"
+                                     Color="{StaticResource Primary}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource FontIconSize}" />
+                </Image.Source>
+            </Image>
+
+            <ContentView Grid.Row="2"
+                         Padding="5">
+                <CollectionView x:Name="imageCollection"
+                                x:DataType="elements:MinuteImageElement"
+                                SelectionMode="Single"
+                                ItemsSource="{Binding BindingContext.ImageCollection, Source={x:Reference base}}"
+                                SelectedItem="{Binding BindingContext.SelectedImage, Mode=TwoWay, Source={x:Reference base}}"
+                                SelectionChangedCommand="{Binding BindingContext.SelectImage, Source={x:Reference base}}"
+                                SelectionChangedCommandParameter="{Binding SelectedItem, Source={x:Reference imageCollection}}">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical"
+                                         HorizontalItemSpacing="5" VerticalItemSpacing="5"
+                                         Span="3" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <Image HeightRequest="128" WidthRequest="128"
+                                       Source="{Binding Source}" />
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ContentView>
+            
+        </Grid>
+    </ContentPage.Content>
+</craftz:BaseDialog>

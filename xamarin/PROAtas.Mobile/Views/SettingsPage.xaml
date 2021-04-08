@@ -1,0 +1,372 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<craftz:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 x:Class="PROAtas.Mobile.Views.SettingsPage"
+                 x:Name="base"
+                 x:DataType="viewmodel:SettingsViewModel"
+                 x:TypeArguments="viewmodel:SettingsViewModel"
+                
+                 xmlns:ui="clr-namespace:PROAtas.Assets.UI"
+                 xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+                 xmlns:ios="clr-namespace:Xamarin.CommunityToolkit.PlatformConfiguration.iOSSpecific;assembly=Xamarin.CommunityToolkit"
+                 xmlns:core="clr-namespace:PROAtas.Core"
+                 xmlns:droid="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+                 xmlns:craftz="clr-namespace:Craftz.Views;assembly=Xamarin.Craftz"
+                 xmlns:entity="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
+                 xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
+                 xmlns:elements="clr-namespace:PROAtas.Mobile.ViewModel.Elements"
+                 xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
+                 xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
+                 xmlns:converters="clr-namespace:PROAtas.Converters"
+                 
+                 Title="Configurações">
+
+    <ContentPage.Resources>
+        <Style TargetType="xct:TabViewItem">
+            <Setter Property="TextColorSelected" Value="{StaticResource LightAccent}" />
+            <Setter Property="TextColor" Value="{StaticResource SecondaryText}" />
+        </Style>
+    </ContentPage.Resources>
+    
+    <ContentPage.BindingContext>
+        <viewmodel:SettingsViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Content>
+        <xct:TabView TabStripPlacement="Top"
+                     TabStripHeight="80"
+                     TabStripBackgroundColor="{StaticResource Primary}"
+                     SelectedIndex="0">
+
+            <!--Organization Settings-->
+            <xct:TabViewItem Text="Organização">
+                <xct:TabViewItem.IconSelected>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Organization}"
+                                     Color="{StaticResource LightAccent}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource FontIconSize}" />
+                </xct:TabViewItem.IconSelected>
+                <xct:TabViewItem.Icon>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Organization}"
+                                     Color="{StaticResource SecondaryText}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource FontIconSize}" />
+                </xct:TabViewItem.Icon>
+
+                <Grid RowDefinitions="48,48,48,48,*,60" ColumnDefinitions="48,*"
+                      Padding="5,40,5,0">
+
+                    <Frame Grid.ColumnSpan="2" 
+                           BackgroundColor="{StaticResource Primary}" />
+                    <Label HorizontalOptions="Center" VerticalOptions="Center"
+                           Text="{x:Static ui:MaterialIcon.Person}"
+                           TextColor="{StaticResource TextIcons}"
+                           FontFamily="{StaticResource FontIconFamily}"
+                           FontSize="{StaticResource FontIconSize}" />
+                    <controls:LoadEntry Grid.Column="1"
+                                        Margin="5"
+                                        Placeholder="Usuário"
+                                        Text="{Binding Settings.User}"
+                                        IsBusy="{Binding IsUserSaving, Mode=OneWayToSource}"
+                                        LoadCommand="{Binding SaveUser}" />
+                    <ActivityIndicator Grid.Column="1"
+                                       HorizontalOptions="End" VerticalOptions="Start"
+                                       Margin="8"
+                                       WidthRequest="16" HeightRequest="16"
+                                       IsRunning="{Binding IsUserSaving}" />
+
+                    <Frame Grid.Row="1" Grid.ColumnSpan="2" 
+                           BackgroundColor="{StaticResource Primary}" />
+                    <Label Grid.Row="1"
+                           HorizontalOptions="Center" VerticalOptions="Center"
+                           Text="{x:Static ui:MaterialIcon.Organization}"
+                           TextColor="{StaticResource TextIcons}"
+                           FontFamily="{StaticResource FontIconFamily}"
+                           FontSize="{StaticResource FontIconSize}" />
+                    <controls:LoadEntry Grid.Row="1" Grid.Column="1"
+                                        Margin="5"
+                                        Placeholder="Organização"
+                                        Text="{Binding Settings.Organization}"
+                                        IsBusy="{Binding IsOrganizationSaving, Mode=OneWayToSource}"
+                                        LoadCommand="{Binding SaveOrganization}" />
+                    <ActivityIndicator Grid.Column="1"
+                                       HorizontalOptions="End"
+                                       IsRunning="{Binding IsOrganizationSaving}" />
+
+                    <Frame Grid.Row="2" Grid.ColumnSpan="2" 
+                           BackgroundColor="{StaticResource Primary}" />
+                    <Label Grid.Row="2"
+                           HorizontalOptions="Center" VerticalOptions="Center"
+                           Text="{x:Static ui:MaterialIcon.FormatSize}"
+                           TextColor="{StaticResource TextIcons}"
+                           FontFamily="{StaticResource FontIconFamily}"
+                           FontSize="{StaticResource FontIconSize}" />
+                    <Button Grid.Row="2" Grid.Column="1"
+                            Margin="5"
+                            Command="{Binding OpenFontSizeDialog}"
+                            Text="{Binding Settings.FontSize}" />
+
+                    <Frame Grid.Row="3" Grid.ColumnSpan="2" 
+                           BackgroundColor="{StaticResource Primary}" />
+                    <Label Grid.Row="3"
+                           HorizontalOptions="Center" VerticalOptions="Center"
+                           Text="{x:Static ui:MaterialIcon.FormatFamily}"
+                           TextColor="{StaticResource TextIcons}"
+                           FontFamily="{StaticResource FontIconFamily}"
+                           FontSize="{StaticResource FontIconSize}" />
+                    <controls:LoadPicker Grid.Row="3" Grid.Column="1"
+                                         FontSize="18"
+                                         TextColor="{StaticResource TextIcons}"
+                                         Title="Família da Fonte"
+                                         ItemsSource="{Binding FontList}"
+                                         SelectedItem="{Binding Settings.FontFamily}"
+                                         Command="{Binding SaveFontFamily}" />
+
+                    <controls:AdMobView Grid.Row="5" Grid.ColumnSpan="2"
+                                        Margin="-5,0"
+                                        AdUnitId="{x:Static core:AppConsts.AdOrganizacao}" />
+                </Grid>
+            </xct:TabViewItem>
+
+            <xct:TabViewItem Text="Margem">
+                <xct:TabViewItem.IconSelected>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Margin}"
+                                     Color="{StaticResource LightAccent}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource FontIconSize}" />
+                </xct:TabViewItem.IconSelected>
+                <xct:TabViewItem.Icon>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Margin}"
+                                     Color="{StaticResource SecondaryText}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource FontIconSize}" />
+                </xct:TabViewItem.Icon>
+
+                <Grid RowDefinitions="*,*,*,60" ColumnDefinitions="*,*,*"
+                      Padding="5,40,5,0">
+
+                    <!--Left Margin-->
+                    <Frame Grid.Row="1"
+                           VerticalOptions="Center"
+                           BackgroundColor="{StaticResource Primary}">
+                        <Grid RowDefinitions="32,32,32,40">
+                            <ActivityIndicator HorizontalOptions="End"
+                                               WidthRequest="16" HeightRequest="16" 
+                                               IsRunning="{Binding IsBusy, Source={x:Reference entryLeftMargin}}"/>
+                            <Label HorizontalOptions="Center"
+                                   Text="{x:Static ui:MaterialIcon.MarginLeft}"
+                                   TextColor="{StaticResource TextIcons}"
+                                   FontFamily="{StaticResource FontIconFamily}"
+                                   FontSize="{StaticResource FontIconSize}" />
+                            <Label Grid.Row="1" 
+                                   HorizontalOptions="Center"
+                                   TextColor="{StaticResource TextIcons}"
+                                   Text="{Binding Settings.MarginLeft, StringFormat='{0:0.00} cm'}">
+                            </Label>
+                            <Label Grid.Row="2"
+                                   Opacity="0" TranslationY="20"
+                                   HorizontalOptions="Center"
+                                   Text="Esquerda"
+                                   TextColor="{StaticResource TextIcons}">
+                                <Label.Behaviors>
+                                    <behaviors:FadingBehavior IsActive="{Binding IsFocused, Source={x:Reference entryLeftMargin}}" />
+                                    <behaviors:MovingBehavior IsActive="{Binding IsFocused, Source={x:Reference entryLeftMargin}}">
+                                        <x:Arguments>
+                                            <x:Double>0</x:Double>
+                                            <x:Double>20</x:Double>
+                                        </x:Arguments>
+                                    </behaviors:MovingBehavior>
+                                </Label.Behaviors>
+                            </Label>
+                            <controls:LoadEntry Grid.Row="3"
+                                                x:Name="entryLeftMargin"
+                                                Placeholder="0,00 cm"
+                                                Keyboard="Numeric"
+                                                Text="{Binding Settings.MarginLeft, Mode=OneTime}"
+                                                LoadCommand="{Binding SaveMarginLeft}"/>
+                        </Grid>
+                    </Frame>
+
+                    <!--Top Margin-->
+                    <Frame Grid.Column="1"
+                           VerticalOptions="Center"
+                           BackgroundColor="{StaticResource Primary}">
+                        <Grid RowDefinitions="32,32,32,40">
+                            <ActivityIndicator HorizontalOptions="End"
+                                               WidthRequest="16" HeightRequest="16" 
+                                               IsRunning="{Binding IsBusy, Source={x:Reference entryTopMargin}}"/>
+                            <Label HorizontalOptions="Center"
+                                   Text="{x:Static ui:MaterialIcon.MarginTop}"
+                                   TextColor="{StaticResource TextIcons}"
+                                   FontFamily="{StaticResource FontIconFamily}"
+                                   FontSize="{StaticResource FontIconSize}" />
+                            <Label Grid.Row="1" 
+                                   HorizontalOptions="Center"
+                                   TextColor="{StaticResource TextIcons}"
+                                   Text="{Binding Settings.MarginTop, StringFormat='{0:0.00} cm'}">
+                            </Label>
+                            <Label Grid.Row="2"
+                                   Opacity="0" TranslationY="20"
+                                   HorizontalOptions="Center"
+                                   Text="Topo"
+                                   TextColor="{StaticResource TextIcons}">
+                                <Label.Behaviors>
+                                    <behaviors:FadingBehavior IsActive="{Binding IsFocused, Source={x:Reference entryTopMargin}}" />
+                                    <behaviors:MovingBehavior IsActive="{Binding IsFocused, Source={x:Reference entryTopMargin}}">
+                                        <x:Arguments>
+                                            <x:Double>0</x:Double>
+                                            <x:Double>20</x:Double>
+                                        </x:Arguments>
+                                    </behaviors:MovingBehavior>
+                                </Label.Behaviors>
+                            </Label>
+                            <controls:LoadEntry Grid.Row="3"
+                                                x:Name="entryTopMargin"
+                                                Placeholder="0,00 cm"
+                                                Keyboard="Numeric"
+                                                Text="{Binding Settings.MarginTop, Mode=OneTime}"
+                                                LoadCommand="{Binding SaveMarginTop}"/>
+                        </Grid>
+                    </Frame>
+
+                    <!--Right Margin-->
+                    <Frame Grid.Row="1" Grid.Column="2"
+                           VerticalOptions="Center"
+                           BackgroundColor="{StaticResource Primary}">
+                        <Grid RowDefinitions="32,32,32,40">
+                            <ActivityIndicator HorizontalOptions="End"
+                                               WidthRequest="16" HeightRequest="16" 
+                                               IsRunning="{Binding IsBusy, Source={x:Reference entryRightMargin}}"/>
+                            <Label HorizontalOptions="Center"
+                                   Text="{x:Static ui:MaterialIcon.MarginRight}"
+                                   TextColor="{StaticResource TextIcons}"
+                                   FontFamily="{StaticResource FontIconFamily}"
+                                   FontSize="{StaticResource FontIconSize}" />
+                            <Label Grid.Row="1" 
+                                   HorizontalOptions="Center"
+                                   TextColor="{StaticResource TextIcons}"
+                                   Text="{Binding Settings.MarginRight, StringFormat='{0:0.00} cm'}">
+                            </Label>
+                            <Label Grid.Row="2"
+                                   Opacity="0" TranslationY="20"
+                                   HorizontalOptions="Center"
+                                   Text="Direita"
+                                   TextColor="{StaticResource TextIcons}">
+                                <Label.Behaviors>
+                                    <behaviors:FadingBehavior IsActive="{Binding IsFocused, Source={x:Reference entryRightMargin}}" />
+                                    <behaviors:MovingBehavior IsActive="{Binding IsFocused, Source={x:Reference entryRightMargin}}">
+                                        <x:Arguments>
+                                            <x:Double>0</x:Double>
+                                            <x:Double>20</x:Double>
+                                        </x:Arguments>
+                                    </behaviors:MovingBehavior>
+                                </Label.Behaviors>
+                            </Label>
+                            <controls:LoadEntry Grid.Row="3"
+                                                x:Name="entryRightMargin"
+                                                Placeholder="0,00 cm"
+                                                Keyboard="Numeric"
+                                                Text="{Binding Settings.MarginRight, Mode=OneTime}"
+                                                LoadCommand="{Binding SaveMarginRight}"/>
+                        </Grid>
+                    </Frame>
+
+                    <Frame Grid.Row="2" Grid.Column="1"
+                           VerticalOptions="Center"
+                           BackgroundColor="{StaticResource Primary}">
+                        <Grid RowDefinitions="32,32,32,40">
+                            <ActivityIndicator HorizontalOptions="End"
+                                               WidthRequest="16" HeightRequest="16" 
+                                               IsRunning="{Binding IsBusy, Source={x:Reference entryBottomMargin}}"/>
+                            <Label HorizontalOptions="Center"
+                                   Text="{x:Static ui:MaterialIcon.MarginBottom}"
+                                   TextColor="{StaticResource TextIcons}"
+                                   FontFamily="{StaticResource FontIconFamily}"
+                                   FontSize="{StaticResource FontIconSize}" />
+                            <Label Grid.Row="1" 
+                                   HorizontalOptions="Center"
+                                   TextColor="{StaticResource TextIcons}"
+                                   Text="{Binding Settings.MarginBottom, StringFormat='{0:0.00} cm'}">
+                            </Label>
+                            <Label Grid.Row="2"
+                                   Opacity="0" TranslationY="20"
+                                   HorizontalOptions="Center"
+                                   Text="Fundo"
+                                   TextColor="{StaticResource TextIcons}">
+                                <Label.Behaviors>
+                                    <behaviors:FadingBehavior IsActive="{Binding IsFocused, Source={x:Reference entryBottomMargin}}" />
+                                    <behaviors:MovingBehavior IsActive="{Binding IsFocused, Source={x:Reference entryBottomMargin}}">
+                                        <x:Arguments>
+                                            <x:Double>0</x:Double>
+                                            <x:Double>20</x:Double>
+                                        </x:Arguments>
+                                    </behaviors:MovingBehavior>
+                                </Label.Behaviors>
+                            </Label>
+                            <controls:LoadEntry Grid.Row="3"
+                                                x:Name="entryBottomMargin"
+                                                Placeholder="0,00 cm"
+                                                Keyboard="Numeric"
+                                                Text="{Binding Settings.MarginBottom, Mode=OneTime}"
+                                                LoadCommand="{Binding SaveMarginBottom}"/>
+                        </Grid>
+                    </Frame>
+
+                    <controls:AdMobView Grid.Row="3" Grid.ColumnSpan="3"
+                                        Margin="-5,0"
+                                        AdUnitId="{x:Static core:AppConsts.AdMargem}" />
+                </Grid>
+            </xct:TabViewItem>
+
+            <xct:TabViewItem Text="Imagem">
+                <xct:TabViewItem.IconSelected>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Image}"
+                                     Color="{StaticResource LightAccent}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource FontIconSize}" />
+                </xct:TabViewItem.IconSelected>
+                <xct:TabViewItem.Icon>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Image}"
+                                     Color="{StaticResource SecondaryText}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource FontIconSize}" />
+                </xct:TabViewItem.Icon>
+
+                <Grid RowDefinitions="4*,48,48,*,60"
+                      Padding="5,40,5,0">
+                    <Image Source="{Binding SelectedImage.Source}"
+                           HorizontalOptions="Center" VerticalOptions="Center"
+                           MinimumHeightRequest="128" MinimumWidthRequest="128" />
+
+                    <Button Grid.Row="1"
+                            Margin="60,0,60,0"
+                            Text="Galeria"
+                            Command="{Binding OpenGallery}">
+                        <Button.ImageSource>
+                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Collection}"
+                                             Color="{StaticResource TextIcons}"
+                                             FontFamily="{StaticResource FontIconFamily}"
+                                             Size="{StaticResource FontIconSize}" />
+                        </Button.ImageSource>
+                    </Button>
+                    <Button Grid.Row="2"
+                            Margin="60,0,60,0"
+                            Text="Armazenados"
+                            Command="{Binding OpenImageStorageDialog}">
+                        <Button.ImageSource>
+                            <FontImageSource Glyph="{x:Static ui:MaterialIcon.Storage}"
+                                             Color="{StaticResource TextIcons}"
+                                             FontFamily="{StaticResource FontIconFamily}"
+                                             Size="{StaticResource FontIconSize}" />
+                        </Button.ImageSource>
+                    </Button>
+
+                    <controls:AdMobView Grid.Row="4"
+                                        Margin="-5,0"
+                                        AdUnitId="{x:Static core:AppConsts.AdImagem}" />
+                </Grid>
+            </xct:TabViewItem>
+
+        </xct:TabView>
+    </ContentPage.Content>
+</craftz:BasePage>

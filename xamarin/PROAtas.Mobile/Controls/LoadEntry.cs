@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -60,12 +61,12 @@ namespace PROAtas.Mobile.Controls
             }
         }
 
-        public Command LoadCommand
+        public ICommand LoadCommand
         {
             get { return (Command)GetValue(LoadCommandProperty); }
             set { SetValue(LoadCommandProperty, value); }
         }
-        public static readonly BindableProperty LoadCommandProperty = BindableProperty.Create(nameof(LoadCommand), typeof(Command), typeof(LoadEntry), default(Command));
+        public static readonly BindableProperty LoadCommandProperty = BindableProperty.Create(nameof(LoadCommand), typeof(ICommand), typeof(LoadEntry), default(ICommand));
 
         public object LoadCommandParameter
         {

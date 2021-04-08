@@ -1,11 +1,11 @@
-﻿using Craftz.Pages;
+﻿using Craftz.Views;
 using PROAtas.Core;
 using PROAtas.Core.Model.Entities;
 using PROAtas.Mobile.ViewModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace PROAtas.Views
+namespace PROAtas.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MinutePage : BasePage<MinuteViewModel, Minute>

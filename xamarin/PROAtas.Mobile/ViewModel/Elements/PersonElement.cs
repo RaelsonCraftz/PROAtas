@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PROAtas.ViewModel.Elements
+namespace PROAtas.Mobile.ViewModel.Elements
 {
     public class PersonElement : BaseElement<Person>
     {

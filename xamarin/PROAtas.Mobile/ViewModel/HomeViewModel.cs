@@ -6,13 +6,12 @@ using PROAtas.Core;
 using PROAtas.Core.Model.Entities;
 using PROAtas.Mobile.Services.Platform;
 using PROAtas.Mobile.Services.Shared;
-using PROAtas.ViewModel.Elements;
+using PROAtas.Mobile.ViewModel.Elements;
 using Syncfusion.DocIO.DLS;
 using Syncfusion.DocIORenderer;
 using Syncfusion.Pdf;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -203,9 +202,8 @@ namespace PROAtas.Mobile.ViewModel
                         {
                             var selectedImage = int.Parse(Application.Current.Properties[AppConsts.SelectedMinuteImage]?.ToString());
                             var minuteImage = dataService.MinuteImageRepository.Get(selectedImage);
-                            minuteImage.ImageBytes = imageService.GetBytesFromPath(minuteImage.Name);
 
-                            localbyte = minuteImage.ImageBytes;
+                            localbyte = imageService.GetBytesFromPath(minuteImage.Name);
                         }
                         else
                             localbyte = imageService.GetBytesFromLogo();
@@ -281,9 +279,8 @@ namespace PROAtas.Mobile.ViewModel
                                 {
                                     var selectedImage = int.Parse(Application.Current.Properties[AppConsts.SelectedMinuteImage]?.ToString());
                                     var minuteImage = dataService.MinuteImageRepository.Get(selectedImage);
-                                    minuteImage.ImageBytes = imageService.GetBytesFromPath(minuteImage.Name);
 
-                                    localbyte = minuteImage.ImageBytes;
+                                    localbyte = imageService.GetBytesFromPath(minuteImage.Name);
                                 }
                                 else
                                     localbyte = imageService.GetBytesFromLogo();

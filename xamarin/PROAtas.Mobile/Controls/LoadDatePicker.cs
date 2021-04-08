@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using System.Windows.Input;
+using Xamarin.Forms;
 
 namespace PROAtas.Mobile.Controls
 {
@@ -14,12 +15,12 @@ namespace PROAtas.Mobile.Controls
             DateSelected -= LoadDatePicker_DateSelected;
         }
 
-        public Command LoadCommand
+        public ICommand LoadCommand
         {
             get { return (Command)GetValue(LoadCommandProperty); }
             set { SetValue(LoadCommandProperty, value); }
         }
-        public static readonly BindableProperty LoadCommandProperty = BindableProperty.Create(nameof(LoadCommand), typeof(Command), typeof(LoadDatePicker), default(Command));
+        public static readonly BindableProperty LoadCommandProperty = BindableProperty.Create(nameof(LoadCommand), typeof(ICommand), typeof(LoadDatePicker), default(ICommand));
 
         private void LoadDatePicker_DateSelected(object sender, DateChangedEventArgs e)
         {

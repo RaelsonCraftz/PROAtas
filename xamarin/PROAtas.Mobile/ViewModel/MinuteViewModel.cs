@@ -1,16 +1,16 @@
 ﻿using Acr.UserDialogs;
-using PROAtas.ViewModel.Elements;
-using PROAtas.Views.Dialogs;
+using PROAtas.Mobile.Views.Dialogs;
 using Rg.Plugins.Popup.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Craftz.ViewModel;
-using PROAtas.Mobile.Views.Dialogs;
 using PROAtas.Core.Model;
 using PROAtas.Core.Model.Entities;
 using PROAtas.Mobile.Services.Shared;
+using System;
+using PROAtas.Mobile.ViewModel.Elements;
 
 namespace PROAtas.Mobile.ViewModel
 {
@@ -209,34 +209,41 @@ namespace PROAtas.Mobile.ViewModel
 
                 if (await UserDialogs.Instance.ConfirmAsync("Esta operação removerá o tópico e todas as suas informações definitivamente. Deseja prosseguir?", "Confirmação", "Sim", "Não"))
                 {
-                    // Looks for a valid index of a topic to be selected afterwards
-                    TopicElement nextTopic;
-                    var index = Minute.Topics.IndexOf(topic);
-                    if (index != 0)
+                    await SetBusyAsync(async () =>
                     {
-                        nextTopic = Minute.Topics[index - 1];
+                        // Looks for a valid index of a topic to be selected afterwards
+                        TopicElement nextTopic;
+                        var index = Minute.Topics.IndexOf(topic);
+                        if (index != 0)
+                        {
+                            nextTopic = Minute.Topics[index - 1];
+
+                            // Selects next valid topic
+                            SelectTopic.Execute(nextTopic);
+                        }
+                        else
+                            nextTopic = Minute.Topics[index];
+                    
+                        // Delete topic
+                        dataService.TopicRepository.Remove(topic.Model);
+
+                        var informationList = topic.Information.Select(l => l.Model);
+                        foreach (var info in informationList)
+                            dataService.InformationRepository.Remove(info);
 
                         // Selects next valid topic
-                        SelectTopic.Execute(nextTopic);
-                    }
-                    else
-                        nextTopic = Minute.Topics[index];
-                    
-                    // Delete topic
-                    dataService.TopicRepository.Remove(topic.Model);
+                        if (index == 0)
+                            SelectTopic.Execute(nextTopic);
 
-                    var informationList = topic.Information.Select(l => l.Model);
-                    foreach (var info in informationList)
-                        dataService.InformationRepository.Remove(info);
+                        //TODO: investigate the source of this issue
+                        // Adds a buffer to prevent situation where the ObservableRangeCollection throws an ArgumentOutOfRangeException
+                        await Task.Delay(1000);
 
-                    Minute.Topics.Remove(topic);
-                    ReorderTopics();
+                        Minute.Topics.Remove(topic);
+                        ReorderTopics();
 
-                    // Selects next valid topic
-                    if (index == 0)
-                        SelectTopic.Execute(nextTopic);
-
-                    DeleteTopic.ChangeCanExecute();
+                        DeleteTopic.ChangeCanExecute();
+                    });
                 }
             },
             log => 

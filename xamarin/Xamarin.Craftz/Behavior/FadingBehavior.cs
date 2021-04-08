@@ -7,10 +7,10 @@ namespace Xamarin.Craftz.Behavior
     {
         public FadingBehavior()
         {
-
+            this.fadeTo = 1;
         }
 
-        public FadingBehavior(double fadeTo = 1)
+        public FadingBehavior(double fadeTo)
         {
             this.fadeTo = fadeTo;
         }
@@ -37,18 +37,12 @@ namespace Xamarin.Craftz.Behavior
         }
         protected async Task FadeAnimationExecution()
         {
-            if (AssociatedControl != null)
+            if (AssociatedObject != null)
             {
                 if (IsActive)
-                {
-                    AssociatedControl.InputTransparent = false;
-                    await AssociatedControl.FadeTo(fadeTo, 250, Easing.Linear);
-                }
+                    await AssociatedObject.FadeTo(fadeTo, 250, Easing.Linear);
                 else
-                {
-                    AssociatedControl.InputTransparent = true;
-                    await AssociatedControl.FadeTo(0, 250, Easing.Linear);
-                }
+                    await AssociatedObject.FadeTo(0, 250, Easing.Linear);
             }
         }
 

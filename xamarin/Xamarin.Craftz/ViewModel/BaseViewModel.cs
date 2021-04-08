@@ -18,6 +18,11 @@ namespace Craftz.ViewModel
             logService = DependencyService.Get<ILogService>();
         }
 
+        public virtual void Leave()
+        {
+
+        }
+
         public virtual bool CanLeave()
         {
             return true;
@@ -39,14 +44,26 @@ namespace Craftz.ViewModel
 
         #region Commands
 
-        public Command Close
+        public Command ClosePage
         {
-            get { if (_close == null) _close = new Command(CloseExecute); return _close; }
+            get { if (_closePage == null) _closePage = new Command(ClosePageExecute); return _closePage; }
         }
-        private Command _close;
-        private void CloseExecute()
+        private Command _closePage;
+        private void ClosePageExecute()
         {
-            PopupNavigation.Instance.PopAsync();
+            if (CanLeave())
+                Shell.Current.Navigation.PopAsync(true);
+        }
+
+        public Command CloseDialog
+        {
+            get { if (_closeDialog == null) _closeDialog = new Command(CloseDialogExecute); return _closeDialog; }
+        }
+        private Command _closeDialog;
+        private void CloseDialogExecute()
+        {
+            if (CanLeave())
+                PopupNavigation.Instance.PopAsync();
         }
 
         #endregion
@@ -65,10 +82,28 @@ namespace Craftz.ViewModel
         protected async Task SetBusyAsync(Func<Task> task, string message = null, bool showLoading = true)
         {
             if (showLoading)
-                UserDialogs.Instance.ShowLoading(message ?? "Carregando", MaskType.Black);
+                ShowLoading(message);
 
-            await task();
+            try
+            {
+                await task();
+            }
+            catch (Exception e)
+            {
+                HideLoading();
+                throw e;
+            }
 
+            HideLoading();
+        }
+
+        protected void ShowLoading(string message = null)
+        {
+            UserDialogs.Instance.ShowLoading(message ?? "Carregando", MaskType.Black);
+        }
+
+        protected void HideLoading()
+        {
             UserDialogs.Instance.HideLoading();
         }
 
@@ -94,6 +129,11 @@ namespace Craftz.ViewModel
             logService = DependencyService.Get<ILogService>();
         }
 
+        public virtual void Leave()
+        {
+
+        }
+
         public virtual bool CanLeave()
         {
             return true;
@@ -115,14 +155,26 @@ namespace Craftz.ViewModel
 
         #region Commands
 
-        public Command Close
+        public Command ClosePage
         {
-            get { if (_close == null) _close = new Command(CloseExecute); return _close; }
+            get { if (_closePage == null) _closePage = new Command(ClosePageExecute); return _closePage; }
         }
-        private Command _close;
-        private void CloseExecute()
+        private Command _closePage;
+        private void ClosePageExecute()
         {
-            PopupNavigation.Instance.PopAsync();
+            if (CanLeave())
+                Shell.Current.Navigation.PopAsync(true);
+        }
+
+        public Command CloseDialog
+        {
+            get { if (_closeDialog == null) _closeDialog = new Command(CloseDialogExecute); return _closeDialog; }
+        }
+        private Command _closeDialog;
+        private void CloseDialogExecute()
+        {
+            if (CanLeave())
+                PopupNavigation.Instance.PopAsync();
         }
 
         #endregion
@@ -143,10 +195,28 @@ namespace Craftz.ViewModel
         protected async Task SetBusyAsync(Func<Task> task, string message = null, bool showLoading = true)
         {
             if (showLoading)
-                UserDialogs.Instance.ShowLoading(message ?? "Carregando", MaskType.Black);
+                ShowLoading(message);
 
-            await task();
+            try
+            {
+                await task();
+            }
+            catch (Exception e)
+            {
+                HideLoading();
+                throw e;
+            }
 
+            HideLoading();
+        }
+
+        protected void ShowLoading(string message = null)
+        {
+            UserDialogs.Instance.ShowLoading(message ?? "Carregando", MaskType.Black);
+        }
+
+        protected void HideLoading()
+        {
             UserDialogs.Instance.HideLoading();
         }
 

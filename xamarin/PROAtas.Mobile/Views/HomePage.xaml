@@ -1,22 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<views:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
-                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                x:Class="PROAtas.Views.HomePage"
-                x:DataType="viewmodel:HomeViewModel"
-                x:TypeArguments="viewmodel:HomeViewModel"
-                x:Name="base"
-                
-                xmlns:ui="clr-namespace:PROAtas.Assets.UI"
-                xmlns:core="clr-namespace:PROAtas.Core"
-                xmlns:views="clr-namespace:Craftz.Pages;assembly=Xamarin.Craftz"
-                xmlns:entity="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
-                xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
-                xmlns:elements="clr-namespace:PROAtas.ViewModel.Elements"
-                xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
-                xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
-                xmlns:converters="clr-namespace:PROAtas.Converters"
-                
-                Title="Cosmo Atas">
+<craftz:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 x:Class="PROAtas.Mobile.Views.HomePage"
+                 x:DataType="viewmodel:HomeViewModel"
+                 x:TypeArguments="viewmodel:HomeViewModel"
+                 x:Name="base"
+                 
+                 xmlns:ui="clr-namespace:PROAtas.Assets.UI"
+                  
+                 xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+                 xmlns:core="clr-namespace:PROAtas.Core"
+                 xmlns:droid="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+                 xmlns:craftz="clr-namespace:Craftz.Views;assembly=Xamarin.Craftz"
+                 xmlns:entity="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
+                 xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
+                 xmlns:elements="clr-namespace:PROAtas.Mobile.ViewModel.Elements"
+                 xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
+                 xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
+                 xmlns:converters="clr-namespace:PROAtas.Converters"
+                 
+                 Title="Cosmo Atas">
     
     <ContentPage.BindingContext>
         <viewmodel:HomeViewModel />
@@ -43,14 +46,19 @@
         <converters:BooleanToColorConverter x:Key="SelectedMinuteColorConverter"
                                             TrueColor="{StaticResource Accent}"
                                             FalseColor="{StaticResource Divider}" />
+        <converters:BooleanToColorConverter x:Key="SelectedFontColorConverter"
+                                            TrueColor="{StaticResource TextIcons}"
+                                            FalseColor="{StaticResource SecondaryText}" />
 
     </ContentPage.Resources>
     
     <ContentPage.Content>
         <Grid RowDefinitions="Auto, *, 60">
             <!--Search Bar-->
-            <controls:LoadSearchBar Margin="5,5,5,0"
-                                    Placeholder="Pesquisar..." />
+            <!--TODO: needs further development. This will be done on v15-->
+            <!--<controls:LoadSearchBar Margin="5,5,5,0"
+                                    TextColor="{StaticResource Primary}"
+                                    Placeholder="Pesquisar..." />-->
 
             <!--Minute Collection-->
             <CollectionView Grid.Row="1" 
@@ -76,31 +84,39 @@
 
                                     <!--People on the meeting-->
                                     <StackLayout Orientation="Horizontal">
-                                        <Label Style="{StaticResource starBorderFontIcon}" HorizontalOptions="StartAndExpand" />
+                                        <Label Style="{StaticResource starBorderFontIcon}" 
+                                               HorizontalOptions="StartAndExpand"
+                                               TextColor="{Binding IsSelected, Converter={StaticResource SelectedFontColorConverter}}" />
 
                                         <Label Style="{StaticResource bodyLabel}"
-                                                       Text="{Binding PeopleQuantity}" />
+                                               Text="{Binding PeopleQuantity}"
+                                               TextColor="{Binding IsSelected, Converter={StaticResource SelectedFontColorConverter}}" />
 
-                                        <Label Style="{StaticResource groupsFontIcon}" />
+                                        <Label Style="{StaticResource groupsFontIcon}"
+                                               TextColor="{Binding IsSelected, Converter={StaticResource SelectedFontColorConverter}}" />
                                     </StackLayout>
 
                                     <!--Name of the meeting-->
                                     <StackLayout Orientation="Horizontal">
-                                        <Label Style="{StaticResource assignmentFontIcon}" />
+                                        <Label Style="{StaticResource assignmentFontIcon}"
+                                               TextColor="{Binding IsSelected, Converter={StaticResource SelectedFontColorConverter}}" />
 
                                         <Label Style="{StaticResource headerLabel}" 
-                                                       LineBreakMode="HeadTruncation"
-                                                       Text="{Binding Name, Mode=OneTime}" />
+                                               LineBreakMode="MiddleTruncation"
+                                               Text="{Binding Name, Mode=OneTime}"
+                                               TextColor="{Binding IsSelected, Converter={StaticResource SelectedFontColorConverter}}" />
                                     </StackLayout>
 
                                     <!--Date of the meeting-->
                                     <StackLayout Orientation="Horizontal">
-                                        <Label Style="{StaticResource todayFontIcon}" />
+                                        <Label Style="{StaticResource todayFontIcon}"
+                                               TextColor="{Binding IsSelected, Converter={StaticResource SelectedFontColorConverter}}" />
 
                                         <Label Style="{StaticResource bodyLabel}" 
-                                                       FontSize="14"
-                                                       LineBreakMode="HeadTruncation" 
-                                                       Text="{Binding Date, Mode=OneTime, StringFormat={StaticResource DateFormat}}"/>
+                                               FontSize="14"
+                                               LineBreakMode="HeadTruncation" 
+                                               Text="{Binding Date, Mode=OneTime, StringFormat={StaticResource DateFormat}}"
+                                               TextColor="{Binding IsSelected, Converter={StaticResource SelectedFontColorConverter}}" />
                                     </StackLayout>
 
                                 </StackLayout>
@@ -156,9 +172,9 @@
                         BackgroundColor="{StaticResource Danger}">
                     <Button.ImageSource>
                         <FontImageSource Glyph="{x:Static ui:MaterialIcon.Delete}"
-                                             Color="{StaticResource TextIcons}"
-                                             FontFamily="{StaticResource FontIconFamily}"
-                                             Size="{StaticResource FontIconSize}" />
+                                         Color="{StaticResource TextIcons}"
+                                         FontFamily="{StaticResource FontIconFamily}"
+                                         Size="{StaticResource FontIconSize}" />
                     </Button.ImageSource>
                 </Button>
             </StackLayout>
@@ -268,4 +284,4 @@
                                 AdUnitId="{x:Static core:AppConsts.AdHome}" />
         </Grid>
     </ContentPage.Content>
-</views:BasePage>
+</craftz:BasePage>

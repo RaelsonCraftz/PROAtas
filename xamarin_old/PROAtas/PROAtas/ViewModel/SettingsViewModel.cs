@@ -516,7 +516,10 @@ namespace PROAtas.ViewModel
                 foreach (var minuteImage in images)
                 {
                     var imageSource = imageService.GetImageFromFile(minuteImage.Name);
-                    imageCollection.Add(new MinuteImageElement(minuteImage) { Source = imageSource });
+                    imageCollection.Add(new MinuteImageElement(minuteImage) 
+                    { 
+                        Source = imageSource 
+                    });
                 }
 
                 InvokeMainThread(() =>

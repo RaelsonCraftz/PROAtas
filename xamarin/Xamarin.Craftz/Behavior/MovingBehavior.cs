@@ -5,8 +5,6 @@ namespace Xamarin.Craftz.Behavior
 {
     public class MovingBehavior : BaseBehavior<VisualElement>
     {
-        public enum EMoveTo { Start, Top, End, Bottom, }
-
         public MovingBehavior()
         {
 
@@ -14,14 +12,18 @@ namespace Xamarin.Craftz.Behavior
 
         public MovingBehavior(double translateToX = 0, double translateToY = 0)
         {
+            if (AssociatedObject != null)
+            {
+                AssociatedObject.TranslationX = translateToX;
+                AssociatedObject.TranslationY = translateToY;
+            }
+
             this.translateToX = translateToX;
             this.translateToY = translateToY;
         }
 
         private double translateToX;
         private double translateToY;
-
-        public EMoveTo MoveTo { get; set; }
 
         #region Bindable Properties
 
@@ -43,26 +45,12 @@ namespace Xamarin.Craftz.Behavior
         }
         protected async Task MoveAnimationExecution()
         {
-            if (AssociatedControl != null)
+            if (AssociatedObject != null)
             {
                 if (IsActive)
-                    await AssociatedControl.TranslateTo(0, 0, 500, Easing.CubicOut);
+                    await AssociatedObject.TranslateTo(0, 0, 500, Easing.CubicOut);
                 else
-                    switch (MoveTo)
-                    {
-                        case EMoveTo.Start:
-                            await AssociatedControl.TranslateTo(translateToX == 0 ? -AssociatedControl.Width : -translateToX, 0, 500, Easing.CubicOut);
-                            break;
-                        case EMoveTo.Top:
-                            await AssociatedControl.TranslateTo(0, translateToY == 0 ? -AssociatedControl.Height : -translateToY, 500, Easing.CubicOut);
-                            break;
-                        case EMoveTo.End:
-                            await AssociatedControl.TranslateTo(translateToX == 0 ? AssociatedControl.Width : translateToX, 0, 500, Easing.CubicOut);
-                            break;
-                        case EMoveTo.Bottom:
-                            await AssociatedControl.TranslateTo(0, translateToY == 0 ? AssociatedControl.Height : translateToY, 500, Easing.CubicOut);
-                            break;
-                    }
+                    await AssociatedObject.TranslateTo(translateToX, translateToY, 500, Easing.CubicOut);
             }
         }
 

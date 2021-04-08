@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<craftz:BasePage xmlns="http://xamarin.com/schemas/2014/forms"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                x:Class="PROAtas.Mobile.Views.AboutPage"
+                x:Name="base"
+             
+                xmlns:ui="clr-namespace:PROAtas.Assets.UI"
+                xmlns:core="clr-namespace:PROAtas.Core"
+                xmlns:craftz="clr-namespace:Craftz.Views;assembly=Xamarin.Craftz"
+                xmlns:entity="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
+                xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
+                xmlns:elements="clr-namespace:PROAtas.Mobile.ViewModel.Elements"
+                xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
+                xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
+                xmlns:converters="clr-namespace:PROAtas.Converters"
+                
+                Title="Cosmo Atas">
+    <ContentPage.Content>
+        <Grid RowDefinitions="128,*,40,48" ColumnDefinitions="*,*"
+              Padding="10,50,10,10">
+
+            <Frame Grid.ColumnSpan="2"
+                   Padding="0"
+                   HorizontalOptions="Center" VerticalOptions="Center"
+                   BorderColor="{StaticResource Primary}"
+                   CornerRadius="64">
+                <Image Source="imgAuthor" />
+            </Frame>
+
+            <Frame Grid.Row="1" Grid.ColumnSpan="2" BackgroundColor="{StaticResource Primary}">
+                <ScrollView>
+                    <Label FontSize="14" 
+                           TextColor="{StaticResource TextIcons}"
+                           Margin="20,0,20,0"
+                           LineBreakMode="WordWrap"
+                           Text="Olá!&#x0a;&#x0a;Eu me chamo Raelson. Sou Engenheiro Civil de formação e desenvolvedor de software. Entrei no mercado do desenvolvimento 7 anos atrás, começando com projetos voltados para a engenharia. Já criei CADs para desktop, trabalhei com sistemas administrativos, rastreadores GPS e outros ramos que a engenharia e o mercado comumente pedem.&#x0a;&#x0a;Hoje sou Engenheiro sem Fronteiras e trabalho com o desenvolvimento de aplicativos mobile, desktop e microsserviços de um modo geral (APIs, bases, etc) para empresas no Brasil e também de fora do país." />
+                </ScrollView>
+            </Frame>
+
+            <Button Grid.Row="2"
+                    ImageSource="icPlayStore"
+                    Text="Play Store"
+                    Clicked="PlayStore_Clicked" />
+
+            <!--TODO: Insert the link to the app store here once the app is approved by Apple-->
+            <Button Grid.Row="2" Grid.Column="1"
+                    ImageSource="icAppStore"
+                    Text="App Store"
+                    Clicked="AppStore_Clicked"
+                    IsEnabled="True" />
+
+        </Grid>
+    </ContentPage.Content>
+</craftz:BasePage>

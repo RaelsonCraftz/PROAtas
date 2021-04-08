@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using Xamarin.CommunityToolkit.ObjectModel;
 
-namespace PROAtas.ViewModel.Elements
+namespace PROAtas.Mobile.ViewModel.Elements
 {
     public class MinuteElement : BaseElement<Minute>
     {

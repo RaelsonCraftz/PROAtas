@@ -5,7 +5,7 @@ using Android.OS;
 
 namespace PROAtas.Droid.Views
 {
-    [Activity(Theme = "@style/MyTheme.Splash", MainLauncher = true, NoHistory = true, ScreenOrientation = ScreenOrientation.Portrait)]
+    [Activity(Theme = "@style/MyTheme.Splash", Icon = "@drawable/icLogo", MainLauncher = true, NoHistory = true, ScreenOrientation = ScreenOrientation.Portrait)]
     public class SplashActivity : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)

@@ -39,12 +39,12 @@ namespace Xamarin.Craftz.Behavior
         }
         protected async Task MoveAnimationExecution()
         {
-            if (AssociatedControl != null)
+            if (AssociatedObject != null)
             {
                 if (IsActive)
-                    await AssociatedControl.RotateTo(rotateFrom, 500, Easing.CubicOut);
+                    await AssociatedObject.RotateTo(rotateFrom, 500, Easing.CubicOut);
                 else
-                    await AssociatedControl.RotateTo(rotateTo, 500, Easing.CubicOut);
+                    await AssociatedObject.RotateTo(rotateTo, 500, Easing.CubicOut);
             }
         }
 

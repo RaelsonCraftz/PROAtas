@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<dialogs:BaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+<craftz:BaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                     x:Class="PROAtas.Mobile.Views.Dialogs.MomentDialog"
                     x:Name="base"
@@ -9,12 +9,12 @@
                     xmlns:ui="clr-namespace:PROAtas.Assets.UI"
                     xmlns:scg="clr-namespace:System.Collections.Generic;assembly=netstandard"
                     xmlns:core="clr-namespace:PROAtas.Core"
-                    xmlns:views="clr-namespace:PROAtas.Views"
+                    xmlns:views="clr-namespace:PROAtas.Mobile.Views"
                     xmlns:model="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
                     xmlns:popups="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
-                    xmlns:dialogs="clr-namespace:Craftz.Dialogs;assembly=Xamarin.Craftz"
+                    xmlns:craftz="clr-namespace:Craftz.Views;assembly=Xamarin.Craftz"
                     xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
-                    xmlns:elements="clr-namespace:PROAtas.ViewModel.Elements"
+                    xmlns:elements="clr-namespace:PROAtas.Mobile.ViewModel.Elements"
                     xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
                     xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
                     xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
@@ -80,4 +80,4 @@
             </Frame>
         </StackLayout>
     </ContentPage.Content>
-</dialogs:BaseDialog>
+</craftz:BaseDialog>

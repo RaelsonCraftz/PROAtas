@@ -1,32 +1,39 @@
 ﻿using System;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace Xamarin.Craftz.Behavior
 {
+    [Preserve(AllMembers = true)]
     public class BaseBehavior<T> : Behavior<T> where T : BindableObject
     {
-        public T AssociatedControl { get; private set; }
+        public T AssociatedObject { get; private set; }
 
-        protected override void OnAttachedTo(T visualElement)
+        protected override void OnAttachedTo(T bindable)
         {
-            base.OnAttachedTo(visualElement);
+            base.OnAttachedTo(bindable);
+            AssociatedObject = bindable;
 
-            AssociatedControl = visualElement;
+            if (bindable.BindingContext != null)
+                BindingContext = bindable.BindingContext;
 
-            if (visualElement.BindingContext != null)
-                BindingContext = visualElement.BindingContext;
-
-            visualElement.BindingContextChanged += OnBindingContextChanged;
+            bindable.BindingContextChanged += OnBindingContextChanged;
         }
 
-        private void OnBindingContextChanged(object sender, EventArgs e) => OnBindingContextChanged();
+        private void OnBindingContextChanged(object sender, EventArgs e)
+        {
+            OnBindingContextChanged();
+        }
 
-        protected override void OnDetachingFrom(T view) => view.BindingContextChanged -= OnBindingContextChanged;
+        protected override void OnDetachingFrom(T bindable)
+        {
+            bindable.BindingContextChanged -= OnBindingContextChanged;
+        }
 
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
-            BindingContext = AssociatedControl.BindingContext;
+            BindingContext = AssociatedObject.BindingContext;
         }
     }
 }

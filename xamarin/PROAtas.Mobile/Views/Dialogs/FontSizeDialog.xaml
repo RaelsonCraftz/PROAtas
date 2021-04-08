@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<craftz:BaseDialog xmlns="http://xamarin.com/schemas/2014/forms"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                   x:Class="PROAtas.Mobile.Views.Dialogs.FontSizeDialog"
+                   x:Name="base"
+                   x:DataType="viewmodel:FontSizeViewModel"
+                   x:TypeArguments="viewmodel:FontSizeViewModel"
+                   
+                   xmlns:ui="clr-namespace:PROAtas.Assets.UI"
+                   xmlns:scg="clr-namespace:System.Collections.Generic;assembly=netstandard"
+                   xmlns:core="clr-namespace:PROAtas.Core"
+                   xmlns:views="clr-namespace:PROAtas.Mobile.Views"
+                   xmlns:model="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
+                   xmlns:popups="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+                   xmlns:craftz="clr-namespace:Craftz.Views;assembly=Xamarin.Craftz"
+                   xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
+                   xmlns:elements="clr-namespace:PROAtas.Mobile.ViewModel.Elements"
+                   xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
+                   xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
+                   xmlns:animations="clr-namespace:Rg.Plugins.Popup.Animations;assembly=Rg.Plugins.Popup"
+                   xmlns:converters="clr-namespace:PROAtas.Converters"
+                   SystemPaddingSides="Bottom">
+
+    <ContentPage.BindingContext>
+        <viewmodel:FontSizeViewModel />
+    </ContentPage.BindingContext>
+
+    <popups:PopupPage.Animation>
+        <animations:MoveAnimation EasingIn="CubicOut"
+                                  EasingOut="CubicIn"
+                                  PositionIn="Bottom"
+                                  PositionOut="Bottom"
+                                  DurationIn="400"
+                                  DurationOut="200" />
+    </popups:PopupPage.Animation>
+
+    <ContentPage.Content>
+        <Grid RowDefinitions="120,32,48,32,*,60">
+
+            <Button HorizontalOptions="Center" VerticalOptions="Center"
+                    BackgroundColor="Transparent"
+                    Command="{Binding CloseDialog}">
+                <Button.ImageSource>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.Clear}"
+                                     Color="{StaticResource TextIcons}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource BigFontIconSize}" />
+                </Button.ImageSource>
+            </Button>
+
+            <!--Frame for popup background-->
+            <Frame Grid.Row="1" Grid.RowSpan="5"
+                   BackgroundColor="{StaticResource TextIcons}" />
+    
+            <Image Grid.Row="1">
+                <Image.Source>
+                    <FontImageSource Glyph="{x:Static ui:MaterialIcon.FormatSize}"
+                                     Color="{StaticResource Primary}"
+                                     FontFamily="{StaticResource FontIconFamily}"
+                                     Size="{StaticResource FontIconSize}" />
+                </Image.Source>
+            </Image>
+
+            <Frame Grid.Row="2"
+                   Margin="5" Padding="5,5,5,8"
+                   BackgroundColor="{StaticResource Primary}">
+                <controls:StepSlider x:Name="fontSizeSlider"
+                                     VerticalOptions="End"
+                                     Maximum="20" Minimum="10"
+                                     MinimumTrackColor="{StaticResource Accent}"
+                                     ThumbColor="{StaticResource LightAccent}"
+                                     Value="{Binding FontSize, Mode=TwoWay}"
+                                     NewValueCommand="{Binding SaveFontSize}" />
+            </Frame>
+
+            <Label Grid.Row="3"
+                   HorizontalOptions="Center"
+                   Text="{Binding FontSize}"
+                   FontSize="{Binding FontSize}" />
+            
+            <ScrollView Grid.Row="4"
+                        Margin="5">
+                <StackLayout>
+                    <Label Text="Título" 
+                           HorizontalOptions="Center"
+                           FontSize="{Binding TitleFontSize}" />
+                    <Label LineBreakMode="WordWrap"
+                           Text="Umbus mundus cabus dundus Umbus mundus cabus dundus Umbus mundus cabus dundus Umbus mundus cabus dundus Umbus mundus cabus dundus Umbus mundus cabus dundus Umbus mundus cabus dundus Umbus mundus cabus dundus Umbus mundus cabus dundus "
+                           FontSize="{Binding FontSize}" />
+                </StackLayout>
+            </ScrollView>
+
+            <controls:AdMobView Grid.Row="5"
+                                AdUnitId="{x:Static core:AppConsts.AdFonteTamanho}" />
+        </Grid>
+    </ContentPage.Content>
+</craftz:BaseDialog>
