@@ -79,7 +79,8 @@
     <Shell.FlyoutHeaderTemplate>
         <DataTemplate>
             <StackLayout Padding="10"
-                         BackgroundColor="{StaticResource Primary}">
+                         BackgroundColor="{StaticResource Primary}"
+                         HeightRequest="{OnPlatform iOS=180}">
                 <Image Source="icLogo" />
 
                 <Label HorizontalOptions="Start"

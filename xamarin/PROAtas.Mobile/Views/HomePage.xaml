@@ -19,7 +19,7 @@
                  xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
                  xmlns:converters="clr-namespace:PROAtas.Converters"
                  
-                 Title="Cosmo Atas"
+                 Title="Minhas Atas"
                  BackgroundImageSource="background_pattern">
     
     <ContentPage.BindingContext>
@@ -54,7 +54,8 @@
     </ContentPage.Resources>
     
     <ContentPage.Content>
-        <Grid RowDefinitions="Auto, *, 60">
+        <Grid RowDefinitions="Auto, *, 60"
+              RowSpacing="0">
             
             <!--Search Bar-->
             <!--TODO: needs further development. This will be done on v15-->
@@ -140,11 +141,11 @@
                      InputTransparent="True">
                 <BoxView.Background>
                     <LinearGradientBrush StartPoint="0,0"
-                                             EndPoint="0,1">
+                                         EndPoint="0,1">
                         <GradientStop Color="Transparent"
-                                          Offset="0" />
+                                      Offset="0" />
                         <GradientStop Color="White"
-                                          Offset="0.2" />
+                                      Offset="0.2" />
                     </LinearGradientBrush>
                 </BoxView.Background>
             </BoxView>

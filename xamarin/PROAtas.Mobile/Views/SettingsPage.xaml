@@ -117,6 +117,7 @@
                            FontSize="{StaticResource FontIconSize}" />
                     <controls:LoadPicker Grid.Row="3" Grid.Column="1"
                                          FontSize="18"
+                                         Margin="{OnPlatform iOS=5}"
                                          TextColor="{StaticResource TextIcons}"
                                          Title="Família da Fonte"
                                          ItemsSource="{Binding FontList}"
