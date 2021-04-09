@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PROAtas.Mobile.Views.LoadingPage"
+             
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False">
+    <ContentPage.Content>
+        <AbsoluteLayout VerticalOptions="FillAndExpand">
+            <Image x:Name="image" AbsoluteLayout.LayoutBounds="0.5,0.5,128,128" AbsoluteLayout.LayoutFlags="PositionProportional"
+                   Source="icLogo" />
+            <StackLayout x:Name="stack" AbsoluteLayout.LayoutBounds="0.5,0.5,1,1" AbsoluteLayout.LayoutFlags="All" Opacity="0" VerticalOptions="Center">
+                <ActivityIndicator Color="{StaticResource Accent}" IsRunning="True" />
+                <Label x:Name="progressText" 
+                       LineBreakMode="TailTruncation"
+                       HorizontalTextAlignment="Center"
+                       Text="Iniciando..." />
+            </StackLayout>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

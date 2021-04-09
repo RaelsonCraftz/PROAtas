@@ -19,7 +19,8 @@
                  xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
                  xmlns:converters="clr-namespace:PROAtas.Converters"
                  
-                 Title="Cosmo Atas">
+                 Title="Cosmo Atas"
+                 BackgroundImageSource="background_pattern">
     
     <ContentPage.BindingContext>
         <viewmodel:HomeViewModel />
@@ -54,6 +55,7 @@
     
     <ContentPage.Content>
         <Grid RowDefinitions="Auto, *, 60">
+            
             <!--Search Bar-->
             <!--TODO: needs further development. This will be done on v15-->
             <!--<controls:LoadSearchBar Margin="5,5,5,0"
@@ -169,7 +171,8 @@
                 </StackLayout.Behaviors>
 
                 <Button Style="{StaticResource roundButton}"
-                        BackgroundColor="{StaticResource Danger}">
+                        BackgroundColor="{StaticResource Danger}"
+                        Command="{Binding DeleteMinute}">
                     <Button.ImageSource>
                         <FontImageSource Glyph="{x:Static ui:MaterialIcon.Delete}"
                                          Color="{StaticResource TextIcons}"

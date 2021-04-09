@@ -19,8 +19,16 @@
     <item name="android:textCursorDrawable">@drawable/entry_cursor</item>
   </style>
 
-  <style name="MyTheme.Splash" parent ="Theme.AppCompat.Light.NoActionBar">
-    <item name="android:windowBackground">@drawable/splash_screen</item>
+  <style name="Theme.Splash" parent ="Theme.AppCompat.Light.NoActionBar">
+    <item name="android:background">@drawable/splash_background</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:windowFullscreen">true</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowActionBar">true</item>
+  </style>
+
+  <style name="Theme.Presentation" parent ="Theme.AppCompat.Light.NoActionBar">
+    <item name="android:windowBackground">@drawable/presentation_background</item>
     <item name="android:windowNoTitle">true</item>
     <item name="android:windowFullscreen">true</item>
     <item name="android:windowContentOverlay">@null</item>

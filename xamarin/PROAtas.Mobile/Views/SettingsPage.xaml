@@ -19,7 +19,8 @@
                  xmlns:behaviors="clr-namespace:Xamarin.Craftz.Behavior;assembly=Xamarin.Craftz"
                  xmlns:converters="clr-namespace:PROAtas.Converters"
                  
-                 Title="Configurações">
+                 Title="Configurações"
+                 BackgroundImageSource="background_pattern">
 
     <ContentPage.Resources>
         <Style TargetType="xct:TabViewItem">

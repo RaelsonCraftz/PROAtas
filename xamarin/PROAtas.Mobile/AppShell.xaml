@@ -4,7 +4,7 @@
        xmlns:views="clr-namespace:PROAtas.Mobile.Views"
        xmlns:local="clr-namespace:PROAtas"
        xmlns:ui="clr-namespace:PROAtas.Assets.UI"
-       Title="PROAtas"
+       Title="Cosmo Atas"
        x:Class="PROAtas.AppShell"
        x:Name="base">
 
@@ -95,12 +95,7 @@
             </StackLayout>
         </DataTemplate>
     </Shell.FlyoutHeaderTemplate>
-    
-    <!-- 
-        When the Flyout is visible this defines the content to display in the flyout.
-        FlyoutDisplayOptions="AsMultipleItems" will create a separate flyout item for each child element    
-        https://docs.microsoft.com/dotnet/api/xamarin.forms.shellgroupitem.flyoutdisplayoptions?view=xamarin-forms
-    -->
+
     <FlyoutItem Title="Minhas Atas">
         <FlyoutItem.FlyoutIcon>
             <FontImageSource Glyph="{x:Static ui:MaterialIcon.Home}"

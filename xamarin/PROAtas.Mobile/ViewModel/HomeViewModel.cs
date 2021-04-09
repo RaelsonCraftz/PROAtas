@@ -157,6 +157,49 @@ namespace PROAtas.Mobile.ViewModel
             });
         }
 
+        public Command DeleteMinute
+        {
+            get { if (_deleteMinute == null) _deleteMinute = new Command(DeleteMinuteExecute); return _deleteMinute; }
+        }
+        private Command _deleteMinute;
+        private void DeleteMinuteExecute()
+        {
+            logService.LogActionAsync(async () =>
+            {
+                if (!await UserDialogs.Instance.ConfirmAsync("Esta operação removerá a informação definitivamente. Deseja prosseguir?", "Confirmação", "Sim", "Não"))
+                    return;
+                
+                await SetBusyAsync(async () =>
+                {
+                    await Task.Delay(300);
+
+                    var topics = dataService.TopicRepository.Find(l => l.IdMinute == SelectedMinute.Model.Id);
+                    foreach (var topic in topics)
+                    {
+                        var information = dataService.InformationRepository.Find(t => t.IdTopic == topic.Id);
+                        information.ForEach(i => dataService.InformationRepository.Remove(i));
+
+                        dataService.TopicRepository.Remove(topic);
+                    }
+
+                    var people = dataService.PersonRepository.Find(l => l.IdMinute == SelectedMinute.Model.Id);
+                    people.ForEach(p => dataService.PersonRepository.Remove(p));
+
+                    dataService.MinuteRepository.Remove(SelectedMinute.Model);
+
+                    Minutes.Remove(SelectedMinute);
+                    ClearSelection.Execute(null);
+                });
+            },
+            log =>
+            {
+                if (log != null)
+                    UserDialogs.Instance.Alert(log);
+
+                return Task.CompletedTask;
+            });
+        }
+
         public Command ClearSelection
         {
             get { if (_clearSelection == null) _clearSelection = new Command(ClearSelectionExecute); return _clearSelection; }
@@ -341,13 +384,18 @@ namespace PROAtas.Mobile.ViewModel
             var minutes = dataService.MinuteRepository.GetAll();
             var minuteCollection = new List<MinuteElement>();
 
+            var people = dataService.PersonRepository.GetAll();
+
             foreach (var minute in minutes)
-                minuteCollection.Add(new MinuteElement(minute));
+                minuteCollection.Add(new MinuteElement(minute)
+                {
+                    PeopleQuantity = people.Count(l => l.IdMinute == minute.Id),
+                });
 
             InvokeMainThread(() =>
             {
                 SelectedMinute = null;
-                Minutes.ReplaceRange(minuteCollection.OrderByDescending(l => l.Date));
+                Minutes.ReplaceRange(minuteCollection);
             });
         }
 
