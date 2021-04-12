@@ -17,6 +17,7 @@ namespace PROAtas
         }
 
         public string Version => VersionTracking.CurrentVersion;
+        public string Build => VersionTracking.CurrentBuild;
 
         private async void OnMenuItemClicked(object sender, EventArgs e)
         {

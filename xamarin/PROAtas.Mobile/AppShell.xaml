@@ -78,9 +78,9 @@
 
     <Shell.FlyoutHeaderTemplate>
         <DataTemplate>
-            <StackLayout Padding="10"
+            <StackLayout Padding="10" Spacing="0"
                          BackgroundColor="{StaticResource Primary}"
-                         HeightRequest="{OnPlatform iOS=180}">
+                         HeightRequest="{OnPlatform iOS=190}">
                 <Image Source="icLogo" />
 
                 <Label HorizontalOptions="Start"
@@ -93,6 +93,11 @@
                        FontAttributes="Italic"
                        TextColor="{StaticResource Accent}"
                        Text="{Binding Version, Source={x:Reference base}}" />
+                <Label HorizontalOptions="Start" 
+                       FontSize="12"
+                       FontAttributes="Italic"
+                       TextColor="{StaticResource Accent}"
+                       Text="{Binding Build, StringFormat='(Build {0:0})', Source={x:Reference base}}" />
             </StackLayout>
         </DataTemplate>
     </Shell.FlyoutHeaderTemplate>

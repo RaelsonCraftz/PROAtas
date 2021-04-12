@@ -4,6 +4,7 @@
              x:Class="PROAtas.App"
              
              xmlns:ui="clr-namespace:PROAtas.Assets.UI"
+             xmlns:controls="clr-namespace:PROAtas.Mobile.Controls"
              xmlns:viewmodel="clr-namespace:PROAtas.Mobile.ViewModel"
              xmlns:converters="clr-namespace:PROAtas.Converters">
     
@@ -61,9 +62,15 @@
             </Style>
             <Style TargetType="Entry">
                 <Setter Property="Visual" Value="Default" />
+                <Setter Property="TextColor" Value="{StaticResource PrimaryText}" />
+            </Style>
+            <Style TargetType="controls:LoadEntry">
+                <Setter Property="Visual" Value="Default" />
+                <Setter Property="TextColor" Value="{StaticResource PrimaryText}" />
             </Style>
             <Style TargetType="Editor">
                 <Setter Property="Visual" Value="Default" />
+                <Setter Property="TextColor" Value="{StaticResource PrimaryText}" />
             </Style>
             <Style TargetType="RefreshView">
                 <Setter Property="RefreshColor" Value="{StaticResource Accent}" />

@@ -21,11 +21,10 @@ namespace PROAtas.Mobile.Controls
             if (IsFocused || string.IsNullOrEmpty(newValue))
             {
                 // Cancels the current execution
-                try
-                {
-                    cancellationTokenSource?.Cancel();
-                }
-                catch (ObjectDisposedException) { Debug.WriteLine($"[{AppInfo.Name}] an error occurred while canceling the CancellationTokenSource of an LoadEditor. This is expected to occur occasionally"); }
+                try 
+                { cancellationTokenSource?.Cancel(); }
+                catch (ObjectDisposedException) 
+                { Debug.WriteLine($"[{AppInfo.Name}] an error occurred while canceling the CancellationTokenSource of an LoadEditor. This is expected to occur occasionally"); }
 
                 // Creates a new instance for the cancellation token
                 cancellationTokenSource = new CancellationTokenSource();

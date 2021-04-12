@@ -29,7 +29,7 @@
     <ContentPage.Resources>
         <!--Styles-->
         <Style x:Key="topicListCollection" TargetType="CollectionView">
-            <Setter Property="HeightRequest" Value="80" />
+            <Setter Property="HeightRequest" Value="70" />
             <Setter Property="SelectionMode" Value="None" />
             <Setter Property="ItemsLayout">
                 <Setter.Value>
@@ -234,7 +234,7 @@
                                 <ContentView Padding="0">
                                     <Frame WidthRequest="90" 
                                            BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedTopicFrameConverter}}">
-                                        <Grid RowDefinitions="48,32">
+                                        <Grid RowDefinitions="40,32">
                                             <Button BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedTopicButtonConverter}}" 
                                                     TextColor="{Binding IsSelected, Converter={StaticResource SelectedTopicTextConverter}}" 
                                                     FontSize="22"
@@ -245,7 +245,7 @@
                                             <Label Grid.Row="1" 
                                                    HorizontalOptions="Center" 
                                                    LineBreakMode="HeadTruncation"
-                                                   FontSize="12"
+                                                   FontSize="10"
                                                    TextColor="{Binding IsSelected, Converter={StaticResource SelectedTopicTitleConverter}}"
                                                    Text="{Binding Text}" />
                                         </Grid>

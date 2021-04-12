@@ -58,6 +58,7 @@ namespace Craftz.Core
         // https://stackoverflow.com/questions/6695208/uri-escapedatastring-invalid-uri-the-uri-string-is-too-long
 
         // This is meant to prevent situation where special characters are inserted on fields meant to be file names
+        //TODO: investigate a regex for this instead
         public static string RemoveSpecialCharacters(this string str)
         {
             return str

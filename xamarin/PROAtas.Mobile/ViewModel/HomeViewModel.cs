@@ -224,59 +224,17 @@ namespace PROAtas.Mobile.ViewModel
         {
             logService.LogActionAsync(async () =>
             {
+                //Note: it's important to pass SelectedMinute.Model here because at some point the SelectedMinute is becoming a null reference
+                //right after approving StoragePermission request
+                //TODO: investigate why this happens
+                var minute = SelectedMinute.Model;
+
                 if (!await permissionService.RequestStoragePermission())
                     return;
 
                 ShowLoading();
-
                 // Running on a background thread
-                _ = Task.Run(() =>
-                {
-                    // This stream will be disposed by the PrintService
-                    MemoryStream stream = new MemoryStream()
-                    { 
-                        Position = 0,
-                    };
-                    
-                    logService.LogAction(() =>
-                    {
-                        byte[] localbyte;
-                        if (Application.Current.Properties[AppConsts.SelectedMinuteImage]?.ToString() != "0")
-                        {
-                            var selectedImage = int.Parse(Application.Current.Properties[AppConsts.SelectedMinuteImage]?.ToString());
-                            var minuteImage = dataService.MinuteImageRepository.Get(selectedImage);
-
-                            localbyte = imageService.GetBytesFromPath(minuteImage.Name);
-                        }
-                        else
-                            localbyte = imageService.GetBytesFromLogo();
-
-                        WordDocument localDocument = CreateDocument(SelectedMinute.Model, localbyte);
-
-                        localDocument.Save(stream, Syncfusion.DocIO.FormatType.Docx);
-
-                        localDocument.Close();
-
-                        var arquivonome = SelectedMinute.Model.Name.RemoveSpecialCharacters();
-                        InvokeMainThread(() =>
-                        {
-                            HideLoading();
-                            printService.Print(arquivonome + ".docx", "application/msword", stream);
-                        });
-                    },
-                    log =>
-                    {
-                        // Disposing the stream, assuming that the background thread didn't get to the point of disposing it through the PrintService
-                        stream?.Dispose();
-
-                        if (log != null)
-                            InvokeMainThread(() =>
-                            {
-                                HideLoading();
-                                UserDialogs.Instance.Alert(log);
-                            });
-                    });
-                });
+                _ = Task.Run(() => PrintWordInternal(minute));
             });
         }
 
@@ -285,11 +243,14 @@ namespace PROAtas.Mobile.ViewModel
             get { if (_printPDF == null) _printPDF = new Command(PrintPDFExecute); return _printPDF; }
         }
         private Command _printPDF;
-        //TODO: this method requires a bit more of refactoring. Its readability is not optimal
         private void PrintPDFExecute()
         {
             logService.LogActionAsync(async () =>
             {
+                //Note: it's important to store SelectedMinute.Model here because the DisplayAlert reinitializes the page,
+                //thus making the SelectedMinute a null reference
+                var minute = SelectedMinute.Model;
+
                 if (!await permissionService.RequestStoragePermission())
                     return;
 
@@ -298,71 +259,11 @@ namespace PROAtas.Mobile.ViewModel
 
                 ShowLoading();
                 adService.ShowVideo(AppConsts.AdVideo,
-                    // Callback for success
-                    () =>
-                    {
-                        isRewarded = true;
-                    },
-                    // Callback for ad close
-                    () =>
-                    {
-                        // This stream will be disposed by the PrintService
-                        MemoryStream stream = new MemoryStream()
-                        {
-                            Position = 0,
-                        };
-
-                        logService.LogAction(() =>
-                        {
-                            //TODO: refactor this. Bad readability
-                            if (isRewarded)
-                            {
-                                byte[] localbyte;
-                                if (Application.Current.Properties[AppConsts.SelectedMinuteImage]?.ToString() != "0")
-                                {
-                                    var selectedImage = int.Parse(Application.Current.Properties[AppConsts.SelectedMinuteImage]?.ToString());
-                                    var minuteImage = dataService.MinuteImageRepository.Get(selectedImage);
-
-                                    localbyte = imageService.GetBytesFromPath(minuteImage.Name);
-                                }
-                                else
-                                    localbyte = imageService.GetBytesFromLogo();
-
-                                WordDocument localWord = CreateDocument(SelectedMinute.Model, localbyte, true);
-                                DocIORenderer render = new DocIORenderer();
-                                PdfDocument localPDF = render.ConvertToPDF(localWord);
-
-                                // No longer necessary and needs disposal
-                                render.Dispose();
-
-                                localWord.Dispose();
-                                localPDF.Save(stream);
-                                localPDF.Close();
-
-                                var fileName = SelectedMinute.Model.Name.RemoveSpecialCharacters();
-                                printService.Print(fileName + ".pdf", "application/msword", stream);
-                            }
-                            else
-                                UserDialogs.Instance.Toast("Você precisa aguardar a recompensa!");
-                    
-                            SelectedMinute = null;
-                            isRewarded = false;
-                            HideLoading();
-                        },
-                        log =>
-                        {
-                            // Disposing the stream, assuming that the background thread didn't get to the point of disposing it through the PrintService
-                            stream?.Dispose();
-
-                            if (log != null)
-                                InvokeMainThread(() =>
-                                {
-                                    HideLoading();
-                                    UserDialogs.Instance.Alert(log);
-                                });
-                        });
-                    },
-                    // Callback for failure
+                    // Callback for success (this happens in its own thread and eventually the ad will be closed as well)
+                    () => isRewarded = true,
+                    // Callback for ad close (this always happens, whether the ad was closed after or before it was successful) 
+                    () => PrintPDFInternal(minute),
+                    // Callback for failure (this negates the callbacks above)
                     () =>
                     {
                         UserDialogs.Instance.Toast("Conexão falhou. Verifique a internet!");
@@ -379,7 +280,7 @@ namespace PROAtas.Mobile.ViewModel
 
         #region Helpers
 
-        private void LoadMinutes()
+        private void LoadMinutesInternal()
         {
             var minutes = dataService.MinuteRepository.GetAll();
             var minuteCollection = new List<MinuteElement>();
@@ -399,7 +300,109 @@ namespace PROAtas.Mobile.ViewModel
             });
         }
 
-        WordDocument CreateDocument(Minute minute, byte[] localbyte, bool isPDF = false)
+        private void PrintWordInternal(Minute minute)
+        {
+            // This stream will be disposed by the PrintService
+            MemoryStream stream = null;
+
+            logService.LogAction(() =>
+            {
+                byte[] localBytes = GetImageBytesInternal();
+
+                // This stream needs to be disposed eventually. Keep in mind that PrintService calls close the stream internally
+                stream = new MemoryStream
+                {
+                    Position = 0,
+                };
+
+                // Generates the document and saves it to a stream
+                var localDocument = CreateDocumentInternal(minute, localBytes);
+                localDocument.Save(stream, Syncfusion.DocIO.FormatType.Docx);
+                localDocument.Close();
+
+                // Removing any special characters not meant for use as file name
+                var arquivonome = minute.Name.RemoveSpecialCharacters();
+                InvokeMainThread(() =>
+                {
+                    HideLoading();
+                    printService.Print(arquivonome + ".docx", "application/msword", stream);
+                });
+            },
+            log =>
+            {
+                // Disposing the stream, assuming that the background thread didn't get to the point of disposing it through the PrintService
+                try { stream?.Dispose(); }
+                catch (ObjectDisposedException) { }
+
+                if (log != null)
+                    InvokeMainThread(() =>
+                    {
+                        HideLoading();
+                        UserDialogs.Instance.Toast(log);
+                    });
+            });
+        }
+
+        private void PrintPDFInternal(Minute minute)
+        {
+            // This stream needs to be disposed. Keep in mind that PrintService disposes it automatically
+            MemoryStream stream = null;
+
+            logService.LogAction(() =>
+            {
+                if (!isRewarded)
+                {
+                    UserDialogs.Instance.Toast("Você precisa aguardar a recompensa!");
+
+                    isRewarded = false;
+                    HideLoading();
+
+                    return;
+                }
+
+                // This stream needs to be disposed eventually. Keep in mind that PrintService calls close the stream internally
+                stream = new MemoryStream
+                {
+                    Position = 0
+                };
+
+                // Retrieving the bytes for the image selected by the user for the minute
+                byte[] localbyte = GetImageBytesInternal();
+
+                // Generating the word document
+                WordDocument wordDocument = CreateDocumentInternal(minute, localbyte, true);
+
+                // Convert to pdf document
+                var pdfDocument = ConvertToPdf(wordDocument);
+
+                // Disposing the word document and saving it to the stream
+                wordDocument.Dispose();
+                pdfDocument.Save(stream);
+                pdfDocument.Close();
+
+                var fileName = minute.Name.RemoveSpecialCharacters();
+                printService.Print($"{fileName}.pdf", "application/msword", stream);
+
+                ClearSelection.Execute(null);
+                isRewarded = false;
+                HideLoading();
+            },
+            log =>
+            {
+                // Disposing the stream, assuming that the background thread didn't get to the point of disposing it through the PrintService
+                try { stream?.Dispose(); }
+                catch (ObjectDisposedException) { }
+
+                if (log != null)
+                    InvokeMainThread(() =>
+                    {
+                        HideLoading();
+                        UserDialogs.Instance.Toast(log);
+                    });
+            });
+        }
+
+        WordDocument CreateDocumentInternal(Minute minute, byte[] localbyte, bool isPDF = false)
         {
             var userName = App.Current.Properties[AppConsts.UserName]?.ToString();
             var organizationName = App.Current.Properties[AppConsts.OrganizationName]?.ToString();
@@ -518,6 +521,28 @@ namespace PROAtas.Mobile.ViewModel
             return localDocument;
         }
 
+        byte[] GetImageBytesInternal()
+        {
+            if (Application.Current.Properties[AppConsts.SelectedMinuteImage]?.ToString() != "0")
+            {
+                var selectedImage = int.Parse(Application.Current.Properties[AppConsts.SelectedMinuteImage]?.ToString());
+                var minuteImage = dataService.MinuteImageRepository.Get(selectedImage);
+
+                return imageService.GetBytesFromPath(minuteImage.Name);
+            }
+            else
+                return imageService.GetBytesFromLogo();
+        }
+
+        PdfDocument ConvertToPdf(WordDocument document)
+        {
+            DocIORenderer render = new DocIORenderer();
+            PdfDocument pdfDocument = render.ConvertToPDF(document);
+            render.Dispose();
+
+            return pdfDocument;
+        }
+
         #endregion
 
         #region Initializers
@@ -526,7 +551,7 @@ namespace PROAtas.Mobile.ViewModel
         {
             base.Initialize();
 
-            LoadMinutes();
+            LoadMinutesInternal();
         }
 
         #endregion
