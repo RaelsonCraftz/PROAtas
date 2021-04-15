@@ -8,7 +8,7 @@
                     
                     xmlns:ui="clr-namespace:PROAtas.Assets.UI"
                     xmlns:scg="clr-namespace:System.Collections.Generic;assembly=netstandard"
-                    xmlns:core="clr-namespace:PROAtas.Core"
+                    xmlns:core="clr-namespace:PROAtas.Mobile.Core"
                     xmlns:views="clr-namespace:PROAtas.Mobile.Views"
                     xmlns:model="clr-namespace:PROAtas.Core.Model;assembly=PROAtas.Core"
                     xmlns:craftz="clr-namespace:Craftz.Views;assembly=Xamarin.Craftz"

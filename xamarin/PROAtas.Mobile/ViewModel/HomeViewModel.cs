@@ -4,6 +4,7 @@ using Craftz.ViewModel;
 using Newtonsoft.Json;
 using PROAtas.Core;
 using PROAtas.Core.Model.Entities;
+using PROAtas.Mobile.Core;
 using PROAtas.Mobile.Services.Platform;
 using PROAtas.Mobile.Services.Shared;
 using PROAtas.Mobile.ViewModel.Elements;
@@ -120,7 +121,7 @@ namespace PROAtas.Mobile.ViewModel
                 await Task.Delay(300);
 
                 var jsonStr = JsonConvert.SerializeObject(minute);
-                await Shell.Current.GoToAsync($"minute/?model={jsonStr}", true);
+                await Shell.Current.GoToAsync($"{Routes.Minute}/?model={jsonStr}", true);
             }),
             log =>
             {
@@ -145,7 +146,7 @@ namespace PROAtas.Mobile.ViewModel
                     await Task.Delay(300);
 
                     var jsonStr = JsonConvert.SerializeObject(SelectedMinute.Model);
-                    await Shell.Current.GoToAsync($"minute/?model={jsonStr}", true);
+                    await Shell.Current.GoToAsync($"{Routes.Minute}/?model={jsonStr}", true);
                 }, 
                 log =>
                 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
-using PROAtas.Core;
+using PROAtas.Mobile.Core;
 using PROAtas.Mobile.Services.Shared;
 using PROAtas.Mobile.Views;
 using Xamarin.Craftz.Services;
@@ -27,7 +27,7 @@ namespace PROAtas
             //DependencyService.Register<MockMinuteStorage>();
 
             // Shell navigation Routes
-            Routing.RegisterRoute("minute", typeof(MinutePage));
+            Routing.RegisterRoute(Routes.Minute, typeof(MinutePage));
 
             // App Center
 #if DEBUG
@@ -52,7 +52,7 @@ namespace PROAtas
             MainPage = new AppShell();
 
             var version = App.Current.Properties[AppConsts.Version]?.ToString();
-            if (version != "v14")
+            if (version != "v14.1")
             {
                 Current.Properties[AppConsts.Version] = "v14.1";
                 Current.SavePropertiesAsync();

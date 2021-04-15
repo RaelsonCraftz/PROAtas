@@ -7,7 +7,7 @@
                    x:Name="base"
                   
                    xmlns:ui="clr-namespace:PROAtas.Assets.UI"
-                   xmlns:core="clr-namespace:PROAtas.Core"
+                   xmlns:core="clr-namespace:PROAtas.Mobile.Core"
                    xmlns:views="clr-namespace:PROAtas.Mobile.Views"
                    xmlns:entity="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"
                    xmlns:popups="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"

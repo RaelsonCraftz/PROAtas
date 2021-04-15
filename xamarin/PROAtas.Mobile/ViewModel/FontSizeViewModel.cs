@@ -2,6 +2,7 @@
 using Craftz.ViewModel;
 using PROAtas.Core;
 using PROAtas.Core.Model;
+using PROAtas.Mobile.Core;
 using PROAtas.Mobile.Services.Shared;
 using System;
 using System.Collections.Generic;

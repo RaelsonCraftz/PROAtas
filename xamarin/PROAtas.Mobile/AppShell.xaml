@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Shell xmlns="http://xamarin.com/schemas/2014/forms" 
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-       xmlns:views="clr-namespace:PROAtas.Mobile.Views"
-       xmlns:local="clr-namespace:PROAtas"
-       xmlns:ui="clr-namespace:PROAtas.Assets.UI"
-       Title="Cosmo Atas"
        x:Class="PROAtas.AppShell"
-       x:Name="base">
+       x:Name="base"
+       
+       xmlns:ui="clr-namespace:PROAtas.Assets.UI"
+       xmlns:core="clr-namespace:PROAtas.Mobile.Core"
+       xmlns:views="clr-namespace:PROAtas.Mobile.Views"
+       
+       Title="Cosmo Atas">
 
     <!--
         The overall app visual hierarchy is defined here, along with navigation.
@@ -102,7 +104,13 @@
         </DataTemplate>
     </Shell.FlyoutHeaderTemplate>
 
-    <FlyoutItem Title="Minhas Atas">
+    <TabBar>
+        <ShellContent Route="{x:Static core:Routes.Loading}"
+                      ContentTemplate="{DataTemplate views:LoadingPage}"/>
+    </TabBar>
+    
+    <FlyoutItem Title="Minhas Atas"
+                Route="{x:Static core:Routes.Main}">
         <FlyoutItem.FlyoutIcon>
             <FontImageSource Glyph="{x:Static ui:MaterialIcon.Home}"
                              Color="{StaticResource Primary}"
@@ -112,7 +120,8 @@
         <ShellContent ContentTemplate="{DataTemplate views:HomePage}" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Configurações">
+    <FlyoutItem Title="Configurações"
+                Route="{x:Static core:Routes.Settings}">
         <FlyoutItem.FlyoutIcon>
             <FontImageSource Glyph="{x:Static ui:MaterialIcon.Settings}"
                              Color="{StaticResource Primary}"
@@ -123,7 +132,8 @@
         <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}" />
     </FlyoutItem>
     
-    <FlyoutItem Title="Sobre">
+    <FlyoutItem Title="Sobre"
+                Route="{x:Static core:Routes.About}">
         <FlyoutItem.FlyoutIcon>
             <FontImageSource Glyph="{x:Static ui:MaterialIcon.Info}"
                              Color="{StaticResource Primary}"

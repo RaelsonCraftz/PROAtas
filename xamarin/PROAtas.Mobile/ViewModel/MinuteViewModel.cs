@@ -67,7 +67,7 @@ namespace PROAtas.Mobile.ViewModel
         {
             logService.LogAction(() =>
             {
-                var minute = new Core.Model.Entities.Minute(Minute.Model)
+                var minute = new Minute(Minute.Model)
                 {
                     Name = minuteName
                 };

@@ -1,5 +1,6 @@
 ﻿using PROAtas.Core;
 using PROAtas.Core.Model.Entities;
+using PROAtas.Mobile.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;

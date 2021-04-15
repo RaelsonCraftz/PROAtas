@@ -1,4 +1,4 @@
-﻿namespace PROAtas.Core
+﻿namespace PROAtas.Mobile.Core
 {
     public static class Formats
     {

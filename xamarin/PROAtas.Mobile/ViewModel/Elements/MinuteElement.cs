@@ -1,6 +1,7 @@
 ﻿using Craftz.ViewModel;
 using PROAtas.Core;
 using PROAtas.Core.Model.Entities;
+using PROAtas.Mobile.Core;
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;

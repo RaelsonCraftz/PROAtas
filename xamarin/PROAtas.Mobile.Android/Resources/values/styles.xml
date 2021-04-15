@@ -19,15 +19,15 @@
     <item name="android:textCursorDrawable">@drawable/entry_cursor</item>
   </style>
 
-  <style name="Theme.Splash" parent ="Theme.AppCompat.Light.NoActionBar">
-    <item name="android:background">@drawable/splash_background</item>
+  <style name="Theme.Splash" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="android:windowSplashscreenContent">@drawable/splash_background</item>
     <item name="android:windowNoTitle">true</item>
-    <item name="android:windowFullscreen">true</item>
-    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowFullscreen">false</item>
     <item name="android:windowActionBar">true</item>
+    <item name="android:statusBarColor">#13191c</item>
   </style>
 
-  <style name="Theme.Presentation" parent ="Theme.AppCompat.Light.NoActionBar">
+  <style name="Theme.Presentation" parent="Theme.AppCompat.Light.NoActionBar">
     <item name="android:windowBackground">@drawable/presentation_background</item>
     <item name="android:windowNoTitle">true</item>
     <item name="android:windowFullscreen">true</item>

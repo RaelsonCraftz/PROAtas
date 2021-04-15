@@ -9,7 +9,7 @@
                  xmlns:ui="clr-namespace:PROAtas.Assets.UI"
                  xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
                  xmlns:ios="clr-namespace:Xamarin.CommunityToolkit.PlatformConfiguration.iOSSpecific;assembly=Xamarin.CommunityToolkit"
-                 xmlns:core="clr-namespace:PROAtas.Core"
+                 xmlns:core="clr-namespace:PROAtas.Mobile.Core"
                  xmlns:droid="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
                  xmlns:craftz="clr-namespace:Craftz.Views;assembly=Xamarin.Craftz"
                  xmlns:entity="clr-namespace:PROAtas.Core.Model.Entities;assembly=PROAtas.Core"

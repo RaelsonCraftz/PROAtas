@@ -26,10 +26,10 @@ namespace PROAtas.Droid.Views
 
         private void InvokeActivity()
         {
-            var presentationActivity = new Intent(ApplicationContext, typeof(PresentationActivity));
-            presentationActivity.AddFlags(ActivityFlags.NoAnimation);
+            var mainActivity = new Intent(ApplicationContext, typeof(MainActivity));
+            mainActivity.AddFlags(ActivityFlags.NoAnimation);
 
-            StartActivity(presentationActivity);
+            StartActivity(mainActivity);
         }
 
         // Prevents the user to kill content while splash screen is running

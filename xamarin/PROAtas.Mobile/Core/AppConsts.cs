@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PROAtas.Core
+namespace PROAtas.Mobile.Core
 {
     public static class AppConsts
     {

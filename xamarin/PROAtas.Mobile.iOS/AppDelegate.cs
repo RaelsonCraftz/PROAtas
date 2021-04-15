@@ -27,7 +27,8 @@ namespace PROAtas.iOS
             // Initializers
             Rg.Plugins.Popup.Popup.Init();
             global::Xamarin.Forms.Forms.Init();
-            
+            Xamarin.Forms.FormsMaterial.Init();
+
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);

@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace PROAtas.Core
+namespace PROAtas.Mobile.Core
 {
     public static class FileNameParsers
     {
