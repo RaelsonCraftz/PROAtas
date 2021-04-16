@@ -17,6 +17,7 @@ That's the project containing most of the MVVM framework, base services (like th
 You can download the app at:
 
 Play Store: https://play.google.com/store/apps/details?id=com.Raelson.PROAtas
+
 App Store: TBD (v15 and the branch feature/ios is focusing on that)
 
 ### Story
