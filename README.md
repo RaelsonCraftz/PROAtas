@@ -1,4 +1,4 @@
-# PROAtas
+# Cosmo Atas (formerly known as PRO Atas)
 App for generating meeting minutes
 
 This project aims for two things:
