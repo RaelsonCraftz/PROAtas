@@ -6,7 +6,7 @@ This project aims for two things:
 - Developing and maintaining an app to help people generate their meeting minutes without having to write a document on paper, then when getting into home/office finally type and format everything into a document. With the app, you type the topics and information in the meeting itself and generate the minute document as soon as the meeting is finished;
 - A laboratory and playground to experiment with custom MVVM frameworks, reusing some concepts I've learned from the community and from other frameworks like Prism, MVVMCross and others, while still building some ideas of my own (like using Elements, which are basically ViewModels but built specifically for Entity types);
 
-The overall structure is as follows:
+The major points about this project are as follows:
 
 ### Xamarin.Craftz
 
