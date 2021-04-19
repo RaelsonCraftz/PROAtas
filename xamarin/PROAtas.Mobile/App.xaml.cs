@@ -52,12 +52,12 @@ namespace PROAtas
             MainPage = new AppShell();
 
             var version = App.Current.Properties[AppConsts.Version]?.ToString();
-            if (version != "v14.1")
+            if (version != "v14.2")
             {
-                Current.Properties[AppConsts.Version] = "v14.1";
+                Current.Properties[AppConsts.Version] = "v14.2";
                 Current.SavePropertiesAsync();
 
-                Application.Current.MainPage.DisplayAlert($"Versão 14.1", "Olá!\r\n\r\nEsta é a versão 14.1 do PRO Atas, que agora se chama Cosmo Atas. As principais mudanças são:\r\n\r\n- Visual redesenhado e mais moderno;\r\n- Experiência de usuário melhorada;\r\n- Implementação de serviços que permitem rastrear possíveis erros que estejam ocorrendo no aplicativo;\r\n- Alguns bugs foram corrigidos;\r\n- Hotfix 1: a cor das entradas de texto foi corrigida;\r\n- Hotfix 2: em algumas situações (principalmente PDF), o aplicativo não conseguia gerar o documento. Isto foi corrigido\r\n- Problema conhecido: para alguns usuários é possível que, logo após iniciar, o app fique com uma tela preta. Caso isso aconteça, favor enviar um e-mail para o desenvolvedor relatando o ocorrido;\r\n\r\nEste aplicativo é desenvolvido por Raelson por iniciativa própria. Caso precise entrar em contato, enviar e-mail para raelsoncraftz@gmail.com", "Legal!");
+                Application.Current.MainPage.DisplayAlert($"Versão 14.2", "Olá!\r\n\r\nEsta é a versão 14.2 do PRO Atas, que agora se chama Cosmo Atas. As principais mudanças são:\r\n\r\n- A tela preta durante a inicialização em alguns dispositivos foi corrigida;\r\n- Após mudar a logo das atas, a geração do documento não estava funcionando. Isto foi corrigido;\r\n\r\nEste aplicativo é desenvolvido por Raelson por iniciativa própria. Caso precise entrar em contato, enviar e-mail para raelsoncraftz@gmail.com", "Legal!");
             }
         }
 

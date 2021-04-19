@@ -51,7 +51,7 @@ namespace PROAtas.Mobile.ViewModel
             if (minuteImage != null)
                 logService.LogAction(() =>
                 {
-                    OnResult(minuteImage);
+                    OnResult?.Invoke(minuteImage);
                 },
                 log =>
                 {

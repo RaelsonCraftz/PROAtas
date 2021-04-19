@@ -20,19 +20,15 @@ namespace PROAtas.Droid.Services
 
         public ImageServiceDroid()
         {
+            string root = Android.OS.Environment.IsExternalStorageEmulated
+                ? Android.OS.Environment.ExternalStorageDirectory.ToString()
+                : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
+            DirectoryPath = $"{root}/Imagens";
         }
 
         public bool CreateDirectory()
         {
-            string root;
-            if (Android.OS.Environment.IsExternalStorageEmulated)
-                root = Android.OS.Environment.ExternalStorageDirectory.ToString();
-            else
-                root = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-            DirectoryPath = $"{root}/Imagens";
-
             Java.IO.File imageDir = new Java.IO.File(DirectoryPath);
             var success = imageDir.Mkdir();
 
@@ -126,6 +122,7 @@ namespace PROAtas.Droid.Services
             MainActivity.Instance.PickImageTaskCompletionSource = new TaskCompletionSource<Stream>();
 
             // Return Task object
+            // Remember to dispose the stream within the task
             return MainActivity.Instance.PickImageTaskCompletionSource.Task;
         }
 

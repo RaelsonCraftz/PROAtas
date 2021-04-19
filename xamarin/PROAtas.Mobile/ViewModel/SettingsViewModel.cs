@@ -347,6 +347,9 @@ namespace PROAtas.Mobile.ViewModel
 
         private void UpdateImage(MinuteImageElement minuteImage)
         {
+            App.Current.Properties[AppConsts.SelectedMinuteImage] = minuteImage.Model.Id;
+            _ = App.Current.SavePropertiesAsync();
+
             SelectedImage = minuteImage;
         }
 
